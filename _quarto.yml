@@ -1,0 +1,23 @@
+project:
+  type: book
+
+book:
+  title: "Python OR-tools Notes"
+  author: "Kunlei Lian"
+  date: "2/18/2023"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+
+
