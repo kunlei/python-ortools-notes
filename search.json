@@ -11,20 +11,41 @@
     "href": "intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "This book covers the usage of Google OR-Tools to solve optimization problems in Python. There are several major chapters in this book:\nIn Chapter 2, we explain the steps needed to setup OR-Tools in a Python environment.\nIn Chapter 3, we go through the modeling techniques made available in OR-Tools.\nIn Chapter 4, we use an example to illustrate the modeling capability of OR-Tools to solve linear programming problems."
+  },
+  {
+    "objectID": "env-setup.html#install-homebrew",
+    "href": "env-setup.html#install-homebrew",
+    "title": "2  Environment Setup",
+    "section": "2.1 Install Homebrew",
+    "text": "2.1 Install Homebrew\nThe first tool we need is Homebrew, ‘the Missing Package Manager for macOS (or Linux)’, and it can be accessed at https://brew.sh/. To install Homebrew, just copy the command below and run it in the Terminal.\n/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"\nWe can then use the brew --version command to check the installed version. On my system, it shows the info below.\n(ortools)  ~/ brew --version\nHomebrew 3.6.20\nHomebrew/homebrew-core (git revision 5f1582e4d55; last commit 2023-02-05)\nHomebrew/homebrew-cask (git revision fa3b8a669d; last commit 2023-02-05)"
+  },
+  {
+    "objectID": "env-setup.html#install-anaconda",
+    "href": "env-setup.html#install-anaconda",
+    "title": "2  Environment Setup",
+    "section": "2.2 Install Anaconda",
+    "text": "2.2 Install Anaconda"
+  },
+  {
+    "objectID": "env-setup.html#create-a-conda-environment",
+    "href": "env-setup.html#create-a-conda-environment",
+    "title": "2  Environment Setup",
+    "section": "2.3 Create a Conda Environment",
+    "text": "2.3 Create a Conda Environment"
+  },
+  {
+    "objectID": "env-setup.html#install-google-or-tools",
+    "href": "env-setup.html#install-google-or-tools",
+    "title": "2  Environment Setup",
+    "section": "2.4 Install Google OR-Tools",
+    "text": "2.4 Install Google OR-Tools"
   },
   {
     "objectID": "summary.html",
     "href": "summary.html",
-    "title": "2  Summary",
+    "title": "5  Summary",
     "section": "",
     "text": "In summary, this book has no content whatsoever."
-  },
-  {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References",
-    "section": "",
-    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
   }
 ]
