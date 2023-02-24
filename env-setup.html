@@ -233,19 +233,100 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The first tool we need is Homebrew, ‘the Missing Package Manager for macOS (or Linux)’, and it can be accessed at <a href="https://brew.sh/" class="uri">https://brew.sh/</a>. To install Homebrew, just copy the command below and run it in the Terminal.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/bash</span> <span class="at">-c</span> <span class="st">"</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We can then use the <code>brew --version</code> command to check the installed version. On my system, it shows the info below.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ortools</span><span class="kw">)</span> <span class="ex"></span> ~/ brew <span class="at">--version</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span> ~/ brew <span class="at">--version</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Homebrew</span> 3.6.20</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Homebrew/homebrew-core</span> <span class="er">(</span><span class="fu">git</span> revision 5f1582e4d55<span class="kw">;</span> <span class="fu">last</span> commit 2023-02-05<span class="kw">)</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Homebrew/homebrew-cask</span> <span class="er">(</span><span class="fu">git</span> revision fa3b8a669d<span class="kw">;</span> <span class="fu">last</span> commit 2023-02-05<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="install-anaconda" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="install-anaconda"><span class="header-section-number">2.2</span> Install Anaconda</h2>
+<p>Since there are several Python versions available for our use and we may end up having multiple Python versions installed on our machine, it is important to use a consistent environment to work on our project in. Anaconda is a package and environment manager for Python and it provides easy-to-use tools to facilitate our data science needs. To install Anaconda, run the below command in the Terminal.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span> ~/ brew install anaconda</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>After the installation is done, we can use <code>conda --version</code> to verify whether it is available on our machine or not.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span> ~/ conda <span class="at">--version</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> 23.1.0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="create-a-conda-environment" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="create-a-conda-environment"><span class="header-section-number">2.3</span> Create a Conda Environment</h2>
+<p>Now we will create a Conda environment named ‘ortools’. Execute the below command in the Terminal, which effectively creates the required environment with Python version 3.10.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span> ~/ conda create <span class="at">-n</span> ortools python=3.10</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Retrieving</span> notices: ...working... done</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Collecting</span> package metadata <span class="er">(</span><span class="ex">current_repodata.json</span><span class="kw">)</span><span class="bu">:</span> done</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Solving</span> environment: done</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Package Plan ##</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">environment</span> location: /opt/homebrew/anaconda3/envs/test</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">added</span> / updated specs:</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="ex">-</span> python=3.10</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> following packages will be downloaded:</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="ex">package</span>                    <span class="kw">|</span>            <span class="ex">build</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="ex">---------------------------</span><span class="kw">|</span><span class="ex">-----------------</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="ex">setuptools-67.4.0</span>          <span class="kw">|</span>     <span class="ex">pyhd8ed1ab_0</span>         567 KB  conda-forge</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="ex">------------------------------------------------------------</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                                           <span class="ex">Total:</span>         567 KB</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> following NEW packages will be INSTALLED:</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bzip2</span>              conda-forge/osx-arm64::bzip2-1.0.8-h3422bc3_4</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="ex">ca-certificates</span>    conda-forge/osx-arm64::ca-certificates-2022.12.7-h4653dfc_0</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="ex">libffi</span>             conda-forge/osx-arm64::libffi-3.4.2-h3422bc3_5</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="ex">libsqlite</span>          conda-forge/osx-arm64::libsqlite-3.40.0-h76d750c_0</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="ex">libzlib</span>            conda-forge/osx-arm64::libzlib-1.2.13-h03a7124_4</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="ex">ncurses</span>            conda-forge/osx-arm64::ncurses-6.3-h07bb92c_1</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="ex">openssl</span>            conda-forge/osx-arm64::openssl-3.0.8-h03a7124_0</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="ex">pip</span>                conda-forge/noarch::pip-23.0.1-pyhd8ed1ab_0</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="ex">python</span>             conda-forge/osx-arm64::python-3.10.9-h3ba56d0_0_cpython</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="ex">readline</span>           conda-forge/osx-arm64::readline-8.1.2-h46ed386_0</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="ex">setuptools</span>         conda-forge/noarch::setuptools-67.4.0-pyhd8ed1ab_0</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="ex">tk</span>                 conda-forge/osx-arm64::tk-8.6.12-he1e0b03_0</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="ex">tzdata</span>             conda-forge/noarch::tzdata-2022g-h191b570_0</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="ex">wheel</span>              conda-forge/noarch::wheel-0.38.4-pyhd8ed1ab_0</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xz</span>                 conda-forge/osx-arm64::xz-5.2.6-h57fd34a_0</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="ex">Proceed</span> <span class="er">(</span><span class="ex">[y]/n</span><span class="kw">)</span><span class="ex">?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Type ‘y’ to proceed and Conda will create the environment for us. We can use <code>cnoda env list</code> to show all the created environments on our machine:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span> ~/ conda env list</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># conda environments:</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">base</span>                     /opt/homebrew/anaconda3</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ortools</span>                   /opt/homebrew/anaconda3/envs/ortools</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that we need to manually activate an environemnt in order to use it: <code>conda activate ortools</code>. On my machine, the activated environment <code>ortools</code> will appear in the beginning of my prompt.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex"></span> ~/ conda activate ortools</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ortools</span><span class="kw">)</span> <span class="ex"></span> ~/ </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="install-google-or-tools" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="install-google-or-tools"><span class="header-section-number">2.4</span> Install Google OR-Tools</h2>
+<p>As of this writing, the latest version of Google OR-Tools is 9.5.2237, and we can install it in our newly created environment using the command <code>pip install ortools==9.5.2237</code>. We can use <code>conda list</code> to verify whether it is available in our environment.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ortools</span><span class="kw">)</span> <span class="ex"></span> ~/ conda list</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># packages in environment at /opt/homebrew/anaconda3/envs/ortools:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Name                    Version                   Build  Channel</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">absl-py</span>                   1.4.0                    pypi_0    pypi</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bzip2</span>                     1.0.8                h3422bc3_4    conda-forge</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ca-certificates</span>           2022.12.7            h4653dfc_0    conda-forge</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">libffi</span>                    3.4.2                h3422bc3_5    conda-forge</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ex">libsqlite</span>                 3.40.0               h76d750c_0    conda-forge</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ex">libzlib</span>                   1.2.13               h03a7124_4    conda-forge</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ncurses</span>                   6.3                  h07bb92c_1    conda-forge</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="ex">numpy</span>                     1.24.2                   pypi_0    pypi</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ex">openssl</span>                   3.0.8                h03a7124_0    conda-forge</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="ex">ortools</span>                   9.5.2237                 pypi_0    pypi</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span>                       23.0.1             pyhd8ed1ab_0    conda-forge</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="ex">protobuf</span>                  4.22.0                   pypi_0    pypi</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span>                    3.10.9          h3ba56d0_0_cpython    conda-forge</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="ex">readline</span>                  8.1.2                h46ed386_0    conda-forge</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="ex">setuptools</span>                67.4.0             pyhd8ed1ab_0    conda-forge</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="ex">tk</span>                        8.6.12               he1e0b03_0    conda-forge</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="ex">tzdata</span>                    2022g                h191b570_0    conda-forge</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="ex">wheel</span>                     0.38.4             pyhd8ed1ab_0    conda-forge</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="fu">xz</span>                        5.2.6                h57fd34a_0    conda-forge</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now we have Python and Google OR-Tools ready, we can start our next journey.</p>
 
 
 </section>
