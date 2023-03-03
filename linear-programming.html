@@ -100,7 +100,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
@@ -124,6 +123,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -249,7 +249,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="solver" class="level3" data-number="3.1.1">
 <h3 data-number="3.1.1" class="anchored" data-anchor-id="solver"><span class="header-section-number">3.1.1</span> Solver</h3>
 <p>In Google OR-Tools, a <code>Solver</code> instance must be created first so that variables, constraints and objective can be added to it. The <code>Solver</code> class is defined in the <code>ortools.linear_solver.pywraplp</code> module and it requires a solver id to instantiate an object. In the code snippet below, the required module is imported first and a <code>solver</code> object is created with <code>GLOP</code>, Google’s own optimization engine for solving linear programming problems. It is good practice to verify whether the desired solver is indeed created successfully or not.</p>
-<div class="cell" data-execution_count="10">
+<div class="cell" data-execution_count="59">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">"GLOP"</span>)</span>
@@ -276,69 +276,161 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Function <code>Var()</code></li>
 </ul>
 <p>The <code>Var()</code> method is the most flexible way to define variables, as it can be used to create numerical, integral and boolean variables. In the following code, a numerical variable named ‘var1’ is created with bound (0.0, 1.0). Note that the parameter <code>integer</code> is set to <code>False</code> in the call to function <code>Var()</code>.</p>
-<div class="cell" data-execution_count="11">
+<div class="cell" data-execution_count="60">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>var1 <span class="op">=</span> solver.Var(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, integer<span class="op">=</span><span class="va">False</span>, name<span class="op">=</span><span class="st">"var1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We could create an integer variable using the same function:</p>
-<div class="cell" data-execution_count="12">
+<div class="cell" data-execution_count="61">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>var2 <span class="op">=</span> solver.Var(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, integer<span class="op">=</span><span class="va">True</span>, name<span class="op">=</span><span class="st">"var2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Function <code>NumVar()</code></li>
 </ul>
 <p><code>var1</code> could be creatd alternatively using the specialized function <code>NumVar()</code>:</p>
-<div class="cell" data-execution_count="13">
+<div class="cell" data-execution_count="62">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>var1 <span class="op">=</span> solver.NumVar(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">'var1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Function <code>IntVar()</code></li>
 </ul>
 <p>Similarly, <code>var2</code> could be created alternatively using the specialized function <code>IntVar()</code>:</p>
-<div class="cell" data-execution_count="14">
+<div class="cell" data-execution_count="63">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var2 <span class="op">=</span> solver.IntVar(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">'var2'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Function <code>BoolVar()</code></li>
 </ul>
 <p>A boolean variable could be created using the <code>BoolVar()</code> function:</p>
-<div class="cell" data-execution_count="15">
+<div class="cell" data-execution_count="64">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>var3 <span class="op">=</span> solver.BoolVar(name<span class="op">=</span><span class="st">'var3'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="constraints" class="level3" data-number="3.1.3">
 <h3 data-number="3.1.3" class="anchored" data-anchor-id="constraints"><span class="header-section-number">3.1.3</span> Constraints</h3>
 <p>Constraints limit the solution space of an optimization problem, and there are two ways to define constraints in Google OR-Tools. In the first approach, we could use the <code>Add()</code> function to create a constraint and automatically add it to the model at the same time, as the below code snippet illustrates.</p>
-<div class="cell" data-execution_count="20">
+<div class="cell" data-execution_count="65">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cons1 <span class="op">=</span> solver.Add(constraint<span class="op">=</span>var1 <span class="op">+</span> var2 <span class="op">&lt;=</span> <span class="dv">1</span>, name<span class="op">=</span><span class="st">"cons1"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(cons1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="65">
 <pre><code>ortools.linear_solver.pywraplp.Constraint</code></pre>
 </div>
 </div>
 <p>Note that the <code>Add()</code> function returns an object of the <code>Constraint</code> class defined in the <code>pywraplp</code> module, as shown in the code output. It is a good practice to retain the reference of the newly created constraint, as we might want to query its information later on.</p>
 <p>The second approach works in a slightly different way. It starts with an empty constraint, with potential lower bound and upper bounds provided, and add components of the constraint gradually. The code snippet below shows an example of adding a second constraint to the model. In this approach, we must retain the reference to the constraint, as it is needed to add decision variables to the constraint in following steps.</p>
-<div class="cell" data-execution_count="22">
+<div class="cell" data-execution_count="66">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cons2 <span class="op">=</span> solver.Constraint(<span class="op">-</span>solver.infinity(), <span class="fl">10.0</span>, <span class="st">"cons2"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cons2.SetCoefficient(var1, <span class="dv">2</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>cons2.SetCoefficient(var2, <span class="dv">3</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>cons2.SetCoefficient(var3, <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>cons2.SetCoefficient(var3, <span class="dv">4</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(cons2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="66">
+<pre><code>ortools.linear_solver.pywraplp.Constraint</code></pre>
+</div>
 </div>
 </section>
 <section id="objective" class="level3" data-number="3.1.4">
 <h3 data-number="3.1.4" class="anchored" data-anchor-id="objective"><span class="header-section-number">3.1.4</span> Objective</h3>
+<p>Similar to constraints, there are two ways to define the objective in Google OR-Tools. In the first approach, we directly add an objective to the model by using the <code>Maximize()</code> or <code>Minimize()</code> function. Below is an example:</p>
+<div class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>solver.Minimize(var1 <span class="op">+</span> var2 <span class="op">+</span> var3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that the function itself does not return a reference to the newly created objective function, but we could use a dedicated function to retrive it:</p>
+<div class="cell" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>obj <span class="op">=</span> solver.Objective()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;ortools.linear_solver.pywraplp.Objective; proxy of &lt;Swig Object of type 'operations_research::MPObjective *' at 0x10815d9b0&gt; &gt;</code></pre>
+</div>
+</div>
+<p>In the second approach, we build the objective incrementally, just as in the second approach of creating constraints. Specifically, we start with an empty objective function, and gradually add components to it. In the end, we specify the optimization sense - whether we want to maximize or minimnize the objective.</p>
+<div class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>obj <span class="op">=</span> solver.Objective()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>obj.SetCoefficient(var1, <span class="fl">1.0</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>obj.SetCoefficient(var2, <span class="fl">1.0</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>obj.SetCoefficient(var3, <span class="fl">1.0</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>obj.SetMinimization()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;ortools.linear_solver.pywraplp.Objective; proxy of &lt;Swig Object of type 'operations_research::MPObjective *' at 0x10815dc20&gt; &gt;</code></pre>
+</div>
+</div>
 </section>
 <section id="objective-and-constraint-expressions" class="level3" data-number="3.1.5">
 <h3 data-number="3.1.5" class="anchored" data-anchor-id="objective-and-constraint-expressions"><span class="header-section-number">3.1.5</span> Objective and Constraint Expressions</h3>
+<p>When we build constraints or objective functions, sometimes they comprise of complex expressions that we would like to build incrementally, possibly within loops. For example, we might have a mathematical expression of the form <span class="math inline">\(expr = 2x_1 + 3x_2 + 4x_3 + x_4\)</span>, which could be part of the objective function or any constraints. In this case, we can either use the aforementioned <code>SetCoefficient()</code> function to add each element of the expression to the constraint or objective, or we could build an expression first and add it once in the end. The code snippet below shows an example.</p>
+<div class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>infinity <span class="op">=</span> solver.Infinity()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="st">"x1"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>x2 <span class="op">=</span> solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="st">"x2"</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>x3 <span class="op">=</span> solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="st">"x3"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>x4 <span class="op">=</span> solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="st">"x4"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>expr <span class="op">=</span> []</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>expr.append(<span class="dv">2</span> <span class="op">*</span> x1)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>expr.append(<span class="dv">3</span> <span class="op">*</span> x2)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>expr.append(<span class="dv">4</span> <span class="op">*</span> x3)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>expr.append(x4)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>cons <span class="op">=</span> solver.Add(solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">10</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cons)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>solver.Minimize(solver.Sum(expr))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;ortools.linear_solver.pywraplp.Constraint; proxy of &lt;Swig Object of type 'operations_research::MPConstraint *' at 0x10815c5d0&gt; &gt;</code></pre>
+</div>
+</div>
+<p>Of course, it is not obvious here that the retitive calls to the <code>append()</code> method are any more convenient than the <code>SetCoefficient()</code> method. Let’s say that we have a slightly more complex expression of the form <span class="math inline">\(\sum_{0 \le i &lt; 4}w_i \cdot x_i\)</span>, now we could build the expression using a loop:</p>
+<div class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">1</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> [x1, x2, x3, x4]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>expr <span class="op">=</span> []</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    expr.append(w[i] <span class="op">*</span> x[i])</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>cons <span class="op">=</span> solver.Add(solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="query-the-model" class="level3" data-number="3.1.6">
 <h3 data-number="3.1.6" class="anchored" data-anchor-id="query-the-model"><span class="header-section-number">3.1.6</span> Query the Model</h3>
+<p>After we build the model, we can query it using some helper functions. For example, to get the total number of constraints, we use the <code>NumVariables()</code> function. In a similar fashion, we can retrieve the total number of constraints with the <code>NumConstraints()</code> function.</p>
+<div class="cell" data-execution_count="72">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>num_vars <span class="op">=</span> solver.NumVariables()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"there are a total of </span><span class="sc">{</span>num_vars<span class="sc">}</span><span class="ss"> variables in the model"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>num_cons <span class="op">=</span> solver.NumConstraints()</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"there are a total of </span><span class="sc">{</span>num_cons<span class="sc">}</span><span class="ss"> constraints in the model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>there are a total of 9 variables in the model
+there are a total of 4 constraints in the model</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="applications" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="applications"><span class="header-section-number">3.2</span> Applications</h2>
+<p>In this section, we use some examples to showcase the modeling capability of Google OR-Tools.</p>
 <section id="an-artificial-example" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="an-artificial-example"><span class="header-section-number">3.2.1</span> An Artificial Example</h3>
+<p>We now consider an simple linear programming problem with two decision variables <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The formal mathematical model is defined as below:</p>
+<p><span class="math display">\[\begin{align}
+\text{max.} \quad &amp; x + 2y \\
+\text{s.t.} \quad &amp; x + y \le 10 \\
+&amp; x &gt;= 1 \\
+&amp; y &gt;= 1
+\end{align}\]</span></p>
+<p><a href="#fig-lp-example">Figure&nbsp;<span>3.1</span></a> shows the three defining constraints represented in blue lines and the feasible space depicted by the orange shaded area. The objective function is indicated by the red dashed lines. It can be seen from the figure that the point in green circle gives the maximal objective value of 19.</p>
+<div class="cell" data-execution_count="193">
+<div class="cell-output cell-output-display">
+<div id="fig-lp-example" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="linear-programming_files/figure-html/fig-lp-example-output-1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;3.1: A simple LP example</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s now use Google OR-Tools to model and solve this trivial problem.</p>
 </section>
 <section id="the-stigler-diet-problem" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="the-stigler-diet-problem"><span class="header-section-number">3.2.2</span> The Stigler Diet Problem</h3>
