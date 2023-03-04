@@ -216,7 +216,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications"><span class="toc-section-number">3.2</span>  Applications</a>
   <ul class="collapse">
-  <li><a href="#an-artificial-example" id="toc-an-artificial-example" class="nav-link" data-scroll-target="#an-artificial-example"><span class="toc-section-number">3.2.1</span>  An Artificial Example</a></li>
+  <li><a href="#a-trivial-example" id="toc-a-trivial-example" class="nav-link" data-scroll-target="#a-trivial-example"><span class="toc-section-number">3.2.1</span>  A Trivial Example</a></li>
   <li><a href="#the-stigler-diet-problem" id="toc-the-stigler-diet-problem" class="nav-link" data-scroll-target="#the-stigler-diet-problem"><span class="toc-section-number">3.2.2</span>  The Stigler Diet Problem</a></li>
   </ul></li>
   </ul>
@@ -410,8 +410,8 @@ there are a total of 4 constraints in the model</code></pre>
 <section id="applications" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="applications"><span class="header-section-number">3.2</span> Applications</h2>
 <p>In this section, we use some examples to showcase the modeling capability of Google OR-Tools.</p>
-<section id="an-artificial-example" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="an-artificial-example"><span class="header-section-number">3.2.1</span> An Artificial Example</h3>
+<section id="a-trivial-example" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="a-trivial-example"><span class="header-section-number">3.2.1</span> A Trivial Example</h3>
 <p>We now consider an simple linear programming problem with two decision variables <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The formal mathematical model is defined as below:</p>
 <p><span class="math display">\[\begin{align}
 \text{max.} \quad &amp; x + 2y \\
@@ -430,7 +430,57 @@ there are a total of 4 constraints in the model</code></pre>
 </div>
 </div>
 </div>
-<p>Let’s now use Google OR-Tools to model and solve this trivial problem.</p>
+<p>Let’s now use Google OR-Tools to model and solve this problem. The code snippet below shows the complete program.</p>
+<div class="cell" data-execution_count="201">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import Google OR-Tools library</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create a solver</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">"GLOP"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create decision variables</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> solver.NumVar(<span class="fl">1.0</span>, solver.Infinity(), <span class="st">'x'</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> solver.NumVar(<span class="fl">1.0</span>, solver.Infinity(), <span class="st">'y'</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>cons <span class="op">=</span> solver.Add(x <span class="op">+</span> y <span class="op">&lt;=</span> <span class="dv">10</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>solver.Maximize(x <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> y)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co"># solve the problem</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL <span class="kw">or</span> status <span class="op">==</span> pywraplp.Solver.FEASIBLE:</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"x = </span><span class="sc">{</span>x<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>x<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"y = </span><span class="sc">{</span>y<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>y<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"cons dual value = </span><span class="sc">{</span>cons<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>obj = 19.0
+x = 1.0, reduced cost = -1.0
+y = 9.0, reduced cost = 0.0
+cons dual value = 2.0</code></pre>
+</div>
+</div>
+<p>We can see from the output that the optimal solution is <span class="math inline">\(x = 1.0\)</span> and <span class="math inline">\(y = 9.0\)</span>, and the optimal objective is 19.0. This can also be validated from <a href="#fig-lp-example">Figure&nbsp;<span>3.1</span></a> that the optimal solution is exactly the green point that sits at the intersection of the three lines <span class="math inline">\(x = 1\)</span>, <span class="math inline">\(x + y = 10\)</span> and <span class="math inline">\(x + 2y = 19\)</span>.</p>
+<p><a href="#fig-lp-example">Figure&nbsp;<span>3.1</span></a> also shows that the point (1, 1) should give us the minimal value of the objective function. To validate this, we can actually change the optimization sense of the objective function from maximization to minimization using the function <code>SetOptimizationDirection()</code>, as shown in the code below:</p>
+<div class="cell" data-execution_count="202">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>solver.Objective().SetOptimizationDirection(maximize<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>solver.Solve()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"x = </span><span class="sc">{</span>x<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>x<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"y = </span><span class="sc">{</span>y<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>y<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"cons dual value = </span><span class="sc">{</span>cons<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>obj = 3.0
+x = 1.0, reduced cost = 1.0
+y = 1.0, reduced cost = 2.0
+cons dual value = 0.0</code></pre>
+</div>
+</div>
 </section>
 <section id="the-stigler-diet-problem" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="the-stigler-diet-problem"><span class="header-section-number">3.2.2</span> The Stigler Diet Problem</h3>
