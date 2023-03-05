@@ -8,6 +8,10 @@ book:
   chapters:
     - index.qmd
     - intro.qmd
+    - env-setup.qmd
+    - linear-programming.ipynb
+    - integer-programming.ipynb
+    - column-generation.ipynb
     - summary.qmd
     - references.qmd
 

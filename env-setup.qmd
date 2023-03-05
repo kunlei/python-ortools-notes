@@ -1,0 +1,141 @@
+# Environment Setup {#sec-setup}
+
+In this chapter, we explain the steps needed to set up Python and Google OR-Tools.
+All the steps below are based on MacBook Air with M1 chip and macOS Ventura 13.1.
+
+## Install Homebrew
+
+The first tool we need is Homebrew, 'the Missing Package Manager for macOS (or Linux)', and it can be accessed at <https://brew.sh/>.
+To install Homebrew, just copy the command below and run it in the Terminal.
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+We can then use the `brew --version` command to check the installed version.
+On my system, it shows the info below.
+
+```bash
+ ~/ brew --version
+Homebrew 3.6.20
+Homebrew/homebrew-core (git revision 5f1582e4d55; last commit 2023-02-05)
+Homebrew/homebrew-cask (git revision fa3b8a669d; last commit 2023-02-05)
+```
+
+## Install Anaconda
+
+Since there are several Python versions available for our use and we may end up having multiple Python versions installed on our machine, it is important to use a consistent environment to work on our project in.
+Anaconda is a package and environment manager for Python and it provides easy-to-use tools to facilitate our data science needs.
+To install Anaconda, run the below command in the Terminal.
+
+```bash
+ ~/ brew install anaconda
+```
+
+After the installation is done, we can use `conda --version` to verify whether it is available on our machine or not.
+
+```bash
+ ~/ conda --version
+conda 23.1.0
+```
+
+## Create a Conda Environment
+
+Now we will create a Conda environment named 'ortools'.
+Execute the below command in the Terminal, which effectively creates the required environment with Python version 3.10.
+
+```bash
+ ~/ conda create -n ortools python=3.10
+Retrieving notices: ...working... done
+Collecting package metadata (current_repodata.json): done
+Solving environment: done
+
+## Package Plan ##
+
+  environment location: /opt/homebrew/anaconda3/envs/test
+
+  added / updated specs:
+    - python=3.10
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    setuptools-67.4.0          |     pyhd8ed1ab_0         567 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:         567 KB
+
+The following NEW packages will be INSTALLED:
+
+  bzip2              conda-forge/osx-arm64::bzip2-1.0.8-h3422bc3_4
+  ca-certificates    conda-forge/osx-arm64::ca-certificates-2022.12.7-h4653dfc_0
+  libffi             conda-forge/osx-arm64::libffi-3.4.2-h3422bc3_5
+  libsqlite          conda-forge/osx-arm64::libsqlite-3.40.0-h76d750c_0
+  libzlib            conda-forge/osx-arm64::libzlib-1.2.13-h03a7124_4
+  ncurses            conda-forge/osx-arm64::ncurses-6.3-h07bb92c_1
+  openssl            conda-forge/osx-arm64::openssl-3.0.8-h03a7124_0
+  pip                conda-forge/noarch::pip-23.0.1-pyhd8ed1ab_0
+  python             conda-forge/osx-arm64::python-3.10.9-h3ba56d0_0_cpython
+  readline           conda-forge/osx-arm64::readline-8.1.2-h46ed386_0
+  setuptools         conda-forge/noarch::setuptools-67.4.0-pyhd8ed1ab_0
+  tk                 conda-forge/osx-arm64::tk-8.6.12-he1e0b03_0
+  tzdata             conda-forge/noarch::tzdata-2022g-h191b570_0
+  wheel              conda-forge/noarch::wheel-0.38.4-pyhd8ed1ab_0
+  xz                 conda-forge/osx-arm64::xz-5.2.6-h57fd34a_0
+
+
+Proceed ([y]/n)?
+```
+
+Type 'y' to proceed and Conda will create the environment for us.
+We can use `cnoda env list` to show all the created environments on our machine:
+
+```bash
+ ~/ conda env list
+# conda environments:
+#
+base                     /opt/homebrew/anaconda3
+ortools                   /opt/homebrew/anaconda3/envs/ortools
+```
+
+Note that we need to manually activate an environemnt in order to use it: `conda activate ortools`.
+On my machine, the activated environment `ortools` will appear in the beginning of my prompt.
+
+```bash
+ ~/ conda activate ortools
+(ortools)  ~/ 
+```
+
+## Install Google OR-Tools
+
+As of this writing, the latest version of Google OR-Tools is 9.5.2237, and we can install it in our newly created environment using the command `pip install ortools==9.5.2237`.
+We can use `conda list` to verify whether it is available in our environment.
+
+```bash
+(ortools)  ~/ conda list
+# packages in environment at /opt/homebrew/anaconda3/envs/ortools:
+#
+# Name                    Version                   Build  Channel
+absl-py                   1.4.0                    pypi_0    pypi
+bzip2                     1.0.8                h3422bc3_4    conda-forge
+ca-certificates           2022.12.7            h4653dfc_0    conda-forge
+libffi                    3.4.2                h3422bc3_5    conda-forge
+libsqlite                 3.40.0               h76d750c_0    conda-forge
+libzlib                   1.2.13               h03a7124_4    conda-forge
+ncurses                   6.3                  h07bb92c_1    conda-forge
+numpy                     1.24.2                   pypi_0    pypi
+openssl                   3.0.8                h03a7124_0    conda-forge
+ortools                   9.5.2237                 pypi_0    pypi
+pip                       23.0.1             pyhd8ed1ab_0    conda-forge
+protobuf                  4.22.0                   pypi_0    pypi
+python                    3.10.9          h3ba56d0_0_cpython    conda-forge
+readline                  8.1.2                h46ed386_0    conda-forge
+setuptools                67.4.0             pyhd8ed1ab_0    conda-forge
+tk                        8.6.12               he1e0b03_0    conda-forge
+tzdata                    2022g                h191b570_0    conda-forge
+wheel                     0.38.4             pyhd8ed1ab_0    conda-forge
+xz                        5.2.6                h57fd34a_0    conda-forge
+```
+
+Now we have Python and Google OR-Tools ready, we can start our next journey.

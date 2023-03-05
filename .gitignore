@@ -1,0 +1,7 @@
+/.quarto/
+/.ipynb_checkpoints/
+/_site/
+/_book/
+
+!.github/workflows/_publish.yaml
+.DS_Store

@@ -1,5 +1,16 @@
-# Introduction
+---
+number-sections: true
+crossref:
+    chapters: true
+---
 
-This is a book created from markdown and executable code.
+# Introduction {#sec-intro}
 
-See @knuth84 for additional discussion of literate programming.
+This book covers the usage of Google OR-Tools to solve optimization problems in Python.
+There are several major chapters in this book:
+
+In [Chapter -@sec-setup], we explain the steps needed to setup OR-Tools in a Python environment.
+
+In [Chapter -@sec-linear], we use an example to illustrate the modeling capability of OR-Tools to solve linear programming problems.
+
+In [Chapter -@sec-integer], we go through the modeling techniques made available in OR-Tools.
