@@ -217,7 +217,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications"><span class="toc-section-number">3.2</span>  Applications</a>
   <ul class="collapse">
   <li><a href="#a-trivial-example" id="toc-a-trivial-example" class="nav-link" data-scroll-target="#a-trivial-example"><span class="toc-section-number">3.2.1</span>  A Trivial Example</a></li>
-  <li><a href="#the-transportation-problem" id="toc-the-transportation-problem" class="nav-link" data-scroll-target="#the-transportation-problem"><span class="toc-section-number">3.2.2</span>  The Transportation Problem</a></li>
+  <li><a href="#a-transportation-problem" id="toc-a-transportation-problem" class="nav-link" data-scroll-target="#a-transportation-problem"><span class="toc-section-number">3.2.2</span>  A Transportation Problem</a></li>
+  <li><a href="#a-blending-problem" id="toc-a-blending-problem" class="nav-link" data-scroll-target="#a-blending-problem"><span class="toc-section-number">3.2.3</span>  A Blending Problem</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -288,21 +289,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p><code>var1</code> could be creatd alternatively using the specialized function <code>NumVar()</code>:</p>
 <div class="cell" data-execution_count="62">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>var1 <span class="op">=</span> solver.NumVar(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">'var1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>var1 <span class="op">=</span> solver.NumVar(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">"var1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Function <code>IntVar()</code></li>
 </ul>
 <p>Similarly, <code>var2</code> could be created alternatively using the specialized function <code>IntVar()</code>:</p>
 <div class="cell" data-execution_count="63">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var2 <span class="op">=</span> solver.IntVar(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">'var2'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var2 <span class="op">=</span> solver.IntVar(lb<span class="op">=</span><span class="dv">0</span>, ub<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">"var2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Function <code>BoolVar()</code></li>
 </ul>
 <p>A boolean variable could be created using the <code>BoolVar()</code> function:</p>
 <div class="cell" data-execution_count="64">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>var3 <span class="op">=</span> solver.BoolVar(name<span class="op">=</span><span class="st">'var3'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>var3 <span class="op">=</span> solver.BoolVar(name<span class="op">=</span><span class="st">"var3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="constraints" class="level3" data-number="3.1.3">
@@ -372,8 +373,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>expr.append(<span class="dv">4</span> <span class="op">*</span> x3)</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>expr.append(x4)</span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>cons <span class="op">=</span> solver.Add(solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">10</span>)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cons)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>constr <span class="op">=</span> solver.Add(solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">10</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(constr)</span>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>solver.Minimize(solver.Sum(expr))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -388,7 +389,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    expr.append(w[i] <span class="op">*</span> x[i])</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>cons <span class="op">=</span> solver.Add(solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>constr <span class="op">=</span> solver.Add(solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="query-the-model" class="level3" data-number="3.1.6">
@@ -398,8 +399,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>num_vars <span class="op">=</span> solver.NumVariables()</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"there are a total of </span><span class="sc">{</span>num_vars<span class="sc">}</span><span class="ss"> variables in the model"</span>)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>num_cons <span class="op">=</span> solver.NumConstraints()</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"there are a total of </span><span class="sc">{</span>num_cons<span class="sc">}</span><span class="ss"> constraints in the model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>num_constr <span class="op">=</span> solver.NumConstraints()</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"there are a total of </span><span class="sc">{</span>num_constr<span class="sc">}</span><span class="ss"> constraints in the model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>there are a total of 9 variables in the model
 there are a total of 4 constraints in the model</code></pre>
@@ -439,11 +440,11 @@ there are a total of 4 constraints in the model</code></pre>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">"GLOP"</span>)</span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create decision variables</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> solver.NumVar(<span class="fl">1.0</span>, solver.Infinity(), <span class="st">'x'</span>)</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> solver.NumVar(<span class="fl">1.0</span>, solver.Infinity(), <span class="st">'y'</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> solver.NumVar(<span class="fl">1.0</span>, solver.Infinity(), <span class="st">"x"</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> solver.NumVar(<span class="fl">1.0</span>, solver.Infinity(), <span class="st">"y"</span>)</span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>cons <span class="op">=</span> solver.Add(x <span class="op">+</span> y <span class="op">&lt;=</span> <span class="dv">10</span>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>constr <span class="op">=</span> solver.Add(x <span class="op">+</span> y <span class="op">&lt;=</span> <span class="dv">10</span>)</span>
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective</span></span>
 <span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>solver.Maximize(x <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> y)</span>
@@ -455,7 +456,7 @@ there are a total of 4 constraints in the model</code></pre>
 <span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"x = </span><span class="sc">{</span>x<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>x<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"y = </span><span class="sc">{</span>y<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>y<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"cons dual value = </span><span class="sc">{</span>cons<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"constr dual value = </span><span class="sc">{</span>constr<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>obj = 19.0
 x = 1.0, reduced cost = -1.0
@@ -473,7 +474,7 @@ cons dual value = 2.0</code></pre>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"x = </span><span class="sc">{</span>x<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>x<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"y = </span><span class="sc">{</span>y<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>y<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"cons dual value = </span><span class="sc">{</span>cons<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"constr dual value = </span><span class="sc">{</span>cons<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>obj = 3.0
 x = 1.0, reduced cost = 1.0
@@ -482,11 +483,19 @@ cons dual value = 0.0</code></pre>
 </div>
 </div>
 </section>
-<section id="the-transportation-problem" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="the-transportation-problem"><span class="header-section-number">3.2.2</span> The Transportation Problem</h3>
-<div class="cell" data-execution_count="212">
-<div class="cell-output cell-output-display" data-execution_count="212">
-<div id="tbl-planet-measures" class="anchored">
+<section id="a-transportation-problem" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="a-transportation-problem"><span class="header-section-number">3.2.2</span> A Transportation Problem</h3>
+<p>The transportation problem involves moving goods from its sources <span class="math inline">\(\mathcal{S}\)</span> to destinations <span class="math inline">\(\mathcal{D}\)</span>. Each source <span class="math inline">\(s \in \mathcal{S}\)</span> has a total amount of goods <span class="math inline">\(p_s\)</span> it could supply, and each destination <span class="math inline">\(s \in \mathcal{D}\)</span> has a certain amount of demands <span class="math inline">\(m_d\)</span>. There is a transportation cost, denoted by <span class="math inline">\(c_{sd}\)</span>, to move one unit of goods from a source to a destination. The problem is to find the best set of goods to move from each source to each destination such that all the destination demands are met with the lowest transportation costs.</p>
+<p>To model this transportation problem, we define the decision variable <span class="math inline">\(x_{sd}\)</span> to be the amount of goods moving from source <span class="math inline">\(s\)</span> to destinaiton <span class="math inline">\(d\)</span>. Then we could state the problem mathematically as below.</p>
+<p><span class="math display">\[\begin{align}
+\text{min.} &amp;\quad \sum_{s \in \mathcal{S}} \sum_{d \in \mathcal{D}} c_{sd} x_{sd} \\
+\text{s.t.} &amp; \quad \sum_{d \in \mathcal{D}} x_{sd} = p_s, \ \forall s \in \mathcal{S} \\
+&amp; \sum_{s \in \mathcal{S}} x_{sd} = m_d, \ \forall d \in \mathcal{D} \\
+&amp; x_{sd} \geq 0, \ \forall s \in \mathcal{S}, d \in \mathcal{D}
+\end{align}\]</span></p>
+<div class="cell" data-execution_count="228">
+<div class="cell-output cell-output-display" data-execution_count="228">
+<div id="tbl-transportation-problem" class="anchored">
 <table class="table table-sm table-striped">
 <caption>Table&nbsp;3.1: A transportation problem</caption>
 <thead>
@@ -497,46 +506,170 @@ cons dual value = 0.0</code></pre>
 <th style="text-align: right;">D3</th>
 <th style="text-align: right;">D4</th>
 <th style="text-align: right;">D5</th>
+<th style="text-align: right;">Supply</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>S1</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">58</td>
 </tr>
 <tr class="even">
 <td>S2</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">10</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">55</td>
 </tr>
 <tr class="odd">
 <td>S3</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">64</td>
 </tr>
 <tr class="even">
 <td>S4</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">71</td>
+</tr>
+<tr class="odd">
+<td>Demand</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">248</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </div>
+<div class="cell" data-execution_count="230">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gather data</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>num_sources <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>num_destinations <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>supplies <span class="op">=</span> [<span class="dv">58</span>, <span class="dv">55</span>, <span class="dv">64</span>, <span class="dv">71</span>]</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>demands <span class="op">=</span> [<span class="dv">44</span>, <span class="dv">28</span>, <span class="dv">36</span>, <span class="dv">52</span>, <span class="dv">88</span>]</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>costs <span class="op">=</span> [[<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">13</span>, <span class="dv">12</span>, <span class="dv">12</span>], </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">8</span>, <span class="dv">7</span>, <span class="dv">18</span>, <span class="dv">6</span>, <span class="dv">5</span>], </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">11</span>, <span class="dv">18</span>], </span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">19</span>, <span class="dv">13</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">18</span>]]</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co"># create solver</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">"GLOP"</span>)</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create decision variables</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>var_flow <span class="op">=</span> []</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span> <span class="op">=</span> [</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>        solver.NumVar(<span class="dv">0</span>, solver.Infinity(), </span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>                    name<span class="op">=</span><span class="ss">f"var_</span><span class="sc">{</span>src_idx<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>dest_idx<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>    var_flow.append(<span class="bu">vars</span>)</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>    expr <span class="op">=</span> [var_flow[src_idx][dest_idx] </span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)]</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>    solver.Add(solver.Sum(expr) <span class="op">==</span> supplies[src_idx])</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>    expr <span class="op">=</span> [var_flow[src_idx][dest_idx] </span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources)]</span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>    solver.Add(solver.Sum(expr) <span class="op">==</span> demands[dest_idx])</span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective function</span></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>obj_expr <span class="op">=</span> []</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>        obj_expr.append(var_flow[src_idx][dest_idx] <span class="op">*</span> costs[src_idx][dest_idx])</span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a>solver.Minimize(solver.Sum(obj_expr))</span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>optimal obj = 2013.0</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="235">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gather data</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>num_sources <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>num_destinations <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>supplies <span class="op">=</span> [<span class="dv">58</span>, <span class="dv">55</span>, <span class="dv">64</span>, <span class="dv">71</span>]</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>demands <span class="op">=</span> [<span class="dv">44</span>, <span class="dv">28</span>, <span class="dv">36</span>, <span class="dv">52</span>, <span class="dv">88</span>]</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>costs <span class="op">=</span> [[<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">13</span>, <span class="dv">12</span>, <span class="dv">12</span>], </span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">8</span>, <span class="dv">7</span>, <span class="dv">18</span>, <span class="dv">6</span>, <span class="dv">5</span>], </span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">11</span>, <span class="dv">18</span>], </span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">19</span>, <span class="dv">13</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">18</span>]]</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co"># create solver</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">"GLOP"</span>)</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create decision variables</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>var_flow <span class="op">=</span> []</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span> <span class="op">=</span> [</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>        solver.Var(<span class="dv">0</span>, solver.Infinity(), </span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>                integer<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="ss">f"var_</span><span class="sc">{</span>src_idx<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>dest_idx<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    var_flow.append(<span class="bu">vars</span>)</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>    constr <span class="op">=</span> solver.Constraint(supplies[src_idx], </span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>                            supplies[src_idx])</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>        constr.SetCoefficient(var_flow[src_idx][dest_idx], <span class="fl">1.0</span>)</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    constr <span class="op">=</span> solver.Constraint(demands[dest_idx], </span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>                            demands[dest_idx])</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>        constr.SetCoefficient(var_flow[src_idx][dest_idx], <span class="fl">1.0</span>)</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective function</span></span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>obj <span class="op">=</span> solver.Objective()</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>        obj.SetCoefficient(var_flow[src_idx][dest_idx], costs[src_idx][dest_idx])</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>obj.SetMinimization()</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>obj<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>optimal obj = 2013.0</code></pre>
+</div>
+</div>
+</section>
+<section id="a-blending-problem" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="a-blending-problem"><span class="header-section-number">3.2.3</span> A Blending Problem</h3>
 
 
 </section>
