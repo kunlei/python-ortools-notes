@@ -122,6 +122,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: { equationNumbers: {autoNumber: "AMS"} },
+        tex2jax: {inlineMath: [ ['$','$'], ["\\(","\\)"] ]}
+    });
+    </script>
+
+<!-- This is what works with Quarto -->
+<script>
+    MathJax = {
+        tex: {
+            tags: 'ams'  // should be 'ams', 'none', or 'all'
+        }
+    };
+</script>
 
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -218,7 +233,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#a-trivial-example" id="toc-a-trivial-example" class="nav-link" data-scroll-target="#a-trivial-example"><span class="toc-section-number">3.2.1</span>  A Trivial Example</a></li>
   <li><a href="#a-transportation-problem" id="toc-a-transportation-problem" class="nav-link" data-scroll-target="#a-transportation-problem"><span class="toc-section-number">3.2.2</span>  A Transportation Problem</a></li>
-  <li><a href="#a-blending-problem" id="toc-a-blending-problem" class="nav-link" data-scroll-target="#a-blending-problem"><span class="toc-section-number">3.2.3</span>  A Blending Problem</a></li>
+  <li><a href="#a-resource-allocation-problem" id="toc-a-resource-allocation-problem" class="nav-link" data-scroll-target="#a-resource-allocation-problem"><span class="toc-section-number">3.2.3</span>  A Resource Allocation Problem</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -474,7 +489,7 @@ cons dual value = 2.0</code></pre>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"x = </span><span class="sc">{</span>x<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>x<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"y = </span><span class="sc">{</span>y<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">, reduced cost = </span><span class="sc">{</span>y<span class="sc">.</span>reduced_cost()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"constr dual value = </span><span class="sc">{</span>cons<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"constr dual value = </span><span class="sc">{</span>constr<span class="sc">.</span>dual_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>obj = 3.0
 x = 1.0, reduced cost = 1.0
@@ -488,14 +503,16 @@ cons dual value = 0.0</code></pre>
 <p>The transportation problem involves moving goods from its sources <span class="math inline">\(\mathcal{S}\)</span> to destinations <span class="math inline">\(\mathcal{D}\)</span>. Each source <span class="math inline">\(s \in \mathcal{S}\)</span> has a total amount of goods <span class="math inline">\(p_s\)</span> it could supply, and each destination <span class="math inline">\(s \in \mathcal{D}\)</span> has a certain amount of demands <span class="math inline">\(m_d\)</span>. There is a transportation cost, denoted by <span class="math inline">\(c_{sd}\)</span>, to move one unit of goods from a source to a destination. The problem is to find the best set of goods to move from each source to each destination such that all the destination demands are met with the lowest transportation costs.</p>
 <p>To model this transportation problem, we define the decision variable <span class="math inline">\(x_{sd}\)</span> to be the amount of goods moving from source <span class="math inline">\(s\)</span> to destinaiton <span class="math inline">\(d\)</span>. Then we could state the problem mathematically as below.</p>
 <p><span class="math display">\[\begin{align}
-\text{min.} &amp;\quad \sum_{s \in \mathcal{S}} \sum_{d \in \mathcal{D}} c_{sd} x_{sd} \\
-\text{s.t.} &amp; \quad \sum_{d \in \mathcal{D}} x_{sd} = p_s, \ \forall s \in \mathcal{S} \\
-&amp; \sum_{s \in \mathcal{S}} x_{sd} = m_d, \ \forall d \in \mathcal{D} \\
-&amp; x_{sd} \geq 0, \ \forall s \in \mathcal{S}, d \in \mathcal{D}
+\text{min.} &amp;\quad \sum_{s \in \mathcal{S}} \sum_{d \in \mathcal{D}} c_{sd} x_{sd} \label{tp-obj} \\
+\text{s.t.} &amp; \quad \sum_{d \in \mathcal{D}} x_{sd} = p_s, \ \forall s \in \mathcal{S} \label{tp-cons1} \\
+&amp; \sum_{s \in \mathcal{S}} x_{sd} = m_d, \ \forall d \in \mathcal{D} \label{tp-cons2} \\
+&amp; x_{sd} \geq 0, \ \forall s \in \mathcal{S}, d \in \mathcal{D} \label{tp-cons3}
 \end{align}\]</span></p>
-<div class="cell" data-execution_count="228">
-<div class="cell-output cell-output-display" data-execution_count="228">
-<div id="tbl-transportation-problem" class="anchored">
+<p>The objective function <span class="math inline">\(\eqref{tp-obj}\)</span> aims to minimize the total transportation costs going from all sources to all destinations. Constraints <span class="math inline">\(\eqref{tp-cons1}\)</span> make sure that the sum of goods leaving a source node <span class="math inline">\(s\)</span> must equal to its available supply <span class="math inline">\(p_s\)</span>. Constraints <span class="math inline">\(\eqref{tp-cons2}\)</span> require that the sum of goods gonig to a destination node <span class="math inline">\(d\)</span> must equal to its demand <span class="math inline">\(m_d\)</span>. Constraints <span class="math inline">\(\eqref{tp-cons3}\)</span> state that the flow variables from sources to destination can only be nonnegative values.</p>
+<p><a href="#tbl-tp">Table&nbsp;<span>3.1</span></a> shows an instance of the transportation problem in which there are four sources and five destinations. Entries in the last row give the corresponding demand from each destination, and the last column list the available supply at each source. The entries in the middle of the table show the transportation cost associated with moving from a specific source to a specific destination. For example, it costs $18 to move one unit of good from source S2 to D3.</p>
+<div class="cell" data-execution_count="246">
+<div class="cell-output cell-output-display" data-execution_count="246">
+<div id="tbl-tp" class="anchored">
 <table class="table table-sm table-striped">
 <caption>Table&nbsp;3.1: A transportation problem</caption>
 <thead>
@@ -560,7 +577,8 @@ cons dual value = 0.0</code></pre>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="230">
+<p>We show here two modeling flavors of using OR-Tools to solve this problem. In the first approach, decision variables are created using the <code>NumVar()</code> function, cnostraints are defined using the <code>Add()</code> function and the objective function is added using the <code>Minimize()</code> function. Note that both constraints and the objective function are generated with the help of of <code>Sum()</code> function that creates an expression.</p>
+<div class="cell" data-execution_count="243">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gather data</span></span>
@@ -606,13 +624,87 @@ cons dual value = 0.0</code></pre>
 <span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
 <span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
-<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a>opt_flow <span class="op">=</span> []</span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>        opt_vals <span class="op">=</span> [var_flow[src_idx][dest_idx].solution_value()</span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)]</span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a>        opt_flow.append(opt_vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>optimal obj = 2013.0</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="235">
+<p>The optimal solution is shown in <a href="#tbl-tp-sol1">Table&nbsp;<span>3.2</span></a>.</p>
+<div class="cell" data-execution_count="253">
+<div class="cell-output cell-output-display" data-execution_count="253">
+<div id="tbl-tp-sol1" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;3.2: The optimal solution</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">D1</th>
+<th style="text-align: right;">D2</th>
+<th style="text-align: right;">D3</th>
+<th style="text-align: right;">D4</th>
+<th style="text-align: right;">D5</th>
+<th style="text-align: right;">Supply</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>S1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">58</td>
+</tr>
+<tr class="even">
+<td>S2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">55</td>
+</tr>
+<tr class="odd">
+<td>S3</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">64</td>
+</tr>
+<tr class="even">
+<td>S4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">71</td>
+</tr>
+<tr class="odd">
+<td>Demand</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">248</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>In the second approach shown in the code snippet below, decision variables are created with the <code>Var(integer=False)</code> method instead of the <code>NumVar()</code> method. In addition, both constraints and the objective function are created using the <code>SetCoefficient()</code> method. In the case of constraints, a lower bound and upper bound are used to generated an empty constraint, and variables are then added to the constraint one by one with their corresponding coefficient. In the case of the objective function, an empty objective is first initialized and variables are then added to it sequentially. Note that the optimization sense is set using the <code>SetMinimization()</code> function.</p>
+<div class="cell" data-execution_count="256">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gather data</span></span>
@@ -622,7 +714,7 @@ cons dual value = 0.0</code></pre>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>demands <span class="op">=</span> [<span class="dv">44</span>, <span class="dv">28</span>, <span class="dv">36</span>, <span class="dv">52</span>, <span class="dv">88</span>]</span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>costs <span class="op">=</span> [[<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">13</span>, <span class="dv">12</span>, <span class="dv">12</span>], </span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">8</span>, <span class="dv">7</span>, <span class="dv">18</span>, <span class="dv">6</span>, <span class="dv">5</span>], </span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">11</span>, <span class="dv">18</span>], </span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">11</span>, <span class="dv">18</span>],</span>
 <span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">19</span>, <span class="dv">13</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">18</span>]]</span>
 <span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co"># create solver</span></span>
@@ -632,44 +724,131 @@ cons dual value = 0.0</code></pre>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>var_flow <span class="op">=</span> []</span>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
 <span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span> <span class="op">=</span> [</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>        solver.Var(<span class="dv">0</span>, solver.Infinity(), </span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>                integer<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span><span class="ss">f"var_</span><span class="sc">{</span>src_idx<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>dest_idx<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)</span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    var_flow.append(<span class="bu">vars</span>)</span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
-<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>    constr <span class="op">=</span> solver.Constraint(supplies[src_idx], </span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>                            supplies[src_idx])</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>        solver.Var(</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>            <span class="dv">0</span>, solver.Infinity(), integer<span class="op">=</span><span class="va">False</span>, </span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="ss">f"var_</span><span class="sc">{</span>src_idx<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>dest_idx<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    var_flow.append(<span class="bu">vars</span>)</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>    constr <span class="op">=</span> solver.Constraint(supplies[src_idx], supplies[src_idx])</span>
 <span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
 <span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>        constr.SetCoefficient(var_flow[src_idx][dest_idx], <span class="fl">1.0</span>)</span>
 <span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    constr <span class="op">=</span> solver.Constraint(demands[dest_idx], </span>
-<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>                            demands[dest_idx])</span>
-<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
-<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>        constr.SetCoefficient(var_flow[src_idx][dest_idx], <span class="fl">1.0</span>)</span>
-<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective function</span></span>
-<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>obj <span class="op">=</span> solver.Objective()</span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
-<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
-<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>        obj.SetCoefficient(var_flow[src_idx][dest_idx], costs[src_idx][dest_idx])</span>
-<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>obj.SetMinimization()</span>
-<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
-<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    constr <span class="op">=</span> solver.Constraint(demands[dest_idx], demands[dest_idx])</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>        constr.SetCoefficient(var_flow[src_idx][dest_idx], <span class="fl">1.0</span>)</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective function</span></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>obj <span class="op">=</span> solver.Objective()</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations):</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>        obj.SetCoefficient(var_flow[src_idx][dest_idx], costs[src_idx][dest_idx])</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>obj.SetMinimization()</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>opt_flow <span class="op">=</span> []</span>
 <span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
-<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>obj<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> src_idx <span class="kw">in</span> <span class="bu">range</span>(num_sources):</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>        opt_vals <span class="op">=</span> [var_flow[src_idx][dest_idx].solution_value()</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> dest_idx <span class="kw">in</span> <span class="bu">range</span>(num_destinations)]</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>        opt_flow.append(opt_vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>optimal obj = 2013.0</code></pre>
 </div>
 </div>
+<p>To validate the results, <a href="#tbl-tp-sol2">Table&nbsp;<span>3.3</span></a> shows the optimal solution produced by the second modeling approach, which is the same as in the previous approach.</p>
+<div class="cell" data-execution_count="255">
+<div class="cell-output cell-output-display" data-execution_count="255">
+<div id="tbl-tp-sol2" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;3.3: The optimal solution</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">D1</th>
+<th style="text-align: right;">D2</th>
+<th style="text-align: right;">D3</th>
+<th style="text-align: right;">D4</th>
+<th style="text-align: right;">D5</th>
+<th style="text-align: right;">Supply</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>S1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">58</td>
+</tr>
+<tr class="even">
+<td>S2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">55</td>
+</tr>
+<tr class="odd">
+<td>S3</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">64</td>
+</tr>
+<tr class="even">
+<td>S4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">71</td>
+</tr>
+<tr class="odd">
+<td>Demand</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">248</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </section>
-<section id="a-blending-problem" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="a-blending-problem"><span class="header-section-number">3.2.3</span> A Blending Problem</h3>
+<section id="a-resource-allocation-problem" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="a-resource-allocation-problem"><span class="header-section-number">3.2.3</span> A Resource Allocation Problem</h3>
+<p>The resource allocation problems involves distributing scarce resources among alternative activities. The resources could be machines in a manufacturing facility, money available to spend, or CPU runtime. The activities could be anything that brings profit at the cost of consuming resources. The objective of this problem is therefore to allocate the available resources to activities such that the total profit is maximized.</p>
+<p>Here, we give a general resource allocation model devoid of any practical meanings. To this end, we define a few input parameters to this problem:</p>
+<ul>
+<li><span class="math inline">\(\mathcal{A}\)</span>: the set of candidate activities</li>
+<li><span class="math inline">\(\mathcal{R}\)</span>: the set of avaiable resources</li>
+<li><span class="math inline">\(p_a\)</span>: the profit of performing one unit of activity <span class="math inline">\(a \in \mathcal{A}\)</span></li>
+<li><span class="math inline">\(c_{ar}\)</span>: the amount of resource <span class="math inline">\(r \in \mathcal{R}\)</span> required by one unit of activity <span class="math inline">\(a \in \mathcal{A}\)</span></li>
+<li><span class="math inline">\(b_r\)</span>: the total amount of available quantities for resource <span class="math inline">\(r \in \mathcal{R}\)</span></li>
+</ul>
+<p>The decision variable <span class="math inline">\(x_a\)</span> represents the amount of activity <span class="math inline">\(a \in \mathcal{A}\)</span> we select to perform, and the mathematical mode is defined below:</p>
+<p><span class="math display">\[\begin{align}
+\text{max.} &amp;\quad \sum_{a \in \mathcal{A}} p_a x_a \label{ra-obj} \\
+\text{s.t.} &amp; \quad \sum_{a \in \mathcal{A}} c_{ar} \leq b_r, \ \forall r \in \mathcal{R} \label{ra-cons1} \\
+&amp; x_a \geq 0, \ a \in \mathcal{A}
+\end{align}\]</span></p>
 
 
 </section>

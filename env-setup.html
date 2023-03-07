@@ -123,6 +123,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: { equationNumbers: {autoNumber: "AMS"} },
+        tex2jax: {inlineMath: [ ['$','$'], ["\\(","\\)"] ]}
+    });
+    </script>
+
+<!-- This is what works with Quarto -->
+<script>
+    MathJax = {
+        tex: {
+            tags: 'ams'  // should be 'ams', 'none', or 'all'
+        }
+    };
+</script>
 
 
 </head>
