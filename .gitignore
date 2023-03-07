@@ -5,3 +5,4 @@
 
 !.github/workflows/_publish.yaml
 .DS_Store
+.Rproj.user

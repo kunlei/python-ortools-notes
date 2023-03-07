@@ -20,6 +20,8 @@ bibliography: references.bib
 format:
   html:
     theme: cosmo
+    include-in-header: mathjax.html
+    html-math-method: mathjax
   pdf:
     documentclass: scrreprt
 
