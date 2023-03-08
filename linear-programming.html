@@ -231,9 +231,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications"><span class="toc-section-number">3.2</span>  Applications</a>
   <ul class="collapse">
-  <li><a href="#a-trivial-example" id="toc-a-trivial-example" class="nav-link" data-scroll-target="#a-trivial-example"><span class="toc-section-number">3.2.1</span>  A Trivial Example</a></li>
-  <li><a href="#a-transportation-problem" id="toc-a-transportation-problem" class="nav-link" data-scroll-target="#a-transportation-problem"><span class="toc-section-number">3.2.2</span>  A Transportation Problem</a></li>
-  <li><a href="#a-resource-allocation-problem" id="toc-a-resource-allocation-problem" class="nav-link" data-scroll-target="#a-resource-allocation-problem"><span class="toc-section-number">3.2.3</span>  A Resource Allocation Problem</a></li>
+  <li><a href="#trivial-problem" id="toc-trivial-problem" class="nav-link" data-scroll-target="#trivial-problem"><span class="toc-section-number">3.2.1</span>  Trivial Problem</a></li>
+  <li><a href="#transportation-problem" id="toc-transportation-problem" class="nav-link" data-scroll-target="#transportation-problem"><span class="toc-section-number">3.2.2</span>  Transportation Problem</a></li>
+  <li><a href="#resource-allocation-problem" id="toc-resource-allocation-problem" class="nav-link" data-scroll-target="#resource-allocation-problem"><span class="toc-section-number">3.2.3</span>  Resource Allocation Problem</a></li>
+  <li><a href="#workforce-planning-problem" id="toc-workforce-planning-problem" class="nav-link" data-scroll-target="#workforce-planning-problem"><span class="toc-section-number">3.2.4</span>  Workforce Planning Problem</a></li>
+  <li><a href="#sudoku-problem" id="toc-sudoku-problem" class="nav-link" data-scroll-target="#sudoku-problem"><span class="toc-section-number">3.2.5</span>  Sudoku Problem</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -426,8 +428,8 @@ there are a total of 4 constraints in the model</code></pre>
 <section id="applications" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="applications"><span class="header-section-number">3.2</span> Applications</h2>
 <p>In this section, we use some examples to showcase the modeling capability of Google OR-Tools.</p>
-<section id="a-trivial-example" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="a-trivial-example"><span class="header-section-number">3.2.1</span> A Trivial Example</h3>
+<section id="trivial-problem" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="trivial-problem"><span class="header-section-number">3.2.1</span> Trivial Problem</h3>
 <p>We now consider an simple linear programming problem with two decision variables <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The formal mathematical model is defined as below:</p>
 <p><span class="math display">\[\begin{align}
 \text{max.} \quad &amp; x + 2y \\
@@ -498,8 +500,8 @@ cons dual value = 0.0</code></pre>
 </div>
 </div>
 </section>
-<section id="a-transportation-problem" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="a-transportation-problem"><span class="header-section-number">3.2.2</span> A Transportation Problem</h3>
+<section id="transportation-problem" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="transportation-problem"><span class="header-section-number">3.2.2</span> Transportation Problem</h3>
 <p>The transportation problem involves moving goods from its sources <span class="math inline">\(\mathcal{S}\)</span> to destinations <span class="math inline">\(\mathcal{D}\)</span>. Each source <span class="math inline">\(s \in \mathcal{S}\)</span> has a total amount of goods <span class="math inline">\(p_s\)</span> it could supply, and each destination <span class="math inline">\(s \in \mathcal{D}\)</span> has a certain amount of demands <span class="math inline">\(m_d\)</span>. There is a transportation cost, denoted by <span class="math inline">\(c_{sd}\)</span>, to move one unit of goods from a source to a destination. The problem is to find the best set of goods to move from each source to each destination such that all the destination demands are met with the lowest transportation costs.</p>
 <p>To model this transportation problem, we define the decision variable <span class="math inline">\(x_{sd}\)</span> to be the amount of goods moving from source <span class="math inline">\(s\)</span> to destinaiton <span class="math inline">\(d\)</span>. Then we could state the problem mathematically as below.</p>
 <p><span class="math display">\[\begin{align}
@@ -832,8 +834,8 @@ cons dual value = 0.0</code></pre>
 </div>
 </div>
 </section>
-<section id="a-resource-allocation-problem" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="a-resource-allocation-problem"><span class="header-section-number">3.2.3</span> A Resource Allocation Problem</h3>
+<section id="resource-allocation-problem" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="resource-allocation-problem"><span class="header-section-number">3.2.3</span> Resource Allocation Problem</h3>
 <p>The resource allocation problems involves distributing scarce resources among alternative activities. The resources could be machines in a manufacturing facility, money available to spend, or CPU runtime. The activities could be anything that brings profit at the cost of consuming resources. The objective of this problem is therefore to allocate the available resources to activities such that the total profit is maximized.</p>
 <p>Here, we give a general resource allocation model devoid of any practical meanings. To this end, we define a few input parameters to this problem:</p>
 <ul>
@@ -849,6 +851,127 @@ cons dual value = 0.0</code></pre>
 \text{s.t.} &amp; \quad \sum_{a \in \mathcal{A}} c_{ar} \leq b_r, \ \forall r \in \mathcal{R} \label{ra-cons1} \\
 &amp; x_a \geq 0, \ a \in \mathcal{A}
 \end{align}\]</span></p>
+<p><a href="#tbl-resource-allocation-data">Table&nbsp;<span>3.4</span></a> shows an instance of the resource allocation problem, in which there are three type of resources and five candidate activities. The last row gives the profit of performing each unit of an activity, while the last column shows the available amount of resources. The remaining entries in the table refer to the resource consumption for each activity. For example, selecting one unit of activity 1 (A1) requires 90, 64 and 55 units of resources R1, R2 and R3, respectively.</p>
+<div class="cell" data-execution_count="272">
+<div class="cell-output cell-output-display" data-execution_count="272">
+<div id="tbl-resource-allocation-data" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;3.4: A resource allocation problem</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">A1</th>
+<th style="text-align: right;">A2</th>
+<th style="text-align: right;">A3</th>
+<th style="text-align: right;">A4</th>
+<th style="text-align: right;">A5</th>
+<th style="text-align: right;">Available</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>R1</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">2001</td>
+</tr>
+<tr class="even">
+<td>R2</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">2616</td>
+</tr>
+<tr class="odd">
+<td>R3</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">1691</td>
+</tr>
+<tr class="even">
+<td>Profit</td>
+<td style="text-align: right;">1223</td>
+<td style="text-align: right;">1238</td>
+<td style="text-align: right;">1517</td>
+<td style="text-align: right;">1616</td>
+<td style="text-align: right;">1027</td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>In the code snippet below, we use Google OR-Tools to solve this problem instance. Again, we start with initializing a solver object, follwed by creation of five decision variables, one for each activity. Both the constraints and objective function are created using the first modeling approach demonstrated previously. The optimal solution is outputed in the end.</p>
+<div class="cell" data-execution_count="277">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gather instance data</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>num_resources <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>num_activities <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>profits <span class="op">=</span> [<span class="dv">1223</span>, <span class="dv">1238</span>, <span class="dv">1517</span>, <span class="dv">1616</span>, <span class="dv">1027</span>]</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>available_resources <span class="op">=</span> [<span class="dv">2001</span>, <span class="dv">2616</span>, <span class="dv">1691</span>]</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>costs <span class="op">=</span> [[<span class="dv">90</span>, <span class="dv">57</span>, <span class="dv">51</span>, <span class="dv">97</span>, <span class="dv">67</span>],</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">64</span>, <span class="dv">58</span>, <span class="dv">97</span>, <span class="dv">56</span>, <span class="dv">93</span>],</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>        [<span class="dv">55</span>, <span class="dv">87</span>, <span class="dv">77</span>, <span class="dv">52</span>, <span class="dv">51</span>]]</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a solver object</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">"GLOP"</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>infinity <span class="op">=</span> solver.Infinity()</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create decision variables</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>var_x <span class="op">=</span> [solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="ss">f"x_P</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">"</span>) </span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> a <span class="kw">in</span> <span class="bu">range</span>(num_activities)]</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective function</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>solver.Maximize(solver.Sum([profits[a] <span class="op">*</span> var_x[a] </span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>                            <span class="cf">for</span> a <span class="kw">in</span> <span class="bu">range</span>(num_activities)]))</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r_idx <span class="kw">in</span> <span class="bu">range</span>(num_resources):</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>    cons <span class="op">=</span> solver.Add(</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>            solver.Sum([costs[r_idx][a_idx] <span class="op">*</span> var_x[a_idx] </span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> a_idx <span class="kw">in</span> <span class="bu">range</span>(num_activities)]) </span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>                      <span class="op">&lt;=</span> available_resources[r_idx])</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">!=</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"solver failure!"</span>)</span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"solve complete!"</span>)</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>opt_obj <span class="op">=</span> solver.Objective().Value()</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>opt_obj<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>opt_sol <span class="op">=</span> [var_x[a_idx].solution_value() </span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> a_idx <span class="kw">in</span> <span class="bu">range</span>(num_activities)]</span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a_idx <span class="kw">in</span> <span class="bu">range</span>(num_activities):</span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"opt_x[</span><span class="sc">{</span>a_idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">] = </span><span class="sc">{</span>opt_sol[a_idx]<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>solve complete!
+optimal obj = 41645.23
+opt_x[1] = 0.00
+opt_x[2] = 0.00
+opt_x[3] = 12.45
+opt_x[4] = 14.08
+opt_x[5] = 0.00</code></pre>
+</div>
+</div>
+</section>
+<section id="workforce-planning-problem" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="workforce-planning-problem"><span class="header-section-number">3.2.4</span> Workforce Planning Problem</h3>
+<p>In the workforce planning problem,</p>
+</section>
+<section id="sudoku-problem" class="level3" data-number="3.2.5">
+<h3 data-number="3.2.5" class="anchored" data-anchor-id="sudoku-problem"><span class="header-section-number">3.2.5</span> Sudoku Problem</h3>
+<p>In the Sudoku problem,</p>
 
 
 </section>
