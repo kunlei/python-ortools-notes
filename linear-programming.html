@@ -967,11 +967,170 @@ opt_x[5] = 0.00</code></pre>
 </section>
 <section id="workforce-planning-problem" class="level3" data-number="3.2.4">
 <h3 data-number="3.2.4" class="anchored" data-anchor-id="workforce-planning-problem"><span class="header-section-number">3.2.4</span> Workforce Planning Problem</h3>
-<p>In the workforce planning problem,</p>
+<p>In the workforce planning problem, there are a number of time periods and each period has a workforce requirement that must be satisfied. In addition, there are a set of available work patterns to assign workers to and each pattern cover one or more time periods. Note that assignment of workers to a particular pattern incurs a certain cost. The problem is then to identify the number of workers assigned to each pattern such that the total cost is minimized.</p>
+<p><a href="#tbl-workforce-inst-1">Table&nbsp;<span>3.5</span></a> shows a contrived workforce planning problem instance. In this problem, there are a total of 10 time periods and there are four patterns available to assign workers to. The last row gives the work requirement in each time period and the last column shows the cost of assigning a worker to a pattern.</p>
+<div id="tbl-workforce-inst-1" class="anchored">
+<table class="table">
+<caption>Table&nbsp;3.5: A workforce planning problem instance</caption>
+<thead>
+<tr class="header">
+<th>Coverage</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pattern 1</td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>Pattern 2</td>
+<td></td>
+<td></td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>30</td>
+</tr>
+<tr class="odd">
+<td>Pattern 3</td>
+<td></td>
+<td></td>
+<td></td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+<td>20</td>
+</tr>
+<tr class="even">
+<td>Pattern 4</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td>Requirement</td>
+<td>3</td>
+<td>4</td>
+<td>3</td>
+<td>1</td>
+<td>5</td>
+<td>7</td>
+<td>2</td>
+<td>4</td>
+<td>5</td>
+<td>1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>To model this problem, we use <span class="math inline">\(\mathcal{T}\)</span> and <span class="math inline">\(\mathcal{P}\)</span> to denote the set of time periods and patterns, respectively. The parameter <span class="math inline">\(m_{pt}\)</span> indicates whether a pattern <span class="math inline">\(p \in \mathcal{P}\)</span> covers a certain time period <span class="math inline">\(t \in \mathcal{T}\)</span>. The work requirement of each time period and the cost of assigning a pattern is represented as <span class="math inline">\(r_t\)</span> and <span class="math inline">\(c_p\)</span>, respectively.</p>
+<p>Now we are ready to define the variable <span class="math inline">\(x_p\)</span> as the number of workers that are assigned to pattern <span class="math inline">\(p\)</span>, and the mathematical model can be stated as below.</p>
+<p><span class="math display">\[\begin{align}
+\text{min.} &amp; \quad \sum_{p \in \mathcal{P}} c_p x_p \\
+\text{s.t.} &amp; \quad \sum_{p \in \mathcal{P}} m_{pt} x_p \geq r_t, \ \forall t \in \mathcal{T} \\
+&amp;\quad x_p \geq 0, \ \forall p \in \mathcal{P}
+\end{align}\]</span></p>
+<p>The code snippet below gives the Python code to solve this problem using Google OR-Tools.</p>
+<div class="cell" data-execution_count="284">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># import instance data</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>num_periods <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>num_patterns <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>requirements <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">1</span>]</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>costs <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">30</span>, <span class="dv">20</span>, <span class="dv">40</span>]</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>patterns <span class="op">=</span> [<span class="bu">set</span>([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>            <span class="bu">set</span>([<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]),</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>            <span class="bu">set</span>([<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>]),</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">set</span>([<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>])]</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co"># create solver object</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'GLOP'</span>)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>infinity <span class="op">=</span> solver.Infinity()</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co"># create decision variables</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>var_p <span class="op">=</span> [solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="ss">f"x_</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>         <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(num_patterns)]</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective function</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>solver.Minimize(</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>    solver.Sum([costs[p] <span class="op">*</span> var_p[p] </span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(num_patterns)])</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(num_periods):   </span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>    solver.Add(</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>        solver.Sum([var_p[p] </span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(num_patterns) </span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> (t <span class="op">+</span> <span class="dv">1</span>) <span class="kw">in</span> patterns[p]])</span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;=</span> requirements[t])</span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a><span class="co"># solve the problem and retrieve optimal solution</span></span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(num_patterns):</span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"var_</span><span class="sc">{</span>p <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>var_p[p]<span class="sc">.</span>solution_value()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>obj = 380.0
+var_1 = 4.0
+var_2 = 0.0
+var_3 = 7.0
+var_4 = 5.0</code></pre>
+</div>
+</div>
 </section>
 <section id="sudoku-problem" class="level3" data-number="3.2.5">
 <h3 data-number="3.2.5" class="anchored" data-anchor-id="sudoku-problem"><span class="header-section-number">3.2.5</span> Sudoku Problem</h3>
 <p>In the Sudoku problem,</p>
+<div class="cell" data-execution_count="303">
+<div class="cell-output cell-output-display">
+<p><img src="linear-programming_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="linear-programming_files/figure-html/cell-27-output-2.png" class="img-fluid"></p>
+</div>
+</div>
 
 
 </section>
