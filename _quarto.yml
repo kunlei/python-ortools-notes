@@ -5,6 +5,7 @@ book:
   title: "Python OR-tools Notes"
   author: "Kunlei Lian"
   date: "2/18/2023"
+  google-analytics: "G-DTVHQH448R"
   chapters:
     - index.qmd
     - intro.qmd
@@ -14,6 +15,9 @@ book:
     - column-generation.ipynb
     - summary.qmd
     - references.qmd
+
+website:
+  google-analytics: "G-DTVHQH448R"
 
 bibliography: references.bib
 
