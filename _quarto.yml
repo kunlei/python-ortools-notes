@@ -16,9 +16,6 @@ book:
     - summary.qmd
     - references.qmd
 
-website:
-  google-analytics: "G-DTVHQH448R"
-
 bibliography: references.bib
 
 format:
