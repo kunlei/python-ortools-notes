@@ -83,6 +83,25 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 
@@ -335,8 +354,41 @@ z is integer? True</code></pre>
 <p>In this section, we use Google OR-Tools to solve some of the classical integer programming problems.</p>
 <section id="job-shop-scheduling-problem" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="job-shop-scheduling-problem"><span class="header-section-number">4.2.1</span> Job Shop Scheduling Problem</h3>
+<p>In the job shop scheduling problem (JSSP), there are a set of <span class="math inline">\(n\)</span> jobs <span class="math inline">\(\mathcal{J}\)</span> and a set of <span class="math inline">\(m\)</span> machines <span class="math inline">\(\mathcal{M}\)</span>, and each job <span class="math inline">\(j \in \mathcal{J}\)</span> has a list of operations, given by <span class="math inline">\((o_1^j, \cdots, o_h^j, \cdots, o_m^j)\)</span>, that must be carried on the machines. The order of operations in the list also indicates the processing order of the job, and <span class="math inline">\(o_h^j\)</span> represents the <span class="math inline">\(h\)</span>-th operation of the job <span class="math inline">\(j\)</span>. In addition, the processing time of job <span class="math inline">\(j\)</span> on machine <span class="math inline">\(i\)</span>, denoted by <span class="math inline">\(p_{ij}\)</span>, is known in advance and is a non-negative integer. At any moment of time, each machine can only process at most one job and no preemption is allowed which means that a job must completes its processing on a machine once it starts on that machine. The objective is to find a processing schedule of the jobs on the machines such that the makespan, the completion time of the last operation of any job, is minimized.</p>
+<p>We present here three classical formulations of the JSSP from the literature and implement them using Google OR-Tools.</p>
+<ol type="1">
+<li>Disjunctive model</li>
+</ol>
+<p>This model is taken from <span class="citation" data-cites="ku_mixed_2016">Ku and Beck (<a href="references.html#ref-ku_mixed_2016" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="manne_job-shop_1960">Manne (<a href="references.html#ref-manne_job-shop_1960" role="doc-biblioref">1960</a>)</span>. The decision variables are defined as follows:</p>
+<ul>
+<li><span class="math inline">\(x_{ij}\)</span>: the processing starting time of job <span class="math inline">\(j\)</span> on machine <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(z_{ijk}\)</span>: a binary variable that equals 1 if job <span class="math inline">\(j\)</span> precedes job <span class="math inline">\(k\)</span> on machine <span class="math inline">\(i\)</span></li>
+</ul>
+<p>The disjunctive model can then be stated as below.</p>
+<p><span class="math display">\[\begin{align}
+    \text{min.} &amp;\quad C_{max} \label{jsp-dis-obj}\\
+    \text{s.t.} &amp;\quad x_{ij} \geq 0, \ \forall j \in \mathcal{J}, i \in \mathcal{M}\\
+    &amp;\quad x_{o_h^j, j} \geq x_{o_{h-1}^j, j} + p_{o_{h-1}^j, j}, \ \forall j \in \mathcal{J}, h = 2, \cdots, m\\
+    &amp;\quad x_{ij} \geq x_{ik} + p_{ik} - V \cdot z_{ijk}, \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}, j &lt; k \\
+    &amp;\quad x_{ik} \geq x_{ij} + p_{ij} - V \cdot (1 - z_{ijk}), \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}, j &lt; k \\
+    &amp;\quad C_{max} \geq x_{o_m^j, j} + p_{o_m^j, j}, \ \forall j \in \mathcal{J} \\
+    &amp;\quad z_{ijk} \in \{0, 1\}, \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}
+\end{align}\]</span></p>
+<p>The objective <span class="math inline">\(\eqref{jsp-dis-obj}\)</span> aims to minimize the maximal completion time of any job <span class="math inline">\(j \in \mathcal{J}\)</span>.</p>
+<ol start="2" type="1">
+<li><p>Time-indexed model</p></li>
+<li><p>Rank-based model</p></li>
+</ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="ref-ku_mixed_2016" class="csl-entry" role="doc-biblioentry">
+Ku, Wen-Yang, and J. Christopher Beck. 2016. <span>“Mixed <span>Integer</span> <span>Programming</span> Models for Job Shop Scheduling: <span>A</span> Computational Analysis.”</span> <em>Computers &amp; Operations Research</em> 73 (September): 165–73. <a href="https://doi.org/10.1016/j.cor.2016.04.006">https://doi.org/10.1016/j.cor.2016.04.006</a>.
+</div>
+<div id="ref-manne_job-shop_1960" class="csl-entry" role="doc-biblioentry">
+Manne, Alan S. 1960. <span>“On the <span>Job</span>-<span>Shop</span> <span>Scheduling</span> <span>Problem</span>.”</span> <em>Operations Research</em> 8 (2): 219–23. <a href="https://doi.org/10.1287/opre.8.2.219">https://doi.org/10.1287/opre.8.2.219</a>.
+</div>
+</div>
 </section>
 </section>
 

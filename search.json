@@ -67,7 +67,7 @@
     "href": "integer-programming.html#applications",
     "title": "4  Integer Programming",
     "section": "4.2 Applications",
-    "text": "4.2 Applications\nIn this section, we use Google OR-Tools to solve some of the classical integer programming problems.\n\n4.2.1 Job Shop Scheduling Problem"
+    "text": "4.2 Applications\nIn this section, we use Google OR-Tools to solve some of the classical integer programming problems.\n\n4.2.1 Job Shop Scheduling Problem\nIn the job shop scheduling problem (JSSP), there are a set of \\(n\\) jobs \\(\\mathcal{J}\\) and a set of \\(m\\) machines \\(\\mathcal{M}\\), and each job \\(j \\in \\mathcal{J}\\) has a list of operations, given by \\((o_1^j, \\cdots, o_h^j, \\cdots, o_m^j)\\), that must be carried on the machines. The order of operations in the list also indicates the processing order of the job, and \\(o_h^j\\) represents the \\(h\\)-th operation of the job \\(j\\). In addition, the processing time of job \\(j\\) on machine \\(i\\), denoted by \\(p_{ij}\\), is known in advance and is a non-negative integer. At any moment of time, each machine can only process at most one job and no preemption is allowed which means that a job must completes its processing on a machine once it starts on that machine. The objective is to find a processing schedule of the jobs on the machines such that the makespan, the completion time of the last operation of any job, is minimized.\nWe present here three classical formulations of the JSSP from the literature and implement them using Google OR-Tools.\n\nDisjunctive model\n\nThis model is taken from Ku and Beck (2016) and Manne (1960). The decision variables are defined as follows:\n\n\\(x_{ij}\\): the processing starting time of job \\(j\\) on machine \\(i\\)\n\\(z_{ijk}\\): a binary variable that equals 1 if job \\(j\\) precedes job \\(k\\) on machine \\(i\\)\n\nThe disjunctive model can then be stated as below.\n\\[\\begin{align}\n    \\text{min.} &\\quad C_{max} \\label{jsp-dis-obj}\\\\\n    \\text{s.t.} &\\quad x_{ij} \\geq 0, \\ \\forall j \\in \\mathcal{J}, i \\in \\mathcal{M}\\\\\n    &\\quad x_{o_h^j, j} \\geq x_{o_{h-1}^j, j} + p_{o_{h-1}^j, j}, \\ \\forall j \\in \\mathcal{J}, h = 2, \\cdots, m\\\\\n    &\\quad x_{ij} \\geq x_{ik} + p_{ik} - V \\cdot z_{ijk}, \\ \\forall i \\in \\mathcal{M}, j, k \\in \\mathcal{J}, j < k \\\\\n    &\\quad x_{ik} \\geq x_{ij} + p_{ij} - V \\cdot (1 - z_{ijk}), \\ \\forall i \\in \\mathcal{M}, j, k \\in \\mathcal{J}, j < k \\\\\n    &\\quad C_{max} \\geq x_{o_m^j, j} + p_{o_m^j, j}, \\ \\forall j \\in \\mathcal{J} \\\\\n    &\\quad z_{ijk} \\in \\{0, 1\\}, \\ \\forall i \\in \\mathcal{M}, j, k \\in \\mathcal{J}\n\\end{align}\\]\nThe objective \\(\\eqref{jsp-dis-obj}\\) aims to minimize the maximal completion time of any job \\(j \\in \\mathcal{J}\\).\n\nTime-indexed model\nRank-based model\n\n\n\n\n\nKu, Wen-Yang, and J. Christopher Beck. 2016. “Mixed Integer Programming Models for Job Shop Scheduling: A Computational Analysis.” Computers & Operations Research 73 (September): 165–73. https://doi.org/10.1016/j.cor.2016.04.006.\n\n\nManne, Alan S. 1960. “On the Job-Shop Scheduling Problem.” Operations Research 8 (2): 219–23. https://doi.org/10.1287/opre.8.2.219."
   },
   {
     "objectID": "column-generation.html",
@@ -82,5 +82,12 @@
     "title": "6  Summary",
     "section": "",
     "text": "In summary, this book has no content whatsoever."
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Ku, Wen-Yang, and J. Christopher Beck. 2016. “Mixed\nInteger Programming Models for Job Shop\nScheduling: A Computational Analysis.” Computers\n& Operations Research 73 (September): 165–73. https://doi.org/10.1016/j.cor.2016.04.006.\n\n\nManne, Alan S. 1960. “On the Job-Shop\nScheduling Problem.” Operations\nResearch 8 (2): 219–23. https://doi.org/10.1287/opre.8.2.219."
   }
 ]
