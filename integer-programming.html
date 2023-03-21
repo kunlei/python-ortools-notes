@@ -367,14 +367,27 @@ z is integer? True</code></pre>
 <p>The disjunctive model can then be stated as below.</p>
 <p><span class="math display">\[\begin{align}
     \text{min.} &amp;\quad C_{max} \label{jsp-dis-obj}\\
-    \text{s.t.} &amp;\quad x_{ij} \geq 0, \ \forall j \in \mathcal{J}, i \in \mathcal{M}\\
-    &amp;\quad x_{o_h^j, j} \geq x_{o_{h-1}^j, j} + p_{o_{h-1}^j, j}, \ \forall j \in \mathcal{J}, h = 2, \cdots, m\\
-    &amp;\quad x_{ij} \geq x_{ik} + p_{ik} - V \cdot z_{ijk}, \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}, j &lt; k \\
-    &amp;\quad x_{ik} \geq x_{ij} + p_{ij} - V \cdot (1 - z_{ijk}), \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}, j &lt; k \\
-    &amp;\quad C_{max} \geq x_{o_m^j, j} + p_{o_m^j, j}, \ \forall j \in \mathcal{J} \\
-    &amp;\quad z_{ijk} \in \{0, 1\}, \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}
+    \text{s.t.} &amp;\quad x_{ij} \geq 0, \ \forall j \in \mathcal{J}, i \in \mathcal{M} \label{jsp-dis-cons1}\\
+    &amp;\quad x_{o_h^j, j} \geq x_{o_{h-1}^j, j} + p_{o_{h-1}^j, j}, \ \forall j \in \mathcal{J}, h = 2, \cdots, m \label{jsp-dis-cons2}\\
+    &amp;\quad x_{ij} \geq x_{ik} + p_{ik} - V \cdot z_{ijk}, \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}, j &lt; k  \label{jsp-dis-cons3}\\
+    &amp;\quad x_{ik} \geq x_{ij} + p_{ij} - V \cdot (1 - z_{ijk}), \ \forall i \in \mathcal{M}, j, k \in \mathcal{J}, j &lt; k  \label{jsp-dis-cons4}\\
+    &amp;\quad C_{max} \geq x_{o_m^j, j} + p_{o_m^j, j}, \ \forall j \in \mathcal{J}  \label{jsp-dis-cons5}\\
+    &amp;\quad z_{ijk} \in \{0, 1\}, \ \forall i \in \mathcal{M}, j, k \in \mathcal{J} \label{jsp-dis-cons6}
 \end{align}\]</span></p>
-<p>The objective <span class="math inline">\(\eqref{jsp-dis-obj}\)</span> aims to minimize the maximal completion time of any job <span class="math inline">\(j \in \mathcal{J}\)</span>.</p>
+<p>The objective <span class="math inline">\(\eqref{jsp-dis-obj}\)</span> aims to minimize the maximal completion time of any job <span class="math inline">\(j \in \mathcal{J}\)</span>. Constraints <span class="math inline">\(\eqref{jsp-dis-cons1}\)</span> require that all the job processing starting time must not be negative values. Constraints <span class="math inline">\(\eqref{jsp-dis-cons2}\)</span> enforce the sequencing order among operations for every job, which state that the <span class="math inline">\(h\)</span>-th operation of job <span class="math inline">\(j\)</span>, <span class="math inline">\(o_h^j\)</span>, cannot start unless its preceeding operation <span class="math inline">\(o_{h - 1}^j\)</span> finishes. Constraints <span class="math inline">\(\eqref{jsp-dis-cons3}\)</span> and <span class="math inline">\(\eqref{jsp-dis-cons4}\)</span> together make sure that at most one job can be processed on a machine at any time. To be specific, in case of job <span class="math inline">\(j\)</span> preceding job <span class="math inline">\(k\)</span> on machine <span class="math inline">\(i\)</span>, <span class="math inline">\(z_{ijk}\)</span> takes the value of 1 and constraints <span class="math inline">\(\eqref{jsp-dis-cons4}\)</span> ensure that job <span class="math inline">\(k\)</span> won’t start processing on machine <span class="math inline">\(i\)</span> unless job <span class="math inline">\(i\)</span> completes processing; Otherwise, <span class="math inline">\(z_{ijk}\)</span> takes the value of 0 and constraints <span class="math inline">\(\eqref{jsp-dis-cons3}\)</span> require that job <span class="math inline">\(j\)</span> starts processing after job <span class="math inline">\(k\)</span>. Note that both constraints are needed when we require <span class="math inline">\(j &lt;&gt; k\)</span>; Otherwise, only one of them is needed if we create a constraint for every pair of <span class="math inline">\(j\)</span> and <span class="math inline">\(k\)</span> on a machine. Constraints <span class="math inline">\(\eqref{jsp-dis-cons5}\)</span> derive <span class="math inline">\(C_{max}\)</span> across all jobs. The last constraints <span class="math inline">\(\eqref{jsp-dis-cons6}\)</span> state the variable type of <span class="math inline">\(z_{ijk}\)</span>.</p>
+<div class="callout-note callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Instance abz5 (<span class="citation" data-cites="or-library">Beasley (<a href="references.html#ref-or-library" role="doc-biblioref">1990</a>)</span>)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>10 10 <br> 4 88 8 68 6 94 5 99 1 67 2 89 9 77 7 99 0 86 3 92<br> 5 72 3 50 6 69 4 75 2 94 8 66 0 92 1 82 7 94 9 63<br> 9 83 8 61 0 83 1 65 6 64 5 85 7 78 4 85 2 55 3 77<br> 7 94 2 68 1 61 4 99 3 54 6 75 5 66 0 76 9 63 8 67<br> 3 69 4 88 9 82 8 95 0 99 2 67 6 95 5 68 7 67 1 86<br> 1 99 4 81 5 64 6 66 8 80 2 80 7 69 9 62 3 79 0 88<br> 7 50 1 86 4 97 3 96 0 95 8 97 2 66 5 99 6 52 9 71<br> 4 98 6 73 3 82 2 51 1 71 5 94 7 85 0 62 8 95 9 79<br> 0 94 6 71 3 81 7 85 1 66 2 90 4 76 5 58 8 93 9 97<br> 3 50 0 59 1 82 8 67 7 56 9 96 6 58 4 81 5 59 2 96<br></p>
+</div>
+</div>
 <ol start="2" type="1">
 <li><p>Time-indexed model</p></li>
 <li><p>Rank-based model</p></li>
@@ -382,6 +395,9 @@ z is integer? True</code></pre>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="ref-or-library" class="csl-entry" role="doc-biblioentry">
+Beasley, John E. 1990. <span>“OR-Library: Distributing Test Problems by Electronic Mail.”</span> <em>Journal of the Operational Research Society</em> 41 (11): 1069–72.
+</div>
 <div id="ref-ku_mixed_2016" class="csl-entry" role="doc-biblioentry">
 Ku, Wen-Yang, and J. Christopher Beck. 2016. <span>“Mixed <span>Integer</span> <span>Programming</span> Models for Job Shop Scheduling: <span>A</span> Computational Analysis.”</span> <em>Computers &amp; Operations Research</em> 73 (September): 165–73. <a href="https://doi.org/10.1016/j.cor.2016.04.006">https://doi.org/10.1016/j.cor.2016.04.006</a>.
 </div>
