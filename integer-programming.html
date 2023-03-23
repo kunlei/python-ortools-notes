@@ -405,7 +405,7 @@ z is integer? True</code></pre>
 \end{align}\]</span></p>
 <p>The objective <span class="math inline">\(\eqref{jsp-dis-obj}\)</span> aims to minimize the maximal completion time of any job <span class="math inline">\(j \in \mathcal{J}\)</span>. Constraints <span class="math inline">\(\eqref{jsp-dis-cons1}\)</span> require that all the job processing starting time must not be negative values. Constraints <span class="math inline">\(\eqref{jsp-dis-cons2}\)</span> enforce the sequencing order among operations for every job, which state that the <span class="math inline">\(h\)</span>-th operation of job <span class="math inline">\(j\)</span>, <span class="math inline">\(o_h^j\)</span>, cannot start unless its preceeding operation <span class="math inline">\(o_{h - 1}^j\)</span> finishes. Constraints <span class="math inline">\(\eqref{jsp-dis-cons3}\)</span> and <span class="math inline">\(\eqref{jsp-dis-cons4}\)</span> together make sure that at most one job can be processed on a machine at any time. To be specific, in case of job <span class="math inline">\(j\)</span> preceding job <span class="math inline">\(k\)</span> on machine <span class="math inline">\(i\)</span>, <span class="math inline">\(z_{ijk}\)</span> takes the value of 1 and constraints <span class="math inline">\(\eqref{jsp-dis-cons4}\)</span> ensure that job <span class="math inline">\(k\)</span> won’t start processing on machine <span class="math inline">\(i\)</span> unless job <span class="math inline">\(i\)</span> completes processing; Otherwise, <span class="math inline">\(z_{ijk}\)</span> takes the value of 0 and constraints <span class="math inline">\(\eqref{jsp-dis-cons3}\)</span> require that job <span class="math inline">\(j\)</span> starts processing after job <span class="math inline">\(k\)</span>. Note that both constraints are needed when we require <span class="math inline">\(j &lt; k\)</span>; Otherwise, only one of them is needed if we create a constraint for every pair of <span class="math inline">\(j\)</span> and <span class="math inline">\(k\)</span> on a machine. Constraints <span class="math inline">\(\eqref{jsp-dis-cons5}\)</span> derive <span class="math inline">\(C_{max}\)</span> across all jobs. The last constraints <span class="math inline">\(\eqref{jsp-dis-cons6}\)</span> state the variable type of <span class="math inline">\(z_{ijk}\)</span>.</p>
 <p>The disjunctive formulation code is presented entirely in the following lines. The data related to the specific case are read between lines 5 to 8, and a solver object is created in line 11. The variable <span class="math inline">\(x_{ij}\)</span> is introduced in lines 16 to 23, followed by the introduction of variable <span class="math inline">\(z_{ijk}\)</span> in lines 25 to 34. The variable <span class="math inline">\(C_{max}\)</span> is defined in lines 36 to 38. The objective of the model is set in line 41, and the constraints are established in lines 44 to 80. The instance is solved, and the optimal solution is obtained from lines 82 to 93.</p>
-<div class="cell" data-execution_count="102">
+<div class="cell" data-execution_count="114">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb7-3"><a href="#cb7-3"></a></span>
@@ -504,11 +504,11 @@ z is integer? True</code></pre>
 </div>
 </div>
 <p>The output of the model indicates that the lowest possible time needed to complete all tasks in this instance is 55. To illustrate the most efficient solution, we have created a function called <code>show_schedule()</code> that displays a Gantt chart of the tasks needed to process all jobs. <a href="#fig-jssp-dis-sol-ft06">Figure&nbsp;<span>4.1</span></a> displays the optimal solution for this instance.</p>
-<div class="cell" data-execution_count="101">
+<div class="cell" data-execution_count="115">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_schedule(num_jobs, operations, processing_times):</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_schedule(num_jobs, operations, processing_times, opt_time):</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> mpl.colormaps[<span class="st">"Set1"</span>].colors</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>[<span class="dv">7</span>, <span class="dv">3</span>], dpi<span class="op">=</span><span class="dv">100</span>)</span>
@@ -540,7 +540,7 @@ z is integer? True</code></pre>
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    fig.tight_layout()</span>
 <span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
 <span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>show_schedule(num_jobs, operations, processing_times)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-jssp-dis-sol-ft06" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -563,7 +563,7 @@ z is integer? True</code></pre>
 &amp;\quad x_{ijt} \in \{0, 1\}, \ \forall j \in \mathcal{J}, i \in \mathcal{M}, t \in H \label{jsp-time-cons5}
 \end{align}\]</span></p>
 <p>In this formulation, the first set of constraints, referred to as <span class="math inline">\(\eqref{jsp-time-cons1}\)</span>, state that each job <span class="math inline">\(j\)</span> must start at one specific time within the scheduling horizon <span class="math inline">\(H\)</span>, which is determined as the sum of processing times for all jobs - <span class="math inline">\(H = \sum_{i \in \mathcal{I}, j \in \mathcal{J}} p_{ij}\)</span>. Constraints <span class="math inline">\(\eqref{jsp-time-cons2}\)</span> are used to calculate the value of <span class="math inline">\(C_{max}\)</span>, while constraints <span class="math inline">\(\eqref{jsp-time-cons3}\)</span> ensure that only one job can be processed by a machine at any given time. It’s important to note that a job will remain on a machine for its full processing time and cannot be interrupted. Constraints <span class="math inline">\(\eqref{jsp-time-cons4}\)</span> make sure that the order of processing jobs is followed, and constraints <span class="math inline">\(\eqref{jsp-time-cons5}\)</span> define the variable types used in the formulation.</p>
-<div class="cell" data-execution_count="113">
+<div class="cell" data-execution_count="143">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -625,10 +625,18 @@ z is integer? True</code></pre>
 <span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
 <span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> solver.OPTIMAL:</span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"min. makespan = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>min. makespan = 55.00</code></pre>
-</div>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"min. makespan = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>    opt_time <span class="op">=</span> []</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> []</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(t):</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="bu">int</span>(var_x[machine][job][t].solution_value()) <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>                    arr.append(t)</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>        opt_time.append(arr)</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol start="3" type="1">
 <li>Rank-based model</li>
