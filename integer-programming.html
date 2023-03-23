@@ -545,7 +545,7 @@ z is integer? True</code></pre>
 <div id="fig-jssp-dis-sol-ft06" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="integer-programming_files/figure-html/fig-jssp-dis-sol-ft06-output-1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;4.1: Optimal solution of the ft06 instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;4.1: Optimal solution of the ft06 instance using the disjunctive formulation</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -563,90 +563,108 @@ z is integer? True</code></pre>
 &amp;\quad x_{ijt} \in \{0, 1\}, \ \forall j \in \mathcal{J}, i \in \mathcal{M}, t \in H \label{jsp-time-cons5}
 \end{align}\]</span></p>
 <p>In this formulation, the first set of constraints, referred to as <span class="math inline">\(\eqref{jsp-time-cons1}\)</span>, state that each job <span class="math inline">\(j\)</span> must start at one specific time within the scheduling horizon <span class="math inline">\(H\)</span>, which is determined as the sum of processing times for all jobs - <span class="math inline">\(H = \sum_{i \in \mathcal{I}, j \in \mathcal{J}} p_{ij}\)</span>. Constraints <span class="math inline">\(\eqref{jsp-time-cons2}\)</span> are used to calculate the value of <span class="math inline">\(C_{max}\)</span>, while constraints <span class="math inline">\(\eqref{jsp-time-cons3}\)</span> ensure that only one job can be processed by a machine at any given time. It’s important to note that a job will remain on a machine for its full processing time and cannot be interrupted. Constraints <span class="math inline">\(\eqref{jsp-time-cons4}\)</span> make sure that the order of processing jobs is followed, and constraints <span class="math inline">\(\eqref{jsp-time-cons5}\)</span> define the variable types used in the formulation.</p>
-<div class="cell" data-execution_count="143">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># read and parse the data</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>filename <span class="op">=</span> <span class="st">'./data/jssp/ft06.txt'</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>num_jobs, num_machines, <span class="op">\</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>operations, processing_times <span class="op">=</span> <span class="op">\</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    read_jssp_instance(filename)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># create solver</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># create variables</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> job <span class="kw">in</span> processing_times:</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    H <span class="op">+=</span> <span class="bu">sum</span>(processing_times[job].values())</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>var_x <span class="op">=</span> np.empty((num_machines, num_jobs, H), dtype<span class="op">=</span><span class="bu">object</span>)</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H):</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>            var_x[machine][job][t] <span class="op">=</span> solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>machine<span class="sc">,</span> job<span class="sc">,</span> t<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>infinity <span class="op">=</span> solver.Infinity()</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>var_makespan <span class="op">=</span> solver.NumVar(<span class="dv">0</span>, </span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>                            infinity, </span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                            name<span class="op">=</span><span class="st">'C_max'</span>)</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># create objective</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>solver.Minimize(var_makespan)</span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># create constraints</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>        solver.Add(solver.Sum([var_x[machine][job][t] <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]) <span class="op">==</span> <span class="dv">1</span>)</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> [var_x[machine][job][t] <span class="op">*</span> (t <span class="op">+</span> processing_times[job][machine]) <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>        solver.Add(solver.Sum(arr) <span class="op">&lt;=</span> var_makespan)</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H):</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> [var_x[machine][job][tt]</span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs)</span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> tt <span class="kw">in</span> <span class="bu">range</span>(t <span class="op">-</span> processing_times[job][machine] <span class="op">+</span> <span class="dv">1</span>, t <span class="op">+</span> <span class="dv">1</span>)]</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>        solver.Add(solver.Sum(arr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> oper <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_machines):</span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>        prev_machine <span class="op">=</span> operations[job][oper <span class="op">-</span> <span class="dv">1</span>]</span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>        curr_machine <span class="op">=</span> operations[job][oper]</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>        expr_prev <span class="op">=</span> [(t <span class="op">+</span> processing_times[job][prev_machine]) <span class="op">*</span> var_x[prev_machine][job][t] </span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>        expr_curr <span class="op">=</span> [t <span class="op">*</span> var_x[curr_machine][job][t]</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>        solver.Add(solver.Sum(expr_prev) <span class="op">&lt;=</span> solver.Sum(expr_curr))</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> solver.Solve()</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> solver.OPTIMAL:</span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"min. makespan = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>    opt_time <span class="op">=</span> []</span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>        arr <span class="op">=</span> []</span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(t):</span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="bu">int</span>(var_x[machine][job][t].solution_value()) <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>                    arr.append(t)</span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>        opt_time.append(arr)</span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The following code provides a program that uses the time-indexed formulation to solve the <code>ft06</code> instance, with the value of <span class="math inline">\(H\)</span> being the sum of all job processing times plus one. The two variables, <span class="math inline">\(x_{ijt}\)</span> and <span class="math inline">\(C_{max}\)</span>, are created in lines 18 - 27. The constraints are created in lines 33 - 57. The optimal solution is retrieved in lines 61 - 71. It can be seen from the output that the same optimal objective, 55, is obtained using this formulation.</p>
+<div class="cell" data-execution_count="145">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co"># read and parse the data</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>filename <span class="op">=</span> <span class="st">'./data/jssp/ft06.txt'</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>num_jobs, num_machines, <span class="op">\</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>operations, processing_times <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>    read_jssp_instance(filename)</span>
+<span id="cb10-10"><a href="#cb10-10"></a>    </span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="co"># create solver</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb10-13"><a href="#cb10-13"></a></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co"># create variables</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>H <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="cf">for</span> job <span class="kw">in</span> processing_times:</span>
+<span id="cb10-17"><a href="#cb10-17"></a>    H <span class="op">+=</span> <span class="bu">sum</span>(processing_times[job].values())</span>
+<span id="cb10-18"><a href="#cb10-18"></a>var_x <span class="op">=</span> np.empty((num_machines, num_jobs, H), dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
+<span id="cb10-20"><a href="#cb10-20"></a>    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
+<span id="cb10-21"><a href="#cb10-21"></a>        <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H):</span>
+<span id="cb10-22"><a href="#cb10-22"></a>            var_x[machine][job][t] <span class="op">=</span> solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>machine<span class="sc">,</span> job<span class="sc">,</span> t<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb10-23"><a href="#cb10-23"></a></span>
+<span id="cb10-24"><a href="#cb10-24"></a>infinity <span class="op">=</span> solver.Infinity()</span>
+<span id="cb10-25"><a href="#cb10-25"></a>var_makespan <span class="op">=</span> solver.NumVar(<span class="dv">0</span>, </span>
+<span id="cb10-26"><a href="#cb10-26"></a>                            infinity, </span>
+<span id="cb10-27"><a href="#cb10-27"></a>                            name<span class="op">=</span><span class="st">'C_max'</span>)</span>
+<span id="cb10-28"><a href="#cb10-28"></a></span>
+<span id="cb10-29"><a href="#cb10-29"></a><span class="co"># create objective</span></span>
+<span id="cb10-30"><a href="#cb10-30"></a>solver.Minimize(var_makespan)</span>
+<span id="cb10-31"><a href="#cb10-31"></a></span>
+<span id="cb10-32"><a href="#cb10-32"></a><span class="co"># create constraints</span></span>
+<span id="cb10-33"><a href="#cb10-33"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
+<span id="cb10-34"><a href="#cb10-34"></a>    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
+<span id="cb10-35"><a href="#cb10-35"></a>        solver.Add(solver.Sum([var_x[machine][job][t] <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb10-36"><a href="#cb10-36"></a>        </span>
+<span id="cb10-37"><a href="#cb10-37"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
+<span id="cb10-38"><a href="#cb10-38"></a>    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
+<span id="cb10-39"><a href="#cb10-39"></a>        arr <span class="op">=</span> [var_x[machine][job][t] <span class="op">*</span> (t <span class="op">+</span> processing_times[job][machine]) <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]</span>
+<span id="cb10-40"><a href="#cb10-40"></a>        solver.Add(solver.Sum(arr) <span class="op">&lt;=</span> var_makespan)</span>
+<span id="cb10-41"><a href="#cb10-41"></a>        </span>
+<span id="cb10-42"><a href="#cb10-42"></a><span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
+<span id="cb10-43"><a href="#cb10-43"></a>    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H):</span>
+<span id="cb10-44"><a href="#cb10-44"></a>        arr <span class="op">=</span> [var_x[machine][job][tt]</span>
+<span id="cb10-45"><a href="#cb10-45"></a>                    <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs)</span>
+<span id="cb10-46"><a href="#cb10-46"></a>                    <span class="cf">for</span> tt <span class="kw">in</span> <span class="bu">range</span>(t <span class="op">-</span> processing_times[job][machine] <span class="op">+</span> <span class="dv">1</span>, t <span class="op">+</span> <span class="dv">1</span>)]</span>
+<span id="cb10-47"><a href="#cb10-47"></a>        solver.Add(solver.Sum(arr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb10-48"><a href="#cb10-48"></a></span>
+<span id="cb10-49"><a href="#cb10-49"></a><span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
+<span id="cb10-50"><a href="#cb10-50"></a>    <span class="cf">for</span> oper <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_machines):</span>
+<span id="cb10-51"><a href="#cb10-51"></a>        prev_machine <span class="op">=</span> operations[job][oper <span class="op">-</span> <span class="dv">1</span>]</span>
+<span id="cb10-52"><a href="#cb10-52"></a>        curr_machine <span class="op">=</span> operations[job][oper]</span>
+<span id="cb10-53"><a href="#cb10-53"></a>        expr_prev <span class="op">=</span> [(t <span class="op">+</span> processing_times[job][prev_machine]) <span class="op">*</span> var_x[prev_machine][job][t] </span>
+<span id="cb10-54"><a href="#cb10-54"></a>                    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]</span>
+<span id="cb10-55"><a href="#cb10-55"></a>        expr_curr <span class="op">=</span> [t <span class="op">*</span> var_x[curr_machine][job][t]</span>
+<span id="cb10-56"><a href="#cb10-56"></a>                    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(H)]</span>
+<span id="cb10-57"><a href="#cb10-57"></a>        solver.Add(solver.Sum(expr_prev) <span class="op">&lt;=</span> solver.Sum(expr_curr))</span>
+<span id="cb10-58"><a href="#cb10-58"></a></span>
+<span id="cb10-59"><a href="#cb10-59"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb10-60"><a href="#cb10-60"></a></span>
+<span id="cb10-61"><a href="#cb10-61"></a><span class="cf">if</span> status <span class="op">==</span> solver.OPTIMAL:</span>
+<span id="cb10-62"><a href="#cb10-62"></a>    <span class="bu">print</span>(<span class="ss">f"min. makespan = </span><span class="sc">{</span>solver<span class="sc">.</span>Objective()<span class="sc">.</span>Value()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb10-63"><a href="#cb10-63"></a>    </span>
+<span id="cb10-64"><a href="#cb10-64"></a>    opt_time <span class="op">=</span> []</span>
+<span id="cb10-65"><a href="#cb10-65"></a>    <span class="cf">for</span> machine <span class="kw">in</span> <span class="bu">range</span>(num_machines):</span>
+<span id="cb10-66"><a href="#cb10-66"></a>        arr <span class="op">=</span> []</span>
+<span id="cb10-67"><a href="#cb10-67"></a>        <span class="cf">for</span> job <span class="kw">in</span> <span class="bu">range</span>(num_jobs):</span>
+<span id="cb10-68"><a href="#cb10-68"></a>            <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(t):</span>
+<span id="cb10-69"><a href="#cb10-69"></a>                <span class="cf">if</span> <span class="bu">int</span>(var_x[machine][job][t].solution_value()) <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb10-70"><a href="#cb10-70"></a>                    arr.append(t)</span>
+<span id="cb10-71"><a href="#cb10-71"></a>        opt_time.append(arr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>min. makespan = 55.00</code></pre>
 </div>
+</div>
+<p>The optimal solution can be seen in <a href="#fig-jssp-time-sol-ft06">Figure&nbsp;<span>4.2</span></a>. Even though both formulations achieve the same optimal objective value, there are some minor discrepancies between the optimal solutions. For instance, in <a href="#fig-jssp-dis-sol-ft06">Figure&nbsp;<span>4.1</span></a>, there is a gap after job 4 completes processing on machine 3, which is not present in <a href="#fig-jssp-time-sol-ft06">Figure&nbsp;<span>4.2</span></a>.</p>
+<div class="cell" data-execution_count="146">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="integer-programming_files/figure-html/cell-9-output-2.png" class="img-fluid"></p>
+<div id="fig-jssp-time-sol-ft06" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="integer-programming_files/figure-html/fig-jssp-time-sol-ft06-output-1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;4.2: Optimal solution of the ft06 instance using the time-indexed formulation</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 <ol start="3" type="1">
 <li>Rank-based model</li>
 </ol>
+<p>The rank-based model is due to <span class="citation" data-cites="wagner_integer_1959">Wagner (<a href="references.html#ref-wagner_integer_1959" role="doc-biblioref">1959</a>)</span> and taken from <span class="citation" data-cites="ku_mixed_2016">Ku and Beck (<a href="references.html#ref-ku_mixed_2016" role="doc-biblioref">2016</a>)</span>. There are three decision variables in this formulation:</p>
+<ul>
+<li><span class="math inline">\(x_{ijk}\)</span>: a binary variable that equals 1 if job <span class="math inline">\(j\)</span> is scheduled at the <span class="math inline">\(k\)</span>-th position on machine <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(h_{ik}\)</span>: a numerical variable that represents the start time of job at the <span class="math inline">\(k\)</span>-th position of machine <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(C_{max}\)</span>: the makespan to be minimized</li>
+</ul>
+<p><span class="math display">\[\begin{align}
+\text{min.} &amp;\quad C_{max} \label{jsp-rank-obj} \\
+\text{s.t.} &amp;\quad \sum_{j \in \mathcal{J}} x_{ijk} = 1, \ \forall i \in \mathcal{M}, k = 1, \cdots, n \label{jsp-rank-cons1}
+\end{align}\]</span></p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
@@ -661,6 +679,9 @@ Ku, Wen-Yang, and J. Christopher Beck. 2016. <span>“Mixed <span>Integer</span>
 </div>
 <div id="ref-manne_job-shop_1960" class="csl-entry" role="doc-biblioentry">
 Manne, Alan S. 1960. <span>“On the <span>Job</span>-<span>Shop</span> <span>Scheduling</span> <span>Problem</span>.”</span> <em>Operations Research</em> 8 (2): 219–23. <a href="https://doi.org/10.1287/opre.8.2.219">https://doi.org/10.1287/opre.8.2.219</a>.
+</div>
+<div id="ref-wagner_integer_1959" class="csl-entry" role="doc-biblioentry">
+Wagner, Harvey M. 1959. <span>“An Integer Linear-Programming Model for Machine Scheduling.”</span> <em>Naval Research Logistics Quarterly</em> 6 (2): 131–40. <a href="https://doi.org/10.1002/nav.3800060205">https://doi.org/10.1002/nav.3800060205</a>.
 </div>
 </div>
 </section>
