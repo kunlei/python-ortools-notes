@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Python OR-tools Notes - 4&nbsp; Integer Programming</title>
+<title>Practical Modeling with Google OR-Tools in Python - 4&nbsp; Integer Programming</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -189,7 +189,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Python OR-tools Notes</a> 
+      <a href="./">Practical Modeling with Google OR-Tools in Python</a> 
     </div>
       </div>
       <div class="mt-2 flex-shrink-0 align-items-center">
@@ -356,7 +356,7 @@ z is integer? True</code></pre>
 <section id="job-shop-scheduling-problem" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="job-shop-scheduling-problem"><span class="header-section-number">4.2.1</span> Job Shop Scheduling Problem</h3>
 <p>In the job shop scheduling problem (JSSP), there are a set of <span class="math inline">\(n\)</span> jobs <span class="math inline">\(\mathcal{J}\)</span> and a set of <span class="math inline">\(m\)</span> machines <span class="math inline">\(\mathcal{M}\)</span>, and each job <span class="math inline">\(j \in \mathcal{J}\)</span> has a list of operations, given by <span class="math inline">\((o_1^j, \cdots, o_h^j, \cdots, o_m^j)\)</span>, that must be carried on the machines. The order of operations in the list also indicates the processing order of the job, and <span class="math inline">\(o_h^j\)</span> represents the <span class="math inline">\(h\)</span>-th operation of the job <span class="math inline">\(j\)</span>. In addition, the processing time of job <span class="math inline">\(j\)</span> on machine <span class="math inline">\(i\)</span>, denoted by <span class="math inline">\(p_{ij}\)</span>, is known in advance and is a non-negative integer. At any moment of time, each machine can only process at most one job and no preemption is allowed which means that a job must completes its processing on a machine once it starts on that machine. The objective is to find a processing schedule of the jobs on the machines such that the makespan, the completion time of the last operation of any job, is minimized.</p>
-<p>To test the modeling of JSSP, we use a benchmarking instance from the OR-Library (<span class="citation" data-cites="or-library">Beasley (<a href="references.html#ref-or-library" role="doc-biblioref">1990</a>)</span>), shown in the box below. The two numbers in the first line represent the number of jobs and the number of machines, respectively. Each remaining line contains the operations, processing machine and processing time, for each job. Note that the machines are numbered starting from 0.</p>
+<p>To test the modeling of JSSP, we use a benchmarking instance from the OR-Library (<span class="citation" data-cites="or-library">(<a href="references.html#ref-or-library" role="doc-biblioref"><strong>or-library?</strong></a>)</span>), shown in the box below. The two numbers in the first line represent the number of jobs and the number of machines, respectively. Each remaining line contains the operations, processing machine and processing time, for each job. Note that the machines are numbered starting from 0.</p>
 <div class="cell" data-code-block-bg="true" data-code-block-border-left="#31BAE9" data-execution_count="95">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instance ft06 from OR-Library</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 6 6   </span></span>
@@ -815,27 +815,55 @@ z is integer? True</code></pre>
 </section>
 <section id="capacitated-vehicle-routing-problem" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="capacitated-vehicle-routing-problem"><span class="header-section-number">4.2.2</span> Capacitated Vehicle Routing Problem</h3>
-<p>The Capacitated Vehicle Routing Problem (CVRP) is a classical combinatorial optimization problem that involves finding the optimal set of routes for a fleet of vehicles to deliver goods or services to a set of customers. The goal is to minimize the total transportation cost while respecting the capacity constraints of each vehicle.</p>
-<p>In the CVRP, a set of customers is given, each with a known demand and location. A fleet of vehicles, each with a limited capacity, is available to serve these customers. The problem is to find a set of routes visited by the vehicles such that each customer is visited once and only once and the total traveling distance is minimized.</p>
+<p>The Capacitated Vehicle Routing Problem (CVRP) is a classical combinatorial optimization problem that involves finding the optimal set of routes for a fleet of vehicles to deliver goods or services to a set of customers. In the CVRP, a set of customers is given, each with a known demand and location. A fleet of vehicles, each with a limited capacity, is available to serve these customers. The problem is to find a set of routes visited by the vehicles such that each customer is visited once and only once and the total traveling distance is minimized.</p>
+<p>We use the notation provided in <span class="citation" data-cites="toth_vehicle_2014">Toth and Vigo (<a href="references.html#ref-toth_vehicle_2014" role="doc-biblioref">2014</a>)</span> to facilitate the presentation of different CVRP models. The depot, denoted as 0, serves as the starting point for transporting goods to customers in <span class="math inline">\(\mathcal{N} = {1, 2, \cdots, n}\)</span> using a homogeneous fleet <span class="math inline">\(\mathcal{K} = {1, 2, \cdots, |\mathcal{K}|}\)</span>. Each customer in <span class="math inline">\(\mathcal{N}\)</span> has a demand of <span class="math inline">\(q_i \geq 0\)</span>, and each vehicle has a positive capacity of <span class="math inline">\(Q &gt; 0\)</span>. The cost of transportation, denoted by <span class="math inline">\(c_{ij}\)</span>, is incurred when a vehicle travels between <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. A vehicle’s route begins at the depot, visits some or all the customers in <span class="math inline">\(\mathcal{N}\)</span>, and then returns to the depot. The objective is to determine the optimal set of routes for the fleet to minimize the total cost of transportation.</p>
+<p>The CVRP could be defined on a directed graph <span class="math inline">\(\mathcal{G} = (\mathcal{V}, \mathcal{A})\)</span>, where <span class="math inline">\(\mathcal{V} = \{0\} \cup \{1, 2, \cdots, n\} = \{0, 1, \cdots, n\}\)</span>, and <span class="math inline">\(\mathcal{A} = \{(i, j) | i, j \in \mathcal{V}, i \neq j\}\)</span>. Let <span class="math inline">\(S\)</span> be a subset of <span class="math inline">\(\mathcal{V}\)</span>, that is, <span class="math inline">\(S \subseteq \mathcal{V}\)</span>. The in-arcs and out-arcs of <span class="math inline">\(S\)</span> are defined as follows:</p>
+<ul>
+<li><span class="math inline">\(\delta^-(S) = \{(i, j) \in \mathcal{A} | i \notin S, j \in S \}\)</span></li>
+<li><span class="math inline">\(\delta^+(S) = \{(i, j) \in \mathcal{A} | i \in S, j \notin S \}\)</span></li>
+</ul>
+<p>In addition, we use <span class="math inline">\(\mathcal{A}(S) = \{(i, j) \in \mathcal{A} | i \in S, j \in S \}\)</span> to indicate all the arcs that connect nodes within <span class="math inline">\(S\)</span>.</p>
+<section id="two-index-formulation" class="level4" data-number="4.2.2.1">
+<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="two-index-formulation"><span class="header-section-number">4.2.2.1</span> Two-index Formulation</h4>
+<p>This formulation was proposed by <span class="citation" data-cites="laporte_exact_1986">Laporte, Mercure, and Nobert (<a href="references.html#ref-laporte_exact_1986" role="doc-biblioref">1986</a>)</span> and we present the formulation given in <span class="citation" data-cites="toth_vehicle_2014">Toth and Vigo (<a href="references.html#ref-toth_vehicle_2014" role="doc-biblioref">2014</a>)</span>.</p>
+<p><span class="math display">\[\begin{align}
+    \text{min.} &amp;\quad \sum_{(i, j) \in \mathcal{A}} c_{ij} x_{ij} \label{cvrp-two-index-obj} \\
+    \text{s.t.} &amp;\quad \sum_{j \in \delta^+(i)}x_{ij} = 1, \ \forall i \in \mathcal{N} \label
+    {cvrp-two-index-cons1}\\
+    &amp;\quad \sum_{i \in \delta^-(j)} x_{ij} = 1, \ \forall j \in \mathcal{N} \label{cvrp-two-index-cons2} \\
+    &amp;\quad \sum_{j \in \delta^+(0)} x_{oj} = |\mathcal{K}| \label{cvrp-two-index-cons3} \\
+    &amp;\quad \sum_{(i, j) \in \delta^+(S)} x_{ij} \geq r(S), \ \forall S \subseteq \mathcal{N}, S \neq \emptyset \label{cvrp-two-index-cons4} \\
+    &amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{cvrp-two-index-cons5}
+\end{align}\]</span></p>
+</section>
+<section id="three-index-formulation" class="level4" data-number="4.2.2.2">
+<h4 data-number="4.2.2.2" class="anchored" data-anchor-id="three-index-formulation"><span class="header-section-number">4.2.2.2</span> Three-index Formulation</h4>
+</section>
+<section id="commodity-flow-formulation" class="level4" data-number="4.2.2.3">
+<h4 data-number="4.2.2.3" class="anchored" data-anchor-id="commodity-flow-formulation"><span class="header-section-number">4.2.2.3</span> Commodity-flow Formulation</h4>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
-<div id="ref-or-library" class="csl-entry" role="doc-biblioentry">
-Beasley, John E. 1990. <span>“OR-Library: Distributing Test Problems by Electronic Mail.”</span> <em>Journal of the Operational Research Society</em> 41 (11): 1069–72.
-</div>
 <div id="ref-kondili_general_1988" class="csl-entry" role="doc-biblioentry">
 Kondili, E, CC Pantelides, and R WH Sargent. 1988. <span>“A <span>General</span> <span>Algorithm</span> for <span>Scheduling</span> <span>Batch</span> <span>Operations</span>.”</span> In. Barton, ACT. <a href="https://search.informit.org/doi/10.3316/informit.394925233030714">https://search.informit.org/doi/10.3316/informit.394925233030714</a>.
 </div>
 <div id="ref-ku_mixed_2016" class="csl-entry" role="doc-biblioentry">
 Ku, Wen-Yang, and J. Christopher Beck. 2016. <span>“Mixed <span>Integer</span> <span>Programming</span> Models for Job Shop Scheduling: <span>A</span> Computational Analysis.”</span> <em>Computers &amp; Operations Research</em> 73 (September): 165–73. <a href="https://doi.org/10.1016/j.cor.2016.04.006">https://doi.org/10.1016/j.cor.2016.04.006</a>.
 </div>
+<div id="ref-laporte_exact_1986" class="csl-entry" role="doc-biblioentry">
+Laporte, Gilbert, Hélène Mercure, and Yves Nobert. 1986. <span>“An Exact Algorithm for the Asymmetrical Capacitated Vehicle Routing Problem.”</span> <em>Networks</em> 16 (1): 33–46. <a href="https://doi.org/10.1002/net.3230160104">https://doi.org/10.1002/net.3230160104</a>.
+</div>
 <div id="ref-manne_job-shop_1960" class="csl-entry" role="doc-biblioentry">
 Manne, Alan S. 1960. <span>“On the <span>Job</span>-<span>Shop</span> <span>Scheduling</span> <span>Problem</span>.”</span> <em>Operations Research</em> 8 (2): 219–23. <a href="https://doi.org/10.1287/opre.8.2.219">https://doi.org/10.1287/opre.8.2.219</a>.
+</div>
+<div id="ref-toth_vehicle_2014" class="csl-entry" role="doc-biblioentry">
+Toth, Paolo, and Daniele Vigo. 2014. <em>Vehicle Routing: Problems, Methods, and Applications</em>. SIAM.
 </div>
 <div id="ref-wagner_integer_1959" class="csl-entry" role="doc-biblioentry">
 Wagner, Harvey M. 1959. <span>“An Integer Linear-Programming Model for Machine Scheduling.”</span> <em>Naval Research Logistics Quarterly</em> 6 (2): 131–40. <a href="https://doi.org/10.1002/nav.3800060205">https://doi.org/10.1002/nav.3800060205</a>.
 </div>
 </div>
+</section>
 </section>
 </section>
 
