@@ -1,3 +1,19 @@
 # Preface {.unnumbered}
 
-This book is under active development.
+*This book is still under active development.*
+
+Dear Reader,
+
+If you're reading this preface, then congratulations! You've either stumbled upon this book accidentally, or you're one of the select few who shares my passion for optimization problems and solving them with Google OR-Tools. Either way, welcome!
+
+First things first, let me start by saying that writing a book is hard. Like, really hard. There were times when I thought I would never finish this darn thing. But then I reminded myself of why I started in the first place: I wanted to become an expert in Google OR-Tools and share that expertise with a broader audience. Plus, it was a great excuse to avoid doing laundry for weeks on end.
+
+Now, I'm not going to lie to you. If you're not a fan of math, algorithms, or Python, then this book may not be for you. But if you're anything like me, and you get a thrill out of finding the optimal solution to a complex problem, then buckle up! We're about to embark on an adventure of optimization, constraints, and fancy algorithms.
+
+Throughout this book, we'll cover everything from basic linear programming to more advanced metaheuristics. And trust me, we'll have fun along the way. There will be laughter, tears (mostly from debugging errors), and hopefully a few "aha!" moments.
+
+In all seriousness, I wrote this book because I believe that Google OR-Tools is an incredibly powerful tool for solving real-world optimization problems, and I want to share that knowledge with you. So, grab a cup of coffee (or tea, if you're fancy like that) and let's dive in!
+
+Yours in optimization,
+
+Kunlei Lian
