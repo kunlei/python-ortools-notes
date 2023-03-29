@@ -2,10 +2,12 @@ project:
   type: book
 
 book:
-  title: "Python OR-tools Notes"
+  title: "Practical Modeling with Google OR-Tools in Python"
+  subtitle: "From Beginning to Giving Up"
   author: "Kunlei Lian"
   date: "2/18/2023"
   google-analytics: "G-DTVHQH448R"
+
   chapters:
     - index.qmd
     - intro.qmd
