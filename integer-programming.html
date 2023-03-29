@@ -823,9 +823,13 @@ z is integer? True</code></pre>
 <li><span class="math inline">\(\delta^+(S) = \{(i, j) \in \mathcal{A} | i \in S, j \notin S \}\)</span></li>
 </ul>
 <p>In addition, we use <span class="math inline">\(\mathcal{A}(S) = \{(i, j) \in \mathcal{A} | i \in S, j \in S \}\)</span> to indicate all the arcs that connect nodes within <span class="math inline">\(S\)</span>.</p>
-<section id="two-index-formulation" class="level4" data-number="4.2.2.1">
-<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="two-index-formulation"><span class="header-section-number">4.2.2.1</span> Two-index Formulation</h4>
-<p>This formulation was proposed by <span class="citation" data-cites="laporte_exact_1986">Laporte, Mercure, and Nobert (<a href="references.html#ref-laporte_exact_1986" role="doc-biblioref">1986</a>)</span> and we present the formulation given in <span class="citation" data-cites="toth_vehicle_2014">Toth and Vigo (<a href="references.html#ref-toth_vehicle_2014" role="doc-biblioref">2014</a>)</span>.</p>
+<section id="cvrp-instances" class="level4" data-number="4.2.2.1">
+<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="cvrp-instances"><span class="header-section-number">4.2.2.1</span> CVRP Instances</h4>
+<p><a href="http://vrp.galgos.inf.puc-rio.br/index.php/en/">CVRPLIB</a></p>
+</section>
+<section id="two-index-formulation" class="level4" data-number="4.2.2.2">
+<h4 data-number="4.2.2.2" class="anchored" data-anchor-id="two-index-formulation"><span class="header-section-number">4.2.2.2</span> Two-index Formulation</h4>
+<p>This formulation was proposed by <span class="citation" data-cites="laporte_exact_1986">Laporte, Mercure, and Nobert (<a href="references.html#ref-laporte_exact_1986" role="doc-biblioref">1986</a>)</span> and we present the formulation given in <span class="citation" data-cites="toth_vehicle_2014">Toth and Vigo (<a href="references.html#ref-toth_vehicle_2014" role="doc-biblioref">2014</a>)</span>. In this formulation, we define the variable <span class="math inline">\(x_{ij}\)</span> that equals 1 if the arc <span class="math inline">\((i, j)\)</span> is traversed by a vehicle. The complete model is given below.</p>
 <p><span class="math display">\[\begin{align}
     \text{min.} &amp;\quad \sum_{(i, j) \in \mathcal{A}} c_{ij} x_{ij} \label{cvrp-two-index-obj} \\
     \text{s.t.} &amp;\quad \sum_{j \in \delta^+(i)}x_{ij} = 1, \ \forall i \in \mathcal{N} \label
@@ -835,12 +839,30 @@ z is integer? True</code></pre>
     &amp;\quad \sum_{(i, j) \in \delta^+(S)} x_{ij} \geq r(S), \ \forall S \subseteq \mathcal{N}, S \neq \emptyset \label{cvrp-two-index-cons4} \\
     &amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{cvrp-two-index-cons5}
 \end{align}\]</span></p>
+<p>The main goal of the formula represented by equation <span class="math inline">\(\eqref{cvrp-two-index-obj}\)</span> is to minimize the overall expenses associated with transportation. The constraints expressed in equations <span class="math inline">\(\eqref{cvrp-two-index-cons1}\)</span> and <span class="math inline">\(\eqref{cvrp-two-index-cons2}\)</span> work together to guarantee that each customer is visited only once, with one incoming and outgoing arc. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons3}\)</span> ensure that all available vehicles are utilized to serve the customers. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons4}\)</span> prevent the formation of sub-tours. Finally, the variable types are defined by the last set of constraints, which are presented in equation <span class="math inline">\(\eqref{cvrp-two-index-cons5}\)</span>.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the set of numbers</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>numbers <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate all combinations of numbers</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>combs <span class="op">=</span> []</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(numbers) <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    combs.extend(<span class="bu">list</span>(combinations(numbers, i)))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the combinations</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(combs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]</code></pre>
+</div>
+</div>
 </section>
-<section id="three-index-formulation" class="level4" data-number="4.2.2.2">
-<h4 data-number="4.2.2.2" class="anchored" data-anchor-id="three-index-formulation"><span class="header-section-number">4.2.2.2</span> Three-index Formulation</h4>
+<section id="three-index-formulation" class="level4" data-number="4.2.2.3">
+<h4 data-number="4.2.2.3" class="anchored" data-anchor-id="three-index-formulation"><span class="header-section-number">4.2.2.3</span> Three-index Formulation</h4>
 </section>
-<section id="commodity-flow-formulation" class="level4" data-number="4.2.2.3">
-<h4 data-number="4.2.2.3" class="anchored" data-anchor-id="commodity-flow-formulation"><span class="header-section-number">4.2.2.3</span> Commodity-flow Formulation</h4>
+<section id="commodity-flow-formulation" class="level4" data-number="4.2.2.4">
+<h4 data-number="4.2.2.4" class="anchored" data-anchor-id="commodity-flow-formulation"><span class="header-section-number">4.2.2.4</span> Commodity-flow Formulation</h4>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
