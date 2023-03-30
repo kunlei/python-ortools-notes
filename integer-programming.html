@@ -825,7 +825,119 @@ z is integer? True</code></pre>
 <p>In addition, we use <span class="math inline">\(\mathcal{A}(S) = \{(i, j) \in \mathcal{A} | i \in S, j \in S \}\)</span> to indicate all the arcs that connect nodes within <span class="math inline">\(S\)</span>.</p>
 <section id="cvrp-instances" class="level4" data-number="4.2.2.1">
 <h4 data-number="4.2.2.1" class="anchored" data-anchor-id="cvrp-instances"><span class="header-section-number">4.2.2.1</span> CVRP Instances</h4>
-<p><a href="http://vrp.galgos.inf.puc-rio.br/index.php/en/">CVRPLIB</a></p>
+<p>We use the instances taken from <span class="citation" data-cites="cvrplib">CVRPLIB (<a href="references.html#ref-cvrplib" role="doc-biblioref">2014</a>)</span> to illustrate the modeling and solving process with Google OR-Tools. <span class="citation" data-cites="cvrplib">CVRPLIB (<a href="references.html#ref-cvrplib" role="doc-biblioref">2014</a>)</span> contains many benchmarking instances for CVRP and we use the python package <code>vrplib</code> to load the instance <code>P-n16-k8.vrp</code> and its optimal solution <code>P-n16-k8.sol</code>.</p>
+<div class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install vrplib with command: pip install vrplib</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> vrplib</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Read VRPLIB formatted instances (default)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>instance <span class="op">=</span> vrplib.read_instance(<span class="st">"./data/cvrp/P-n16-k8.vrp"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>solution <span class="op">=</span> vrplib.read_solution(<span class="st">"./data/cvrp/P-n16-k8.sol"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s first create a function to visualize vehicle routes, as given below.</p>
+<div class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_vehicle_routes(locations, edges):</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""draw vehicles routings, adapted from https://stackoverflow.com/a/50682819</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">    examples:</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">    locations = {</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">        0: (5, 5),</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">        1: (4, 9),</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">        2: (6, 4),</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">        3: (2, 6),</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">    }</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">    edges = [</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">        (0, 1, {'vehicle': '0'}),</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">        (1, 2, {'vehicle': '0'}),</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co">        (2, 0, {'vehicle': '0'}),</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co">        (0, 3, {'vehicle': '1'}),</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co">        (3, 0, {'vehicle': '1'}),</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="co">    ]</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co">        locations (dict): location id -&gt; (lat, lon)</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="co">        edges (list): list of edges</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>    G <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    G.add_edges_from(edges)</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>))</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    vehicles <span class="op">=</span> <span class="bu">set</span>([e[<span class="dv">2</span>][<span class="st">'vehicle'</span>] <span class="cf">for</span> e <span class="kw">in</span> edges])</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    num_vehicles <span class="op">=</span> <span class="bu">len</span>(vehicles)</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> mpl.colormaps[<span class="st">"Set1"</span>].colors</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> v <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>        temp <span class="op">=</span> [e <span class="cf">for</span> e <span class="kw">in</span> edges <span class="cf">if</span> e[<span class="dv">2</span>][<span class="st">'vehicle'</span>] <span class="op">==</span> <span class="bu">str</span>(v)]</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>        color_idx <span class="op">=</span> v </span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> color_idx <span class="op">&gt;=</span> <span class="bu">len</span>(colors):</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>            color_idx <span class="op">=</span> color_idx <span class="op">%</span> <span class="bu">len</span>(colors)</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> np.array([colors[color_idx]])</span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>        nx.draw_networkx_nodes(G, </span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>                                locations, </span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>                                nodelist<span class="op">=</span>[x[<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> temp], </span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>                                node_color<span class="op">=</span>color)</span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>        nx.draw_networkx_edges(G,</span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>                                locations, </span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>                                edgelist<span class="op">=</span>temp,</span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>                                width<span class="op">=</span><span class="dv">2</span>, </span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>                                edge_color<span class="op">=</span>color, </span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>                                style<span class="op">=</span><span class="st">'dashed'</span>)</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>    <span class="co">#let's color the node 0 in black</span></span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_nodes(G, locations, </span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>                            nodelist<span class="op">=</span>[<span class="dv">0</span>], </span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>                            node_color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># labels</span></span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_labels(G, locations, </span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>                            font_color<span class="op">=</span><span class="st">'w'</span>, </span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>                            font_size<span class="op">=</span><span class="dv">12</span>, </span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>                            font_family<span class="op">=</span><span class="st">'sans-serif'</span>)</span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">#print out the graph</span></span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">'off'</span>)</span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="#fig-cvrp-p-n16-k6-sol">Figure&nbsp;<span>4.4</span></a> shows the optimal vehicle routes for the instance P-n16-k8.vrp.</p>
+<div class="cell" data-execution_count="72">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize the optimal solution</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>node_coords <span class="op">=</span> instance[<span class="st">'node_coord'</span>]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>locations <span class="op">=</span> {}</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, coord <span class="kw">in</span> <span class="bu">enumerate</span>(node_coords):</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    locations[idx] <span class="op">=</span> (coord[<span class="dv">0</span>], coord[<span class="dv">1</span>])</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>routes <span class="op">=</span> solution[<span class="st">'routes'</span>]</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>vehicle_idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> []</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> route <span class="kw">in</span> routes:</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    r_temp <span class="op">=</span> route.copy()</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    r_temp.insert(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    r_temp.insert(<span class="bu">len</span>(r_temp), <span class="dv">0</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(r_temp) <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        edges.append((r_temp[i], r_temp[i <span class="op">+</span> <span class="dv">1</span>], {<span class="st">'vehicle'</span>: <span class="bu">str</span>(vehicle_idx)}))</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    vehicle_idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>show_vehicle_routes(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-cvrp-p-n16-k6-sol" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="integer-programming_files/figure-html/fig-cvrp-p-n16-k6-sol-output-1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;4.4: Optimal routes for instance P-n16-k8.vrp</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="two-index-formulation" class="level4" data-number="4.2.2.2">
 <h4 data-number="4.2.2.2" class="anchored" data-anchor-id="two-index-formulation"><span class="header-section-number">4.2.2.2</span> Two-index Formulation</h4>
@@ -841,18 +953,18 @@ z is integer? True</code></pre>
 \end{align}\]</span></p>
 <p>The main goal of the formula represented by equation <span class="math inline">\(\eqref{cvrp-two-index-obj}\)</span> is to minimize the overall expenses associated with transportation. The constraints expressed in equations <span class="math inline">\(\eqref{cvrp-two-index-cons1}\)</span> and <span class="math inline">\(\eqref{cvrp-two-index-cons2}\)</span> work together to guarantee that each customer is visited only once, with one incoming and outgoing arc. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons3}\)</span> ensure that all available vehicles are utilized to serve the customers. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons4}\)</span> prevent the formation of sub-tours. Finally, the variable types are defined by the last set of constraints, which are presented in equation <span class="math inline">\(\eqref{cvrp-two-index-cons5}\)</span>.</p>
 <div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the set of numbers</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>numbers <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate all combinations of numbers</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>combs <span class="op">=</span> []</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(numbers) <span class="op">+</span> <span class="dv">1</span>):</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    combs.extend(<span class="bu">list</span>(combinations(numbers, i)))</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the combinations</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(combs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the set of numbers</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>numbers <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate all combinations of numbers</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>combs <span class="op">=</span> []</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(numbers) <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    combs.extend(<span class="bu">list</span>(combinations(numbers, i)))</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the combinations</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(combs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]</code></pre>
 </div>
@@ -868,6 +980,9 @@ z is integer? True</code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
 <div id="ref-or-library" class="csl-entry" role="doc-biblioentry">
 Beasley, John E. 1990. <span>“OR-Library: Distributing Test Problems by Electronic Mail.”</span> <em>Journal of the Operational Research Society</em> 41 (11): 1069–72.
+</div>
+<div id="ref-cvrplib" class="csl-entry" role="doc-biblioentry">
+CVRPLIB. 2014. <span>“<span>CVRPLIB</span>.”</span> <a href="http://vrp.galgos.inf.puc-rio.br/index.php/en/">http://vrp.galgos.inf.puc-rio.br/index.php/en/</a>.
 </div>
 <div id="ref-kondili_general_1988" class="csl-entry" role="doc-biblioentry">
 Kondili, E, CC Pantelides, and R WH Sargent. 1988. <span>“A <span>General</span> <span>Algorithm</span> for <span>Scheduling</span> <span>Batch</span> <span>Operations</span>.”</span> In. Barton, ACT. <a href="https://search.informit.org/doi/10.3316/informit.394925233030714">https://search.informit.org/doi/10.3316/informit.394925233030714</a>.
