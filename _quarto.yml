@@ -2,7 +2,7 @@ project:
   type: book
 
 book:
-  title: "Practical Modeling with Google OR-Tools in Python"
+  title: "Optimization with OR-Tools: A Practical Guide"
   subtitle: "From Beginning to Giving Up"
   author: "Kunlei Lian"
   date: "2/18/2023"
