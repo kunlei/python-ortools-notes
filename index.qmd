@@ -1,19 +1,80 @@
-# Preface {.unnumbered}
-
 *This book is still under active development.*
 
-Dear Reader,
+## For The Impatient {.unnumbered}
 
-If you're reading this preface, then congratulations! You've either stumbled upon this book accidentally, or you're one of the select few who shares my passion for optimization problems and solving them with Google OR-Tools. Either way, welcome!
+If you have experience with other optimization tools and you are just looking for some OR-Tools code examples, the example formulation and implementation below should give you a jump start.
+The formulation is devoid of any practical meanings.
 
-First things first, let me start by saying that writing a book is hard. Like, really hard. There were times when I thought I would never finish this darn thing. But then I reminded myself of why I started in the first place: I wanted to become an expert in Google OR-Tools and share that expertise with a broader audience. Plus, it was a great excuse to avoid doing laundry for weeks on end.
+\begin{align}
+    \text{min.} &\quad \sum_{s \in \mathcal{S}} \sum_{d \in \mathcal{D}} c_{sd} x_{sd} \label{tp-obj} \\
+    \text{s.t.} & \quad \sum_{d \in \mathcal{D}} x_{sd} = p_s, \ \forall s \in \mathcal{S} \label{tp-cons1} \\
+    & \sum_{s \in \mathcal{S}} x_{sd} = m_d, \ \forall d \in \mathcal{D} \label{tp-cons2} \\
+    & x_{sd} \geq 0, \ \forall s \in \mathcal{S}, d \in \mathcal{D} \label{tp-cons3}
+\end{align}
 
-Now, I'm not going to lie to you. If you're not a fan of math, algorithms, or Python, then this book may not be for you. But if you're anything like me, and you get a thrill out of finding the optimal solution to a complex problem, then buckle up! We're about to embark on an adventure of optimization, constraints, and fancy algorithms.
+The implementation in OR-Tools of the above model aims to convey a few information:
 
-Throughout this book, we'll cover everything from basic linear programming to more advanced metaheuristics. And trust me, we'll have fun along the way. There will be laughter, tears (mostly from debugging errors), and hopefully a few "aha!" moments.
+- A `solver` object has to be instantiated first in order to create variables, objective and constraints.
+- Numerical variables can be created using the `solver.NumVar()` method.
+- Objective is added using the `solver.Minimize()` (`solver.Maximize()`) function.
+- Constraints are added using the `solver.Add()` function.
+- Objective and constraint expressions can be built by first putting their elements into a list and using the `solver.Sum()` method to aggregate them.
 
-In all seriousness, I wrote this book because I believe that Google OR-Tools is an incredibly powerful tool for solving real-world optimization problems, and I want to share that knowledge with you. So, grab a cup of coffee (or tea, if you're fancy like that) and let's dive in!
+```{python}
+#| eval: false
+#| echo: true
+#| code-line-numbers: true
 
-Yours in optimization,
+from ortools.linear_solver import pywraplp
 
-Kunlei Lian
+# gather data
+num_sources = 4
+num_destinations = 5
+supplies = [58, 55, 64, 71]
+demands = [44, 28, 36, 52, 88]
+costs = [[8, 5, 13, 12, 12], 
+        [8, 7, 18, 6, 5], 
+        [11, 12, 5, 11, 18], 
+        [19, 13, 5, 10, 18]]
+
+# create solver
+solver = pywraplp.Solver.CreateSolver("GLOP")
+
+# create decision variables
+var_flow = []
+for src_idx in range(num_sources):
+    vars = [
+        solver.NumVar(0, solver.Infinity(), 
+                    name=f"var_{src_idx}, {dest_idx}")
+        for dest_idx in range(num_destinations)
+    ]
+    var_flow.append(vars)
+
+# create constraints
+for src_idx in range(num_sources):
+    expr = [var_flow[src_idx][dest_idx] 
+            for dest_idx in range(num_destinations)]
+    solver.Add(solver.Sum(expr) == supplies[src_idx])
+
+for dest_idx in range(num_destinations):
+    expr = [var_flow[src_idx][dest_idx] 
+            for src_idx in range(num_sources)]
+    solver.Add(solver.Sum(expr) == demands[dest_idx])
+
+# create objective function
+obj_expr = []
+for src_idx in range(num_sources):
+    for dest_idx in range(num_destinations):
+        obj_expr.append(var_flow[src_idx][dest_idx] * costs[src_idx][dest_idx])
+solver.Minimize(solver.Sum(obj_expr))
+
+status = solver.Solve()
+
+opt_flow = []
+if status == pywraplp.Solver.OPTIMAL:
+    print(f"optimal obj = {solver.Objective().Value()}")
+    for src_idx in range(num_sources):
+        opt_vals = [var_flow[src_idx][dest_idx].solution_value()
+                    for dest_idx in range(num_destinations)]
+        opt_flow.append(opt_vals)
+```

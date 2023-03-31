@@ -2,7 +2,7 @@ project:
   type: book
 
 book:
-  title: "Optimization with OR-Tools: A Practical Guide"
+  title: "Hands-on Optimization with OR-Tools"
   subtitle: "From Beginning to Giving Up"
   author: "Kunlei Lian"
   date: "2/18/2023"
@@ -10,6 +10,7 @@ book:
 
   chapters:
     - index.qmd
+    - preface.qmd
     - intro.qmd
     - env-setup.qmd
     - linear-programming.ipynb
