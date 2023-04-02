@@ -1,1 +1,1 @@
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://kunlei.github.io/python-ortools-notes/sitemap.xml

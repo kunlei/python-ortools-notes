@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://example.com/index.html</loc>
-    <lastmod>2023-04-01T20:57:04.757Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/index.html</loc>
+    <lastmod>2023-04-02T03:43:49.114Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/preface.html</loc>
-    <lastmod>2023-04-01T20:57:04.757Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/preface.html</loc>
+    <lastmod>2023-04-02T03:43:49.115Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/intro.html</loc>
-    <lastmod>2023-04-01T20:57:04.758Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/intro.html</loc>
+    <lastmod>2023-04-02T03:43:49.115Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/env-setup.html</loc>
-    <lastmod>2023-04-01T20:57:04.758Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/env-setup.html</loc>
+    <lastmod>2023-04-02T03:43:49.116Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/linear-programming.html</loc>
-    <lastmod>2023-04-01T20:57:04.761Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/linear-programming.html</loc>
+    <lastmod>2023-04-02T03:43:49.118Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/integer-programming.html</loc>
-    <lastmod>2023-04-01T20:57:04.765Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/integer-programming.html</loc>
+    <lastmod>2023-04-02T03:43:49.122Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/column-generation.html</loc>
-    <lastmod>2023-04-01T20:57:04.765Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/column-generation.html</loc>
+    <lastmod>2023-04-02T03:43:49.122Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/summary.html</loc>
-    <lastmod>2023-04-01T20:57:04.765Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/summary.html</loc>
+    <lastmod>2023-04-02T03:43:49.122Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/references.html</loc>
-    <lastmod>2023-04-01T20:57:04.766Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/references.html</loc>
+    <lastmod>2023-04-02T03:43:49.123Z</lastmod>
   </url>
   <url>
-    <loc>https://example.com/Hands-on-Optimization-with-OR-Tools-in-Python.pdf</loc>
-    <lastmod>2023-04-01T20:57:04.476Z</lastmod>
+    <loc>https://kunlei.github.io/python-ortools-notes/Hands-on-Optimization-with-OR-Tools-in-Python.pdf</loc>
+    <lastmod>2023-04-02T03:43:48.832Z</lastmod>
   </url>
 </urlset>
