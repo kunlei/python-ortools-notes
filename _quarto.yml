@@ -2,20 +2,39 @@ project:
   type: book
 
 book:
-  title: "Hands-on Optimization with OR-Tools"
+  title: "Hands-on Optimization with OR-Tools in Python"
   subtitle: "From Beginning to Giving Up"
   author: "Kunlei Lian"
   date: "2/18/2023"
   google-analytics: "G-DTVHQH448R"
+  favicon: logo.png
+  twitter-card: true
+  site-url: https://kunlei.github.io/python-ortools-notes/
+  # downloads: [pdf, epub]
+  sharing: [twitter]
+  comments:
+    giscus:
+      repo: kunlei/python-ortools-notes
+
+  sidebar:
+    style: docked
+    background: light
 
   chapters:
     - index.qmd
     - preface.qmd
     - intro.qmd
     - env-setup.qmd
-    - linear-programming.ipynb
-    - integer-programming.ipynb
-    - column-generation.ipynb
+    - part: "Mathematical Programming" 
+      chapters: 
+        - linear-programming.ipynb
+        - integer-programming.ipynb
+        - ip-jsp.ipynb
+        - ip-tsp.ipynb
+        - ip-cvrp.ipynb
+        - column-generation.ipynb
+    - part: "Constraint Programming"
+    - part: "Tailored Algorithms"
     - summary.qmd
     - references.qmd
 

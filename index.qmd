@@ -1,15 +1,15 @@
 *This book is still under active development.*
 
-## For The Impatient {.unnumbered}
+## For the Impatient {.unnumbered}
 
 If you have experience with other optimization tools and you are just looking for some OR-Tools code examples, the example formulation and implementation below should give you a jump start.
 The formulation is devoid of any practical meanings.
 
 \begin{align}
     \text{min.} &\quad \sum_{s \in \mathcal{S}} \sum_{d \in \mathcal{D}} c_{sd} x_{sd} \label{tp-obj} \\
-    \text{s.t.} & \quad \sum_{d \in \mathcal{D}} x_{sd} = p_s, \ \forall s \in \mathcal{S} \label{tp-cons1} \\
-    & \sum_{s \in \mathcal{S}} x_{sd} = m_d, \ \forall d \in \mathcal{D} \label{tp-cons2} \\
-    & x_{sd} \geq 0, \ \forall s \in \mathcal{S}, d \in \mathcal{D} \label{tp-cons3}
+    \text{s.t.} &\quad \sum_{d \in \mathcal{D}} x_{sd} = p_s, \ \forall s \in \mathcal{S} \label{tp-cons1} \\
+    &\quad \sum_{s \in \mathcal{S}} x_{sd} = m_d, \ \forall d \in \mathcal{D} \label{tp-cons2} \\
+    &\quad x_{sd} \geq 0, \ \forall s \in \mathcal{S}, d \in \mathcal{D} \label{tp-cons3}
 \end{align}
 
 The implementation in OR-Tools of the above model aims to convey a few information:
