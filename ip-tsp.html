@@ -582,18 +582,22 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     &amp;\qquad \forall S \subset \mathcal{V}, \ 2 \leq |S| \leq n - 2
 \end{split}
 \label{tsp1-cons3}  \\
-&amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A}
+&amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp1-cons4}
 \end{align}\]</span></p>
-<p>In this formulation, the objective <span class="math inline">\(\eqref{tsp1-obj}\)</span> aims to minimize the total distance of the optimal tour. Constraints <span class="math inline">\(\eqref{tsp1-cons1}\)</span> and <span class="math inline">\(\eqref{tsp1-cons2}\)</span> make sure that each node is entered and left once and only once, and they are also called <em>degree constraints</em>. Constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span> are the so-called <em>subtour elimination constraints</em>.</p>
-<p><a href="#fig-subtour1">Figure&nbsp;<span>6.4</span></a> and <a href="#fig-subtour2">Figure&nbsp;<span>6.5</span></a> show two subtours with 2 and 3 nodes, respectively. Note that the number of arcs (edges) in a subtour equals to the number of nodes. Therefore,</p>
+<p>This specific TSP formulation aims to find the optimal route with the shortest total distance. To ensure that each node is visited exactly once, constraints <span class="math inline">\(\eqref{tsp1-cons1}\)</span> and <span class="math inline">\(\eqref{tsp1-cons2}\)</span>, also known as <em>degree constraints</em>, are used. Another set of constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span>, called subtour elimination constraints, ensure that the solution does not contain any subtours. Subtours are smaller cycles within the larger route that violate the requirement of visiting each city exactly once. Two examples of solutions with subtours are shown in figures <a href="#fig-subtour1">Figure&nbsp;<span>6.4</span></a> and <a href="#fig-subtour2">Figure&nbsp;<span>6.5</span></a>. While these solutions satisfy the degree constraints, they violate the subtour elimination constraints. A subtour contains the same number of edges (or arcs) as nodes, so limiting the number of edges to be less than the number of nodes can help to eliminate subtours. Furthermore, because of the presence of degree constraints, subtours with only one node cannot exist, and similarly, subtours with <span class="math inline">\(n-1\)</span> nodes are also impossible. Therefore, it is acceptable to define the subtour elimination constraints only for subtours that contain between 2 and <span class="math inline">\(n-2\)</span> nodes.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-subtour1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-subtour1">flowchart LR
-    A((1)) --&gt; B((2))
-    B --&gt; A
+    1((1)) --&gt; 2((2))
+    2 --&gt; 3((3))
+    3 --&gt; 4((4))
+    4 --&gt; 7((7))
+    7 --&gt; 1
+    5((5)) --&gt; 6((6))
+    6 --&gt; 5
 </pre>
 </div>
 <p></p><figcaption class="figure-caption">Figure&nbsp;6.4: Subtour with 2 nodes</figcaption><p></p>
@@ -607,9 +611,13 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <figure class="figure">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-subtour2">flowchart LR
-    A((1)) --&gt; B((2))
-    B --&gt; C((3))
-    C --&gt; A
+    1((1)) --&gt; 2((2))
+    2 --&gt; 3((3))
+    3 --&gt; 7((7))
+    7 --&gt; 1
+    4((4)) --&gt; 5((5)) 
+    5 --&gt; 6((6))
+    6 --&gt; 4
 </pre>
 </div>
 <p></p><figcaption class="figure-caption">Figure&nbsp;6.5: Subtour with 3 nodes</figcaption><p></p>
@@ -617,6 +625,11 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
+<p>An equivalent way of constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span> is</p>
+<p><span class="math display">\[\begin{align}
+    \sum_{i \in S}\sum_{j \notin S} x_{ij} \geq 1, \ \forall S \subset \mathcal{V}, \ 2 \leq |S| \leq n - 2 \label{tsp1-cons5}
+\end{align}\]</span></p>
+<p>To understand this, observe that the value of <span class="math inline">\(|S|\)</span> can be calculated as the sum of two terms: the sum of the decision variables <span class="math inline">\(x_{ij}\)</span> for all edges <span class="math inline">\((i,j)\)</span> that are included in the subset, and the sum of the decision variables <span class="math inline">\(x_{ij}\)</span> for all edges that cross the boundary of the subtour, that is, <span class="math inline">\(|S| = \sum_{i, j \in S, \ (i, j) \in \mathcal{A}} x_{ij} + \sum_{i \in S}\sum_{j \notin S} x_{ij}\)</span>. This means that the constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span> and <span class="math inline">\(\eqref{tsp1-cons5}\)</span> are interchangeable, as they represent the same condition in different forms.</p>
 </section>
 <section id="model-2---mtz" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="model-2---mtz"><span class="header-section-number">6.4</span> Model 2 - MTZ</h2>
