@@ -675,7 +675,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb14-40"><a href="#cb14-40"></a>    <span class="kw">def</span> num_nodes(<span class="va">self</span>): <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>._node_coords)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To implement the TSP model using OR-Tools, we define the <code>TspModelV1</code> class that inherits from the base class <code>TspModel</code>. The constructor initializes a solver object and defines attributes to store decision variables and the optimal solution. The <code>_create_variables()</code> function creates binary decision variables for every arc in the problem, while the <code>_create_objective()</code> function calculates the total traveling cost. Degree constraints are defined in the <code>_create_degree_constraints()</code> function, while the subtour elimination constraints are defined in the <code>_create_subtour_elimination_constraints()</code> function. The <code>build_model()</code> function needs to be called before optimize() to construct the model.</p>
-<div class="cell" data-execution_count="11">
+<div class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb15-3"><a href="#cb15-3"></a></span>
@@ -696,8 +696,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb15-18"><a href="#cb15-18"></a>        <span class="va">self</span>._create_degree_constraints()</span>
 <span id="cb15-19"><a href="#cb15-19"></a>        <span class="va">self</span>._create_subtour_elimination_constraints()</span>
 <span id="cb15-20"><a href="#cb15-20"></a>    </span>
-<span id="cb15-21"><a href="#cb15-21"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
-<span id="cb15-22"><a href="#cb15-22"></a>        <span class="va">self</span>._solver.EnableOutput()</span>
+<span id="cb15-21"><a href="#cb15-21"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>, enable_output: <span class="bu">bool</span>):</span>
+<span id="cb15-22"><a href="#cb15-22"></a>        <span class="cf">if</span> enable_output: <span class="va">self</span>._solver.EnableOutput()</span>
 <span id="cb15-23"><a href="#cb15-23"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
 <span id="cb15-24"><a href="#cb15-24"></a>        <span class="cf">if</span> status <span class="kw">is</span> pywraplp.Solver.OPTIMAL:</span>
 <span id="cb15-25"><a href="#cb15-25"></a>            <span class="va">self</span>._retrieve_opt_solution()</span>
@@ -753,7 +753,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb15-75"><a href="#cb15-75"></a>                <span class="cf">if</span> j <span class="op">!=</span> i</span>
 <span id="cb15-76"><a href="#cb15-76"></a>            }</span>
 <span id="cb15-77"><a href="#cb15-77"></a>            </span>
-<span id="cb15-78"><a href="#cb15-78"></a>        <span class="bu">print</span>(<span class="ss">f'optimal value = </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_obj<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb15-78"><a href="#cb15-78"></a>        <span class="bu">print</span>(<span class="ss">f'optimal value = </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_obj<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
 <span id="cb15-79"><a href="#cb15-79"></a>    </span>
 <span id="cb15-80"><a href="#cb15-80"></a>    <span class="kw">def</span> _retrieve_opt_route(<span class="va">self</span>):</span>
 <span id="cb15-81"><a href="#cb15-81"></a>        <span class="va">self</span>._opt_route <span class="op">=</span> []</span>
@@ -772,44 +772,26 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb15-94"><a href="#cb15-94"></a>            </span>
 <span id="cb15-95"><a href="#cb15-95"></a>    <span class="kw">def</span> show_opt_route(<span class="va">self</span>):</span>
 <span id="cb15-96"><a href="#cb15-96"></a>        TspVisualizer.show(<span class="va">self</span>._node_coords, <span class="va">self</span>._opt_route)</span>
-<span id="cb15-97"><a href="#cb15-97"></a>        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-97"><a href="#cb15-97"></a>        </span>
+<span id="cb15-98"><a href="#cb15-98"></a>        </span>
+<span id="cb15-99"><a href="#cb15-99"></a>    <span class="kw">def</span> show_model_info(<span class="va">self</span>):</span>
+<span id="cb15-100"><a href="#cb15-100"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-101"><a href="#cb15-101"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we use the <code>TspModelV1</code> class to solve the <em>burma14</em> instance and plots the optimal solution found by the OR-Tools in <a href="#fig-tsp-model1-burma14-sol">Figure&nbsp;<span>6.6</span></a>.</p>
-<div class="cell" data-execution_count="12">
+<div class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a></span>
 <span id="cb16-3"><a href="#cb16-3"></a>model_v1 <span class="op">=</span> TspModelV1()</span>
 <span id="cb16-4"><a href="#cb16-4"></a>model_v1.read_inputs(instance_file<span class="op">=</span>instance)</span>
 <span id="cb16-5"><a href="#cb16-5"></a>model_v1.build_model()</span>
-<span id="cb16-6"><a href="#cb16-6"></a>model_v1.optimize()</span>
-<span id="cb16-7"><a href="#cb16-7"></a>model_v1.show_opt_route()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-6"><a href="#cb16-6"></a>model_v1.show_model_info()</span>
+<span id="cb16-7"><a href="#cb16-7"></a>model_v1.optimize(<span class="va">False</span>)</span>
+<span id="cb16-8"><a href="#cb16-8"></a>model_v1.show_opt_route()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>optimal value = 3323.0presolving:
-(round 1, exhaustive) 0 del vars, 0 del conss, 0 add conss, 0 chg bounds, 0 chg sides, 0 chg coeffs, 16382 upgd conss, 0 impls, 119 clqs
-   (0.9s) probing: 51/182 (28.0%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
-   (0.9s) probing aborted: 50/50 successive totally useless probings
-   Deactivated symmetry handling methods, since SCIP was built without symmetry detector (SYM=none).
-presolving (2 rounds: 2 fast, 2 medium, 2 exhaustive):
- 0 deleted vars, 0 deleted constraints, 0 added constraints, 0 tightened bounds, 0 added holes, 0 changed sides, 0 changed coefficients
- 0 implications, 119 cliques
-presolved problem has 182 variables (182 bin, 0 int, 0 impl, 0 cont) and 16382 constraints
-  16263 constraints of type &lt;knapsack&gt;
-    119 constraints of type &lt;setppc&gt;
-transformed objective value is always integral (scale: 1)
-Presolving Time: 0.92
-
- time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
-p 1.1s|     1 |     0 |     0 |     - |  clique|   0 | 182 |  16k|  16k|   0 |  0 |   0 |   0 | 0.000000e+00 | 3.876000e+03 |    Inf | unknown
-* 1.5s|     1 |     0 |    47 |     - |    LP  |   0 | 182 |  16k|  16k|   0 |  0 |  15 |   0 | 3.323000e+03 | 3.323000e+03 |   0.00%| unknown
-  1.5s|     1 |     0 |    47 |     - |   396M |   0 | 182 |  16k|  16k|   0 |  0 |  15 |   0 | 3.323000e+03 | 3.323000e+03 |   0.00%| unknown
-
-SCIP Status        : problem is solved [optimal solution found]
-Solving Time (sec) : 1.51
-Solving Nodes      : 1
-Primal Bound       : +3.32300000000000e+03 (2 solutions)
-Dual Bound         : +3.32300000000000e+03
-Gap                : 0.00 %
-</code></pre>
+<pre><code>Number of variables: 182
+Number of constraints: 16382
+optimal value = 3323.0</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model1-burma14-sol" class="quarto-figure quarto-figure-center anchored">
@@ -823,6 +805,179 @@ Gap                : 0.00 %
 </section>
 <section id="model-2---mtz" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="model-2---mtz"><span class="header-section-number">6.4</span> Model 2 - MTZ</h2>
+<p>In this formulation, an alternative way of modeling the subtour elimination constraints was proposed by <span class="citation" data-cites="miller_integer_1960">Miller, Tucker, and Zemlin (<a href="references.html#ref-miller_integer_1960" role="doc-biblioref">1960</a>)</span>. The model uses two types of decision variables:</p>
+<ul>
+<li><span class="math inline">\(x_{ij}\)</span>: a binary variable that equals 1 if arc <span class="math inline">\((i, j) \in \mathcal{A}\)</span> shows up in the optimal solution, 0 otherwise</li>
+<li><span class="math inline">\(u_i\)</span>: a continuous variable for <span class="math inline">\(i \in \mathcal{V} \backslash \{1\}\)</span></li>
+</ul>
+<p>The complete formulation is given below.</p>
+<p><span class="math display">\[\begin{align}
+\text{min.} &amp;\quad \sum_{(i, j) \in \mathcal{A}} c_{ij} x_{ij} \label{tsp2-obj} \\
+\text{s.t.} &amp;\quad \sum_{j \in \mathcal{V},\  j \neq i} x_{ij} = 1, \ \forall i \in \mathcal{V} \label{tsp2-cons1} \\
+&amp;\quad \sum_{i \in \mathcal{V}, \ i \neq j} x_{ij} = 1, \ \forall j \in \mathcal{V} \label{tsp2-cons2}\\
+&amp;\quad
+\begin{split}
+    &amp;u_i - u_j + (n - 1) x_{ij} \leq n - 2, \\
+    &amp;\qquad \forall i, j \in \{2, \cdots, n\}, i \neq j
+\end{split}
+\label{tsp2-cons4} \\
+&amp;\quad 1 \leq n_i \leq n - 1, i = 2, \cdots, n \label{tsp2-cons5}
+\end{align}\]</span></p>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb18-3"><a href="#cb18-3"></a></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="kw">class</span> TspModelV2(TspModel):</span>
+<span id="cb18-5"><a href="#cb18-5"></a>    </span>
+<span id="cb18-6"><a href="#cb18-6"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, name<span class="op">=</span><span class="st">'Tspmodel_v2'</span>):</span>
+<span id="cb18-7"><a href="#cb18-7"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(name)</span>
+<span id="cb18-8"><a href="#cb18-8"></a>        </span>
+<span id="cb18-9"><a href="#cb18-9"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb18-10"><a href="#cb18-10"></a>        <span class="va">self</span>._var_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a>        <span class="va">self</span>._var_u <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb18-12"><a href="#cb18-12"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb18-13"><a href="#cb18-13"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a>        <span class="va">self</span>._opt_route <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb18-15"><a href="#cb18-15"></a>    </span>
+<span id="cb18-16"><a href="#cb18-16"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
+<span id="cb18-17"><a href="#cb18-17"></a>        <span class="va">self</span>._create_variables()</span>
+<span id="cb18-18"><a href="#cb18-18"></a>        <span class="va">self</span>._create_objective()</span>
+<span id="cb18-19"><a href="#cb18-19"></a>        <span class="va">self</span>._create_degree_constraints()</span>
+<span id="cb18-20"><a href="#cb18-20"></a>        <span class="va">self</span>._create_subtour_elimination_constraints()</span>
+<span id="cb18-21"><a href="#cb18-21"></a>    </span>
+<span id="cb18-22"><a href="#cb18-22"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>, enable_output: <span class="bu">bool</span>):</span>
+<span id="cb18-23"><a href="#cb18-23"></a>        <span class="cf">if</span> enable_output: <span class="va">self</span>._solver.EnableOutput()</span>
+<span id="cb18-24"><a href="#cb18-24"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb18-25"><a href="#cb18-25"></a>        <span class="cf">if</span> status <span class="kw">is</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb18-26"><a href="#cb18-26"></a>            <span class="va">self</span>._retrieve_opt_solution()</span>
+<span id="cb18-27"><a href="#cb18-27"></a>            <span class="va">self</span>._retrieve_opt_route()</span>
+<span id="cb18-28"><a href="#cb18-28"></a>    </span>
+<span id="cb18-29"><a href="#cb18-29"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb18-30"><a href="#cb18-30"></a>        <span class="va">self</span>._var_x <span class="op">=</span> {}</span>
+<span id="cb18-31"><a href="#cb18-31"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="va">self</span>._node_list:</span>
+<span id="cb18-32"><a href="#cb18-32"></a>            <span class="va">self</span>._var_x[i] <span class="op">=</span> {</span>
+<span id="cb18-33"><a href="#cb18-33"></a>                j: <span class="va">self</span>._solver.BoolVar(<span class="st">'x_{i, j}'</span>)</span>
+<span id="cb18-34"><a href="#cb18-34"></a>                <span class="cf">for</span> j <span class="kw">in</span> <span class="va">self</span>._node_list</span>
+<span id="cb18-35"><a href="#cb18-35"></a>                <span class="cf">if</span> j <span class="op">!=</span> i</span>
+<span id="cb18-36"><a href="#cb18-36"></a>            }</span>
+<span id="cb18-37"><a href="#cb18-37"></a>        </span>
+<span id="cb18-38"><a href="#cb18-38"></a>        <span class="va">self</span>._var_u <span class="op">=</span> {</span>
+<span id="cb18-39"><a href="#cb18-39"></a>            i: <span class="va">self</span>._solver.NumVar(<span class="dv">1</span>, <span class="va">self</span>.num_nodes, <span class="st">'v_</span><span class="sc">{i}</span><span class="st">'</span>)</span>
+<span id="cb18-40"><a href="#cb18-40"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="va">self</span>._node_list</span>
+<span id="cb18-41"><a href="#cb18-41"></a>            <span class="cf">if</span> i <span class="op">!=</span> <span class="dv">1</span></span>
+<span id="cb18-42"><a href="#cb18-42"></a>        }</span>
+<span id="cb18-43"><a href="#cb18-43"></a>    </span>
+<span id="cb18-44"><a href="#cb18-44"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb18-45"><a href="#cb18-45"></a>        node_list <span class="op">=</span> <span class="va">self</span>._node_list</span>
+<span id="cb18-46"><a href="#cb18-46"></a>        expr <span class="op">=</span> [<span class="va">self</span>._distance[i][j] <span class="op">*</span> <span class="va">self</span>._var_x[i][j]</span>
+<span id="cb18-47"><a href="#cb18-47"></a>                <span class="cf">for</span> i, j <span class="kw">in</span> product(node_list, node_list)</span>
+<span id="cb18-48"><a href="#cb18-48"></a>                <span class="cf">if</span> i <span class="op">!=</span> j]</span>
+<span id="cb18-49"><a href="#cb18-49"></a>        <span class="va">self</span>._solver.Minimize(<span class="va">self</span>._solver.Sum(expr))</span>
+<span id="cb18-50"><a href="#cb18-50"></a>        </span>
+<span id="cb18-51"><a href="#cb18-51"></a>    <span class="kw">def</span> _create_degree_constraints(<span class="va">self</span>):</span>
+<span id="cb18-52"><a href="#cb18-52"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="va">self</span>._node_list:</span>
+<span id="cb18-53"><a href="#cb18-53"></a>            out_expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
+<span id="cb18-54"><a href="#cb18-54"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="va">self</span>._node_list</span>
+<span id="cb18-55"><a href="#cb18-55"></a>                    <span class="cf">if</span> j <span class="op">!=</span> i</span>
+<span id="cb18-56"><a href="#cb18-56"></a>                    ]</span>
+<span id="cb18-57"><a href="#cb18-57"></a>            in_expr <span class="op">=</span> [<span class="va">self</span>._var_x[j][i]</span>
+<span id="cb18-58"><a href="#cb18-58"></a>                        <span class="cf">for</span> j <span class="kw">in</span> <span class="va">self</span>._node_list</span>
+<span id="cb18-59"><a href="#cb18-59"></a>                        <span class="cf">if</span> j <span class="op">!=</span> i</span>
+<span id="cb18-60"><a href="#cb18-60"></a>                    ]</span>
+<span id="cb18-61"><a href="#cb18-61"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(out_expr) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb18-62"><a href="#cb18-62"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(in_expr) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb18-63"><a href="#cb18-63"></a>    </span>
+<span id="cb18-64"><a href="#cb18-64"></a>    <span class="kw">def</span> _create_subtour_elimination_constraints(<span class="va">self</span>):</span>
+<span id="cb18-65"><a href="#cb18-65"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>.num_nodes</span>
+<span id="cb18-66"><a href="#cb18-66"></a>        <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="va">self</span>._node_list, <span class="va">self</span>._node_list):</span>
+<span id="cb18-67"><a href="#cb18-67"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
+<span id="cb18-68"><a href="#cb18-68"></a>            <span class="cf">if</span> i <span class="op">==</span> <span class="dv">1</span> <span class="kw">or</span> j <span class="op">==</span> <span class="dv">1</span>: <span class="cf">continue</span></span>
+<span id="cb18-69"><a href="#cb18-69"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._var_u[i] <span class="op">-</span> </span>
+<span id="cb18-70"><a href="#cb18-70"></a>                            <span class="va">self</span>._var_u[j] <span class="op">+</span></span>
+<span id="cb18-71"><a href="#cb18-71"></a>                            (num_nodes <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> <span class="va">self</span>._var_x[i][j] <span class="op">&lt;=</span></span>
+<span id="cb18-72"><a href="#cb18-72"></a>                            num_nodes <span class="op">-</span> <span class="dv">2</span>)</span>
+<span id="cb18-73"><a href="#cb18-73"></a>    </span>
+<span id="cb18-74"><a href="#cb18-74"></a>    <span class="kw">def</span> _retrieve_opt_solution(<span class="va">self</span>):</span>
+<span id="cb18-75"><a href="#cb18-75"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="bu">float</span>(<span class="va">self</span>._solver.Objective().Value())</span>
+<span id="cb18-76"><a href="#cb18-76"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> {}</span>
+<span id="cb18-77"><a href="#cb18-77"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="va">self</span>._node_list:</span>
+<span id="cb18-78"><a href="#cb18-78"></a>            <span class="va">self</span>._opt_x[i] <span class="op">=</span> {</span>
+<span id="cb18-79"><a href="#cb18-79"></a>                j: <span class="bu">round</span>(<span class="va">self</span>._var_x[i][j].solution_value())</span>
+<span id="cb18-80"><a href="#cb18-80"></a>                <span class="cf">for</span> j <span class="kw">in</span> <span class="va">self</span>._node_list</span>
+<span id="cb18-81"><a href="#cb18-81"></a>                <span class="cf">if</span> j <span class="op">!=</span> i</span>
+<span id="cb18-82"><a href="#cb18-82"></a>            }</span>
+<span id="cb18-83"><a href="#cb18-83"></a>            </span>
+<span id="cb18-84"><a href="#cb18-84"></a>        <span class="bu">print</span>(<span class="ss">f'optimal value = </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_obj<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
+<span id="cb18-85"><a href="#cb18-85"></a>    </span>
+<span id="cb18-86"><a href="#cb18-86"></a>    <span class="kw">def</span> _retrieve_opt_route(<span class="va">self</span>):</span>
+<span id="cb18-87"><a href="#cb18-87"></a>        <span class="va">self</span>._opt_route <span class="op">=</span> []</span>
+<span id="cb18-88"><a href="#cb18-88"></a>        route_start <span class="op">=</span> <span class="bu">list</span>(<span class="va">self</span>._opt_x.keys())[<span class="dv">0</span>]</span>
+<span id="cb18-89"><a href="#cb18-89"></a>        edge_start <span class="op">=</span> route_start</span>
+<span id="cb18-90"><a href="#cb18-90"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb18-91"><a href="#cb18-91"></a>            <span class="cf">for</span> n <span class="kw">in</span> <span class="va">self</span>._opt_x[edge_start]:</span>
+<span id="cb18-92"><a href="#cb18-92"></a>                <span class="cf">if</span> <span class="va">self</span>._opt_x[edge_start][n] <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
+<span id="cb18-93"><a href="#cb18-93"></a>                </span>
+<span id="cb18-94"><a href="#cb18-94"></a>                edge_end <span class="op">=</span> n</span>
+<span id="cb18-95"><a href="#cb18-95"></a>                <span class="va">self</span>._opt_route.append((edge_start, edge_end))</span>
+<span id="cb18-96"><a href="#cb18-96"></a>                <span class="cf">break</span></span>
+<span id="cb18-97"><a href="#cb18-97"></a>            </span>
+<span id="cb18-98"><a href="#cb18-98"></a>            <span class="cf">if</span> edge_end <span class="op">==</span> route_start: <span class="cf">break</span></span>
+<span id="cb18-99"><a href="#cb18-99"></a>            edge_start <span class="op">=</span> edge_end</span>
+<span id="cb18-100"><a href="#cb18-100"></a>            </span>
+<span id="cb18-101"><a href="#cb18-101"></a>    <span class="kw">def</span> show_opt_route(<span class="va">self</span>):</span>
+<span id="cb18-102"><a href="#cb18-102"></a>        TspVisualizer.show(<span class="va">self</span>._node_coords, <span class="va">self</span>._opt_route)</span>
+<span id="cb18-103"><a href="#cb18-103"></a>        </span>
+<span id="cb18-104"><a href="#cb18-104"></a>        </span>
+<span id="cb18-105"><a href="#cb18-105"></a>    <span class="kw">def</span> show_model_info(<span class="va">self</span>):</span>
+<span id="cb18-106"><a href="#cb18-106"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-107"><a href="#cb18-107"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a></span>
+<span id="cb19-3"><a href="#cb19-3"></a>model_v2 <span class="op">=</span> TspModelV2()</span>
+<span id="cb19-4"><a href="#cb19-4"></a>model_v2.read_inputs(instance_file<span class="op">=</span>instance)</span>
+<span id="cb19-5"><a href="#cb19-5"></a>model_v2.build_model()</span>
+<span id="cb19-6"><a href="#cb19-6"></a>model_v2.show_model_info()</span>
+<span id="cb19-7"><a href="#cb19-7"></a>model_v2.optimize(<span class="va">False</span>)</span>
+<span id="cb19-8"><a href="#cb19-8"></a>model_v2.show_opt_route()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of variables: 195
+Number of constraints: 184
+optimal value = 3323.00</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-tsp-model2-burma14-sol" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="ip-tsp_files/figure-html/fig-tsp-model2-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.7: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/ulysses22.tsp'</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a></span>
+<span id="cb21-3"><a href="#cb21-3"></a>model_v2 <span class="op">=</span> TspModelV2()</span>
+<span id="cb21-4"><a href="#cb21-4"></a>model_v2.read_inputs(instance_file<span class="op">=</span>instance)</span>
+<span id="cb21-5"><a href="#cb21-5"></a>model_v2.build_model()</span>
+<span id="cb21-6"><a href="#cb21-6"></a>model_v2.show_model_info()</span>
+<span id="cb21-7"><a href="#cb21-7"></a>model_v2.optimize(<span class="va">False</span>)</span>
+<span id="cb21-8"><a href="#cb21-8"></a>model_v2.show_opt_route()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of variables: 483
+Number of constraints: 464
+optimal value = 7013.0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-tsp-model2-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="ip-tsp_files/figure-html/fig-tsp-model2-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.8: Optimal route for the <em>ulysses22</em> instance</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="model-3---single-commodity-flow" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="model-3---single-commodity-flow"><span class="header-section-number">6.5</span> Model 3 - Single Commodity Flow</h2>
@@ -837,6 +992,9 @@ Gap                : 0.00 %
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-dantzig_solution_1954" class="csl-entry" role="listitem">
 Dantzig, G., R. Fulkerson, and S. Johnson. 1954. <span>“Solution of a <span>Large</span>-<span>Scale</span> <span>Traveling</span>-<span>Salesman</span> <span>Problem</span>.”</span> <em>Journal of the Operations Research Society of America</em> 2 (4): 393–410. <a href="https://doi.org/10.1287/opre.2.4.393">https://doi.org/10.1287/opre.2.4.393</a>.
+</div>
+<div id="ref-miller_integer_1960" class="csl-entry" role="listitem">
+Miller, C. E., A. W. Tucker, and R. A. Zemlin. 1960. <span>“Integer <span>Programming</span> <span>Formulation</span> of <span>Traveling</span> <span>Salesman</span> <span>Problems</span>.”</span> <em>Journal of the ACM</em> 7 (4): 326–29. <a href="https://doi.org/10.1145/321043.321046">https://doi.org/10.1145/321043.321046</a>.
 </div>
 </div>
 </section>
