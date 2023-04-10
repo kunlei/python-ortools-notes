@@ -32,12 +32,12 @@ book:
         - ip-jsp.ipynb
         - ip-tsp.ipynb
         - ip-cvrp.ipynb
-        - ip-rcps.ipynb
-        - ip-nqueens.ipynb
-        - ip-knapsack.ipynb
-        - column-generation.ipynb
-    - part: "Constraint Programming"
-    - part: "Tailored Algorithms"
+        # - ip-rcps.ipynb
+        # - ip-nqueens.ipynb
+        # - ip-knapsack.ipynb
+        # - column-generation.ipynb
+    # - part: "Constraint Programming"
+    # - part: "Tailored Algorithms"
     - summary.qmd
     - references.qmd
 
