@@ -270,7 +270,17 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#cvrp-instances" id="toc-cvrp-instances" class="nav-link active" data-scroll-target="#cvrp-instances"><span class="header-section-number">7.1</span> CVRP Instances</a></li>
+  <li><a href="#two-index-formulation---1" id="toc-two-index-formulation---1" class="nav-link" data-scroll-target="#two-index-formulation---1"><span class="header-section-number">7.2</span> Two-index Formulation - 1</a></li>
+  <li><a href="#two-index-formulation---2" id="toc-two-index-formulation---2" class="nav-link" data-scroll-target="#two-index-formulation---2"><span class="header-section-number">7.3</span> Two-index Formulation - 2</a></li>
+  <li><a href="#three-index-formulation" id="toc-three-index-formulation" class="nav-link" data-scroll-target="#three-index-formulation"><span class="header-section-number">7.4</span> Three-index Formulation</a></li>
+  <li><a href="#commodity-flow-formulation" id="toc-commodity-flow-formulation" class="nav-link" data-scroll-target="#commodity-flow-formulation"><span class="header-section-number">7.5</span> Commodity-flow Formulation</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -300,8 +310,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <li><span class="math inline">\(\delta^+(S) = \{(i, j) \in \mathcal{A} | i \in S, j \notin S \}\)</span></li>
 </ul>
 <p>In addition, we use <span class="math inline">\(\mathcal{A}(S) = \{(i, j) \in \mathcal{A} | i \in S, j \in S \}\)</span> to indicate all the arcs that connect nodes within <span class="math inline">\(S\)</span>.</p>
-<section id="cvrp-instances" class="level4" data-number="7.0.0.1">
-<h4 data-number="7.0.0.1" class="anchored" data-anchor-id="cvrp-instances"><span class="header-section-number">7.0.0.1</span> CVRP Instances</h4>
+<section id="cvrp-instances" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="cvrp-instances"><span class="header-section-number">7.1</span> CVRP Instances</h2>
 <p>We use the instances taken from <span class="citation" data-cites="cvrplib">CVRPLIB (<a href="references.html#ref-cvrplib" role="doc-biblioref">2014</a>)</span> to illustrate the modeling and solving process with Google OR-Tools. <span class="citation" data-cites="cvrplib">CVRPLIB (<a href="references.html#ref-cvrplib" role="doc-biblioref">2014</a>)</span> contains many benchmarking instances for CVRP and we use the python package <code>vrplib</code> to load the instance <code>P-n16-k8.vrp</code> and its optimal solution <code>P-n16-k8.sol</code>.</p>
 <div class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># install vrplib with command: pip install vrplib</span></span>
@@ -418,11 +428,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </div>
 </div>
 </section>
-<section id="subtour-elimination-constraints-secs" class="level4" data-number="7.0.0.2">
-<h4 data-number="7.0.0.2" class="anchored" data-anchor-id="subtour-elimination-constraints-secs"><span class="header-section-number">7.0.0.2</span> Subtour Elimination Constraints (SECs)</h4>
-</section>
-<section id="two-index-formulation---1" class="level4" data-number="7.0.0.3">
-<h4 data-number="7.0.0.3" class="anchored" data-anchor-id="two-index-formulation---1"><span class="header-section-number">7.0.0.3</span> Two-index Formulation - 1</h4>
+<section id="two-index-formulation---1" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="two-index-formulation---1"><span class="header-section-number">7.2</span> Two-index Formulation - 1</h2>
 <p>This formulation was proposed by <span class="citation" data-cites="laporte_exact_1986">Laporte, Mercure, and Nobert (<a href="references.html#ref-laporte_exact_1986" role="doc-biblioref">1986</a>)</span> and we present the formulation given in <span class="citation" data-cites="toth_vehicle_2014">Toth and Vigo (<a href="references.html#ref-toth_vehicle_2014" role="doc-biblioref">2014</a>)</span>. In this formulation, we define the variable <span class="math inline">\(x_{ij}\)</span> that equals 1 if the arc <span class="math inline">\((i, j)\)</span> is traversed by a vehicle. The complete model is given below.</p>
 <p><span class="math display">\[\begin{align}
     \text{min.} &amp;\quad \sum_{(i, j) \in \mathcal{A}} c_{ij} x_{ij} \label{cvrp-two-index-obj} \\
@@ -928,15 +935,15 @@ route: [(0, 14), (14, 7), (7, 0)], length: 68</code></pre>
 </div>
 <p>It can be seen from the model output that there are a total of 32798 constraints, out of which 32767 are subtour elimination constraints, even for such a small instance with only 15 customers. In the next section, we will present another two index formulation to handle this exponential number of constraints.</p>
 </section>
-<section id="two-index-formulation---2" class="level4" data-number="7.0.0.4">
-<h4 data-number="7.0.0.4" class="anchored" data-anchor-id="two-index-formulation---2"><span class="header-section-number">7.0.0.4</span> Two-index Formulation - 2</h4>
+<section id="two-index-formulation---2" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="two-index-formulation---2"><span class="header-section-number">7.3</span> Two-index Formulation - 2</h2>
 </section>
-<section id="three-index-formulation" class="level4" data-number="7.0.0.5">
-<h4 data-number="7.0.0.5" class="anchored" data-anchor-id="three-index-formulation"><span class="header-section-number">7.0.0.5</span> Three-index Formulation</h4>
+<section id="three-index-formulation" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="three-index-formulation"><span class="header-section-number">7.4</span> Three-index Formulation</h2>
 <p>This formulation is also known as the <em>MTZ-formulation</em> as a new set of constraints initially proposed for traveling salesman problem (<span class="citation" data-cites="miller_integer_1960">Miller, Tucker, and Zemlin (<a href="references.html#ref-miller_integer_1960" role="doc-biblioref">1960</a>)</span>) is used to eliminate subtours.</p>
 </section>
-<section id="commodity-flow-formulation" class="level4" data-number="7.0.0.6">
-<h4 data-number="7.0.0.6" class="anchored" data-anchor-id="commodity-flow-formulation"><span class="header-section-number">7.0.0.6</span> Commodity-flow Formulation</h4>
+<section id="commodity-flow-formulation" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="commodity-flow-formulation"><span class="header-section-number">7.5</span> Commodity-flow Formulation</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">

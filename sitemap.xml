@@ -2,50 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/index.html</loc>
-    <lastmod>2023-04-11T02:32:05.095Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.631Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/preface.html</loc>
-    <lastmod>2023-04-11T02:32:05.097Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.636Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/intro.html</loc>
-    <lastmod>2023-04-11T02:32:05.102Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.639Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/env-setup.html</loc>
-    <lastmod>2023-04-11T02:32:05.108Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.644Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/linear-programming.html</loc>
-    <lastmod>2023-04-11T02:32:05.134Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.669Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/integer-programming.html</loc>
-    <lastmod>2023-04-11T02:32:05.137Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.673Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-jsp.html</loc>
-    <lastmod>2023-04-11T02:32:05.154Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.689Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-tsp.html</loc>
-    <lastmod>2023-04-11T02:32:05.196Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.730Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-cvrp.html</loc>
-    <lastmod>2023-04-11T02:32:05.218Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.752Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/summary.html</loc>
-    <lastmod>2023-04-11T02:32:05.220Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.754Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/references.html</loc>
-    <lastmod>2023-04-11T02:32:05.222Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.756Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/Hands-on-Optimization-with-OR-Tools-in-Python.pdf</loc>
-    <lastmod>2023-04-11T02:32:04.749Z</lastmod>
+    <lastmod>2023-04-11T02:38:41.289Z</lastmod>
   </url>
 </urlset>
