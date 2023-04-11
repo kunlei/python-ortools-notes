@@ -806,9 +806,48 @@ optimal value = 3323.0</code></pre>
     &amp;u_i - u_j + (n - 1) x_{ij} \leq n - 2, \\
     &amp;\qquad \forall i, j \in \{2, \cdots, n\}, i \neq j
 \end{split}
-\label{tsp2-cons4} \\
+\label{tsp2-cons3} \\
+&amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp2-cons4} \\
 &amp;\quad 1 \leq n_i \leq n - 1, i = 2, \cdots, n \label{tsp2-cons5}
 \end{align}\]</span></p>
+<p>In this formulation, constraints <span class="math inline">\(\eqref{tsp2-cons1}\)</span> and <span class="math inline">\(\eqref{tsp2-cons2}\)</span> serve as the degree constraints requiring that there is only one arc entering and leaving a node. Constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> are the new subtour elimination constraints. To see how constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> effectively forbid subtours, let’s examine the example below in <a href="#fig-subtour3">Figure&nbsp;<span>6.7</span></a>. In the figure, nodes 5 and 6 form a subtour and constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> become:</p>
+<p><span class="math display">\[\begin{align}
+u_5 - u_6 + (7 - 1) * 1 \leq 7 - 2 \\
+u_6 - u_5 + (7 - 1) * 1 \leq 7 - 2\\
+\end{align}\]</span></p>
+<p>which translate to:</p>
+<p><span class="math display">\[\begin{align}
+u_5 \leq u_6 - 1 \\
+u_6 \leq u_5 - 1
+\end{align}\]</span></p>
+<p>and thus:</p>
+<p><span class="math display">\[\begin{align}
+    u_5 &amp; \leq u_6 - 1 \\
+    &amp; \leq u_5 - 1 - 1\\
+    &amp; \leq u_5 - 2
+\end{align}\]</span></p>
+<p>for which, we have <span class="math inline">\(0 \leq -2\)</span>, which is obviously wrong. Therefore, any subtour will violate the constraints defined in <span class="math inline">\(\eqref{tsp2-cons3}\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-subtour3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-subtour3">flowchart LR
+    1((1)) --&gt; 2((2))
+    2 --&gt; 3((3))
+    3 --&gt; 7((7))
+    7 --&gt; 4((4))
+    4 --&gt; 1
+    5((5)) --&gt; 6((6))
+    6 --&gt; 5
+</pre>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.7: Subtour with 2 nodes</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The code below gives the complete program of the formulation. The new variable <span class="math inline">\(u_i\)</span> is defined in function <code>_create_variables()</code> and the subtour elimination constraints are updated in function <code>_create_subtour_elimination_constraints()</code>.</p>
 <div class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb18-2"><a href="#cb18-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
@@ -918,6 +957,7 @@ optimal value = 3323.0</code></pre>
 <span id="cb18-106"><a href="#cb18-106"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb18-107"><a href="#cb18-107"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>We now use this formulation to solve the <em>burma14</em> instance and show its optimal solution in <a href="#fig-tsp-model2-burma14-sol">Figure&nbsp;<span>6.8</span></a>.</p>
 <div class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb19-2"><a href="#cb19-2"></a></span>
@@ -936,11 +976,12 @@ optimal value = 3323.00</code></pre>
 <div id="fig-tsp-model2-burma14-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model2-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.7: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.8: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
+<p><a href="#fig-tsp-model2-ulysses22-sol">Figure&nbsp;<span>6.9</span></a> shows the optimal solution found by the formulation for the <em>ulysses22</em> instance.</p>
 <div class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/ulysses22.tsp'</span></span>
 <span id="cb21-2"><a href="#cb21-2"></a></span>
@@ -959,7 +1000,7 @@ optimal value = 7013.0</code></pre>
 <div id="fig-tsp-model2-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model2-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.8: Optimal route for the <em>ulysses22</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.9: Optimal route for the <em>ulysses22</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -980,7 +1021,7 @@ optimal value = 7013.0</code></pre>
 &amp;\quad y_{ij} \leq (n - 1) x_{ij}, \ \forall (i, j) \in \mathcal{A} \label{tsp3-cons3} \\
 &amp;\quad \sum_{j \in \mathcal{V}\backslash \{1\}} y_{1j} = n - 1, \label{tsp3-cons4} \\
 &amp;\quad \sum_{i \in \mathcal{V}\backslash \{j\}} y_{ij} - \sum_{k \in \mathcal{V}\backslash \{j\}} y_{jk} = 1, \ \forall j \in \mathcal{V}\backslash \{1\} \label{tsp3-cons5}\\
-&amp;\quad 1 \leq n_i \leq n - 1, i = 2, \cdots, n \label{tsp3-cons6} \\
+&amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp3-cons6} \\
 &amp;\quad y_{ij} \geq 0, \ \forall (i, j) \in \mathcal{A} \label{tsp3-cons7}
 \end{align}\]</span></p>
 <div class="cell" data-execution_count="31">
@@ -1119,7 +1160,7 @@ optimal value = 3323.00</code></pre>
 <div id="fig-tsp-model3-burma14-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model3-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.9: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.10: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1142,7 +1183,7 @@ optimal value = 7013.00</code></pre>
 <div id="fig-tsp-model3-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model3-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.10: Optimal route for the <em>ulysses22</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.11: Optimal route for the <em>ulysses22</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1165,7 +1206,7 @@ optimal value = 7542.00</code></pre>
 <div id="fig-tsp-model3-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model3-berlin52-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.11: Optimal route for the <em>berlin52</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.12: Optimal route for the <em>berlin52</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1188,7 +1229,7 @@ optimal value = 108159.00</code></pre>
 <div id="fig-tsp-model3-pr76-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model3-pr76-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.12: Optimal route for the <em>pr76</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.13: Optimal route for the <em>pr76</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1417,7 +1458,7 @@ optimal value = 3323.00</code></pre>
 <div id="fig-tsp-model4-burma14-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model4-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.13: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.14: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1440,7 +1481,7 @@ optimal value = 7542.00</code></pre>
 <div id="fig-tsp-model4-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model4-berlin52-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.14: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.15: Optimal route for the <em>berlin52</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1630,7 +1671,7 @@ optimal value = 3323.00</code></pre>
 <div id="fig-tsp-model5-burma14-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model5-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.15: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.16: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -1653,7 +1694,7 @@ optimal value = 7542.00</code></pre>
 <div id="fig-tsp-model5-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-tsp_files/figure-html/fig-tsp-model5-berlin52-sol-output-2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6.16: Optimal route for the <em>burma14</em> instance</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;6.17: Optimal route for the <em>berlin52</em> instance</figcaption><p></p>
 </figure>
 </div>
 </div>
