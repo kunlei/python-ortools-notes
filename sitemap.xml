@@ -2,50 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/index.html</loc>
-    <lastmod>2023-04-12T13:24:43.381Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.426Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/preface.html</loc>
-    <lastmod>2023-04-12T13:24:43.383Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.428Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/intro.html</loc>
-    <lastmod>2023-04-12T13:24:43.386Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.431Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/env-setup.html</loc>
-    <lastmod>2023-04-12T13:24:43.391Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.437Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/linear-programming.html</loc>
-    <lastmod>2023-04-12T13:24:43.419Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.465Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/integer-programming.html</loc>
-    <lastmod>2023-04-12T13:24:43.423Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.469Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-jsp.html</loc>
-    <lastmod>2023-04-12T13:24:43.439Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.485Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-tsp.html</loc>
-    <lastmod>2023-04-12T13:24:43.481Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.528Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-cvrp.html</loc>
-    <lastmod>2023-04-12T13:24:43.519Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.569Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kunlei.github.io/python-ortools-notes/ip-knapsack.html</loc>
+    <lastmod>2023-04-13T15:00:31.571Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/summary.html</loc>
-    <lastmod>2023-04-12T13:24:43.521Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.573Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/references.html</loc>
-    <lastmod>2023-04-12T13:24:43.525Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.575Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/Hands-on-Optimization-with-OR-Tools-in-Python.pdf</loc>
-    <lastmod>2023-04-12T13:24:43.003Z</lastmod>
+    <lastmod>2023-04-13T15:00:31.025Z</lastmod>
   </url>
 </urlset>

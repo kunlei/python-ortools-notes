@@ -83,7 +83,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./summary.html" rel="next">
+<link href="./ip-knapsack.html" rel="next">
 <link href="./ip-tsp.html" rel="prev">
 <link href="./logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
@@ -250,12 +250,18 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-knapsack.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -441,12 +447,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \end{align}\]</span></p>
 <p>The objective function represented by equation <span class="math inline">\(\eqref{cvrp-two-index-obj}\)</span> is to minimize the overall transportation costs. The constraints expressed in equations <span class="math inline">\(\eqref{cvrp-two-index-cons1}\)</span> and <span class="math inline">\(\eqref{cvrp-two-index-cons2}\)</span> work together to guarantee that each customer is visited only once, with one incoming and outgoing arc. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons3}\)</span> ensure that all available vehicles are utilized to serve the customers. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons4}\)</span> prevent the formation of sub-tours. Finally, the variable types are defined by the last set of constraints, which are presented in equation <span class="math inline">\(\eqref{cvrp-two-index-cons5}\)</span>.</p>
 <p>To solve the aforementioned instance, we’ll first prepare the data for our following implementation use. Let’s first define two classes, <code>Node</code> and <code>Vehicle</code>, to represent a node in the network and the vechiles, respectively.</p>
-<div class="cell" data-execution_count="6">
+<div class="cell" data-execution_count="120">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> Node:</span>
 <span id="cb4-2"><a href="#cb4-2"></a>    <span class="co">"""a node is either a depot (0) or a customer</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="co">    """</span></span>
 <span id="cb4-4"><a href="#cb4-4"></a>    </span>
-<span id="cb4-5"><a href="#cb4-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, <span class="bu">id</span>, x_coord, y_coord, demand):</span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, <span class="bu">id</span>, x_coord<span class="op">=</span><span class="dv">0</span>, y_coord<span class="op">=</span><span class="dv">0</span>, demand<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb4-6"><a href="#cb4-6"></a>        <span class="va">self</span>._id <span class="op">=</span> <span class="bu">id</span></span>
 <span id="cb4-7"><a href="#cb4-7"></a>        <span class="va">self</span>._x_coord <span class="op">=</span> x_coord</span>
 <span id="cb4-8"><a href="#cb4-8"></a>        <span class="va">self</span>._y_coord <span class="op">=</span> y_coord</span>
@@ -489,7 +495,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb5-16"><a href="#cb5-16"></a>        <span class="cf">return</span> <span class="ss">f"id: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_id<span class="sc">}</span><span class="ss">, capacity: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_capacity<span class="sc">}</span><span class="ss">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now let’s define a class <code>CvrpDataCenter</code> to hold all the information we need later. It also has a helper function to read and parse a CVRP instance.</p>
-<div class="cell" data-execution_count="10">
+<div class="cell" data-execution_count="118">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="im">import</span> vrplib</span>
 <span id="cb6-3"><a href="#cb6-3"></a><span class="im">import</span> re</span>
@@ -515,55 +521,62 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb6-23"><a href="#cb6-23"></a>        <span class="co"># gather nodes</span></span>
 <span id="cb6-24"><a href="#cb6-24"></a>        nodes <span class="op">=</span> []</span>
 <span id="cb6-25"><a href="#cb6-25"></a>        idx <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb6-26"><a href="#cb6-26"></a>        <span class="cf">for</span> node, demand <span class="kw">in</span> <span class="bu">zip</span>(instance[<span class="st">'node_coord'</span>], </span>
-<span id="cb6-27"><a href="#cb6-27"></a>                                instance[<span class="st">'demand'</span>]):</span>
-<span id="cb6-28"><a href="#cb6-28"></a>            node <span class="op">=</span> Node(<span class="bu">id</span><span class="op">=</span>idx, </span>
-<span id="cb6-29"><a href="#cb6-29"></a>                        x_coord<span class="op">=</span>node[<span class="dv">0</span>], </span>
-<span id="cb6-30"><a href="#cb6-30"></a>                        y_coord<span class="op">=</span>node[<span class="dv">1</span>], </span>
-<span id="cb6-31"><a href="#cb6-31"></a>                        demand<span class="op">=</span>demand)</span>
-<span id="cb6-32"><a href="#cb6-32"></a>            idx <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb6-33"><a href="#cb6-33"></a>            nodes.append(node)</span>
-<span id="cb6-34"><a href="#cb6-34"></a>            </span>
-<span id="cb6-35"><a href="#cb6-35"></a>        <span class="co"># gather vehicles</span></span>
-<span id="cb6-36"><a href="#cb6-36"></a>        comment <span class="op">=</span> instance[<span class="st">'comment'</span>]</span>
-<span id="cb6-37"><a href="#cb6-37"></a>        num_vehicles <span class="op">=</span> <span class="bu">int</span>(re.search(<span class="vs">r'\d'</span>, comment).group())</span>
-<span id="cb6-38"><a href="#cb6-38"></a>        vehicles <span class="op">=</span> []</span>
-<span id="cb6-39"><a href="#cb6-39"></a>        <span class="cf">for</span> v <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):</span>
-<span id="cb6-40"><a href="#cb6-40"></a>            vehicle <span class="op">=</span> Vehicle(v, <span class="bu">int</span>(instance[<span class="st">'capacity'</span>]))</span>
-<span id="cb6-41"><a href="#cb6-41"></a>            vehicles.append(vehicle)</span>
-<span id="cb6-42"><a href="#cb6-42"></a>        </span>
-<span id="cb6-43"><a href="#cb6-43"></a>        <span class="co"># gather distance matrix</span></span>
-<span id="cb6-44"><a href="#cb6-44"></a>        distance <span class="op">=</span> instance[<span class="st">'edge_weight'</span>]</span>
-<span id="cb6-45"><a href="#cb6-45"></a>        </span>
-<span id="cb6-46"><a href="#cb6-46"></a>        <span class="va">self</span>._nodes <span class="op">=</span> nodes</span>
-<span id="cb6-47"><a href="#cb6-47"></a>        <span class="va">self</span>._vehicles <span class="op">=</span> vehicles</span>
-<span id="cb6-48"><a href="#cb6-48"></a>        <span class="va">self</span>._distance <span class="op">=</span> distance</span>
-<span id="cb6-49"><a href="#cb6-49"></a>    </span>
-<span id="cb6-50"><a href="#cb6-50"></a>    <span class="at">@property</span></span>
-<span id="cb6-51"><a href="#cb6-51"></a>    <span class="kw">def</span> nodes(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._nodes</span>
-<span id="cb6-52"><a href="#cb6-52"></a>    </span>
-<span id="cb6-53"><a href="#cb6-53"></a>    <span class="at">@property</span></span>
-<span id="cb6-54"><a href="#cb6-54"></a>    <span class="kw">def</span> vehicles(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._vehicles</span>
-<span id="cb6-55"><a href="#cb6-55"></a>    </span>
-<span id="cb6-56"><a href="#cb6-56"></a>    <span class="at">@property</span></span>
-<span id="cb6-57"><a href="#cb6-57"></a>    <span class="kw">def</span> num_nodes(<span class="va">self</span>): <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>._nodes)</span>
-<span id="cb6-58"><a href="#cb6-58"></a>    </span>
-<span id="cb6-59"><a href="#cb6-59"></a>    <span class="at">@property</span></span>
-<span id="cb6-60"><a href="#cb6-60"></a>    <span class="kw">def</span> num_vehicles(<span class="va">self</span>): <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>._vehicles)</span>
-<span id="cb6-61"><a href="#cb6-61"></a>    </span>
-<span id="cb6-62"><a href="#cb6-62"></a>    <span class="at">@property</span></span>
-<span id="cb6-63"><a href="#cb6-63"></a>    <span class="kw">def</span> vehicle_capacity(<span class="va">self</span>): </span>
-<span id="cb6-64"><a href="#cb6-64"></a>        <span class="cf">return</span> <span class="va">self</span>._vehicles[<span class="dv">0</span>].capacity</span>
-<span id="cb6-65"><a href="#cb6-65"></a></span>
-<span id="cb6-66"><a href="#cb6-66"></a>    <span class="kw">def</span> distance(<span class="va">self</span>, i, j, integer<span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb6-67"><a href="#cb6-67"></a>        <span class="cf">return</span> <span class="bu">round</span>(<span class="va">self</span>._distance[i][j]) <span class="op">\</span></span>
-<span id="cb6-68"><a href="#cb6-68"></a>            <span class="cf">if</span> integer <span class="cf">else</span> <span class="va">self</span>._distance[i][j]</span>
-<span id="cb6-69"><a href="#cb6-69"></a>    </span>
-<span id="cb6-70"><a href="#cb6-70"></a>    <span class="kw">def</span> get_all_combinations(<span class="va">self</span>, numbers):</span>
-<span id="cb6-71"><a href="#cb6-71"></a>        combs <span class="op">=</span> []</span>
-<span id="cb6-72"><a href="#cb6-72"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(numbers) <span class="op">+</span> <span class="dv">1</span>):</span>
-<span id="cb6-73"><a href="#cb6-73"></a>            combs.extend(<span class="bu">list</span>(combinations(numbers, i)))</span>
-<span id="cb6-74"><a href="#cb6-74"></a>        <span class="cf">return</span> combs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-26"><a href="#cb6-26"></a>        <span class="cf">if</span> <span class="st">'node_coord'</span> <span class="kw">in</span> instance:</span>
+<span id="cb6-27"><a href="#cb6-27"></a>            <span class="cf">for</span> node, demand <span class="kw">in</span> <span class="bu">zip</span>(instance[<span class="st">'node_coord'</span>], </span>
+<span id="cb6-28"><a href="#cb6-28"></a>                                    instance[<span class="st">'demand'</span>]):</span>
+<span id="cb6-29"><a href="#cb6-29"></a>                node <span class="op">=</span> Node(<span class="bu">id</span><span class="op">=</span>idx, </span>
+<span id="cb6-30"><a href="#cb6-30"></a>                            x_coord<span class="op">=</span>node[<span class="dv">0</span>], </span>
+<span id="cb6-31"><a href="#cb6-31"></a>                            y_coord<span class="op">=</span>node[<span class="dv">1</span>], </span>
+<span id="cb6-32"><a href="#cb6-32"></a>                            demand<span class="op">=</span>demand)</span>
+<span id="cb6-33"><a href="#cb6-33"></a>                idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a>                nodes.append(node)</span>
+<span id="cb6-35"><a href="#cb6-35"></a>        <span class="cf">else</span>:</span>
+<span id="cb6-36"><a href="#cb6-36"></a>            <span class="cf">for</span> demand <span class="kw">in</span> instance[<span class="st">'demand'</span>]:</span>
+<span id="cb6-37"><a href="#cb6-37"></a>                node <span class="op">=</span> Node(<span class="bu">id</span><span class="op">=</span>idx, </span>
+<span id="cb6-38"><a href="#cb6-38"></a>                            demand<span class="op">=</span>demand)</span>
+<span id="cb6-39"><a href="#cb6-39"></a>                idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>                nodes.append(node)</span>
+<span id="cb6-41"><a href="#cb6-41"></a>            </span>
+<span id="cb6-42"><a href="#cb6-42"></a>        <span class="co"># gather vehicles</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a>        comment <span class="op">=</span> instance[<span class="st">'comment'</span>]</span>
+<span id="cb6-44"><a href="#cb6-44"></a>        num_vehicles <span class="op">=</span> <span class="bu">int</span>(re.search(<span class="vs">r'\d'</span>, comment).group())</span>
+<span id="cb6-45"><a href="#cb6-45"></a>        vehicles <span class="op">=</span> []</span>
+<span id="cb6-46"><a href="#cb6-46"></a>        <span class="cf">for</span> v <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):</span>
+<span id="cb6-47"><a href="#cb6-47"></a>            vehicle <span class="op">=</span> Vehicle(v, <span class="bu">int</span>(instance[<span class="st">'capacity'</span>]))</span>
+<span id="cb6-48"><a href="#cb6-48"></a>            vehicles.append(vehicle)</span>
+<span id="cb6-49"><a href="#cb6-49"></a>        </span>
+<span id="cb6-50"><a href="#cb6-50"></a>        <span class="co"># gather distance matrix</span></span>
+<span id="cb6-51"><a href="#cb6-51"></a>        distance <span class="op">=</span> instance[<span class="st">'edge_weight'</span>]</span>
+<span id="cb6-52"><a href="#cb6-52"></a>        </span>
+<span id="cb6-53"><a href="#cb6-53"></a>        <span class="va">self</span>._nodes <span class="op">=</span> nodes</span>
+<span id="cb6-54"><a href="#cb6-54"></a>        <span class="va">self</span>._vehicles <span class="op">=</span> vehicles</span>
+<span id="cb6-55"><a href="#cb6-55"></a>        <span class="va">self</span>._distance <span class="op">=</span> distance</span>
+<span id="cb6-56"><a href="#cb6-56"></a>    </span>
+<span id="cb6-57"><a href="#cb6-57"></a>    <span class="at">@property</span></span>
+<span id="cb6-58"><a href="#cb6-58"></a>    <span class="kw">def</span> nodes(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._nodes</span>
+<span id="cb6-59"><a href="#cb6-59"></a>    </span>
+<span id="cb6-60"><a href="#cb6-60"></a>    <span class="at">@property</span></span>
+<span id="cb6-61"><a href="#cb6-61"></a>    <span class="kw">def</span> vehicles(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._vehicles</span>
+<span id="cb6-62"><a href="#cb6-62"></a>    </span>
+<span id="cb6-63"><a href="#cb6-63"></a>    <span class="at">@property</span></span>
+<span id="cb6-64"><a href="#cb6-64"></a>    <span class="kw">def</span> num_nodes(<span class="va">self</span>): <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>._nodes)</span>
+<span id="cb6-65"><a href="#cb6-65"></a>    </span>
+<span id="cb6-66"><a href="#cb6-66"></a>    <span class="at">@property</span></span>
+<span id="cb6-67"><a href="#cb6-67"></a>    <span class="kw">def</span> num_vehicles(<span class="va">self</span>): <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>._vehicles)</span>
+<span id="cb6-68"><a href="#cb6-68"></a>    </span>
+<span id="cb6-69"><a href="#cb6-69"></a>    <span class="at">@property</span></span>
+<span id="cb6-70"><a href="#cb6-70"></a>    <span class="kw">def</span> vehicle_capacity(<span class="va">self</span>): </span>
+<span id="cb6-71"><a href="#cb6-71"></a>        <span class="cf">return</span> <span class="va">self</span>._vehicles[<span class="dv">0</span>].capacity</span>
+<span id="cb6-72"><a href="#cb6-72"></a></span>
+<span id="cb6-73"><a href="#cb6-73"></a>    <span class="kw">def</span> distance(<span class="va">self</span>, i, j, integer<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb6-74"><a href="#cb6-74"></a>        <span class="cf">return</span> <span class="bu">round</span>(<span class="va">self</span>._distance[i][j]) <span class="op">\</span></span>
+<span id="cb6-75"><a href="#cb6-75"></a>            <span class="cf">if</span> integer <span class="cf">else</span> <span class="va">self</span>._distance[i][j]</span>
+<span id="cb6-76"><a href="#cb6-76"></a>    </span>
+<span id="cb6-77"><a href="#cb6-77"></a>    <span class="kw">def</span> get_all_combinations(<span class="va">self</span>, numbers):</span>
+<span id="cb6-78"><a href="#cb6-78"></a>        combs <span class="op">=</span> []</span>
+<span id="cb6-79"><a href="#cb6-79"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(numbers) <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb6-80"><a href="#cb6-80"></a>            combs.extend(<span class="bu">list</span>(combinations(numbers, i)))</span>
+<span id="cb6-81"><a href="#cb6-81"></a>        <span class="cf">return</span> combs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To implement this formulation using Google OR-Tools, we first create a <code>CvrpDataCenter</code> object and read in the instance <code>P-n16-k8.vrp</code>. Then we create a <code>solver</code> object with solver option <code>SCIP</code> to solve mixed integer programming problems.</p>
 <div class="cell" data-execution_count="11">
@@ -1153,18 +1166,18 @@ route: [(0, 14), (14, 5), (5, 0)], length: 62</code></pre>
 </ul>
 <p><span class="math display">\[\begin{align}
     \text{min.} &amp;\quad \sum_{k \in \mathcal{K}} \sum_{(i, j) \in \mathcal{A}} c_{ij} x_{ijk} \label{cvrp3-obj} \\
-    \text{s.t.} &amp;\quad \sum_{k \in \mathcal{K}} y_{ik} = 1, \ \forall i \in \mathcal{N} \label{cvrp3-cons1} \\
-    &amp;\quad \sum_{j \in \mathcal{N}}x_{0jk} - \sum_{j \in \mathcal{N}}x_{j0k} = 1, \ \forall k \in \mathcal{K} \label{cvrp3-cons2} \\
-    &amp;\quad \sum_{j \in \mathcal{N}}x_{ijk} - \sum_{j \in \mathcal{N}}x_{jik} = 0, \ \forall i \in \mathcal{N}, k \in \mathcal{K} \label{cvrp3-cons3} \\
-    &amp;\quad y_{ik} = \sum_{j \in \mathcal{V}, j \neq i} x_{ijk}, \ \forall i \in \mathcal{N}, k \in \mathcal{K} \label{cvrp3-cons4} \\
-    &amp;\quad y_{0k} = \sum_{j \in \mathcal{N}} x_{j0k}, \ \forall k \in \mathcal{K} \label{cvrp3-cons5} \\
-    &amp;\quad u_{ik} \leq u_{jk} - q_j + Q(1 - x_{ijk}), \ \forall (i, j) \in \mathcal{A}, k \in \mathcal{K} \label{cvrp3-cons6} \\
-    &amp;\quad q_i \leq u_{ik} \leq Q, \ \forall i \in \mathcal{N}, k \in \mathcal{K} \label{cvrp-cons7}\\
+    \text{s.t.} &amp;\quad x_{iik} = 0, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \\
+    &amp;\quad \sum_{j \in \mathcal{V}}x_{ijk} = \sum_{j \in \mathcal{V}}x_{jik}, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \label{cvrp3-cons3} \\
+    &amp;\quad \sum_{k \in \mathcal{K}} y_{ik} = 1, \ \forall i \in \mathcal{N} \label{cvrp3-cons1} \\
+    &amp;\quad y_{ik} = \sum_{j \in \mathcal{V}} x_{ijk}, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \label{cvrp3-cons4} \\
+    &amp;\quad y_{0k} = 1, \ \forall k \in \mathcal{K} \\
+    &amp;\quad u_{i} \leq u_{j} - q_j + Q(1 - x_{ijk}), \ \forall i \neq j, i, j \in \mathcal{N}, k \in \mathcal{K} \label{cvrp3-cons6} \\
+    &amp;\quad q_i \leq u_{i} \leq Q, \ \forall i \in \mathcal{N}\label{cvrp-cons7}\\
     &amp;\quad x_{ijk} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A}, k \in \mathcal{K} \label{cvrp3-cons8} \\
     &amp;\quad y_{ik} \in \{0, 1\}, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \label{cvrp3-cons9} \\
-    &amp;\quad u_{ik} \geq 0, \ \forall i \in \mathcal{N}, k \in \mathcal{K} \label{cvrp3-cons10}
+    &amp;\quad u_{ik} \geq 0, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \label{cvrp3-cons10}
 \end{align}\]</span></p>
-<div class="cell" data-execution_count="71">
+<div class="cell" data-execution_count="121">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb22-2"><a href="#cb22-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb22-3"><a href="#cb22-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1187,200 +1200,284 @@ route: [(0, 14), (14, 5), (5, 0)], length: 62</code></pre>
 <span id="cb22-20"><a href="#cb22-20"></a>    </span>
 <span id="cb22-21"><a href="#cb22-21"></a>    <span class="kw">def</span> read_instance(<span class="va">self</span>, instance_file):</span>
 <span id="cb22-22"><a href="#cb22-22"></a>        <span class="va">self</span>._data_center.read_cvrp_instance(instance_file)</span>
-<span id="cb22-23"><a href="#cb22-23"></a></span>
-<span id="cb22-24"><a href="#cb22-24"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
-<span id="cb22-25"><a href="#cb22-25"></a>        <span class="va">self</span>._create_variables()</span>
-<span id="cb22-26"><a href="#cb22-26"></a>        <span class="va">self</span>._create_objective()</span>
-<span id="cb22-27"><a href="#cb22-27"></a>        <span class="va">self</span>._create_constr_customer_must_be_visited()</span>
-<span id="cb22-28"><a href="#cb22-28"></a>        <span class="va">self</span>._create_constr_flow()</span>
-<span id="cb22-29"><a href="#cb22-29"></a>        <span class="va">self</span>._create_constr_fleet()</span>
-<span id="cb22-30"><a href="#cb22-30"></a>        <span class="va">self</span>._create_constr_subtour()</span>
-<span id="cb22-31"><a href="#cb22-31"></a>        </span>
-<span id="cb22-32"><a href="#cb22-32"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
-<span id="cb22-33"><a href="#cb22-33"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
-<span id="cb22-34"><a href="#cb22-34"></a>        <span class="cf">if</span> <span class="kw">not</span> status:</span>
-<span id="cb22-35"><a href="#cb22-35"></a>            <span class="va">self</span>._retrieve_opt_solution()</span>
-<span id="cb22-36"><a href="#cb22-36"></a>            <span class="va">self</span>._retrieve_opt_routes()</span>
-<span id="cb22-37"><a href="#cb22-37"></a>        <span class="cf">else</span>:</span>
-<span id="cb22-38"><a href="#cb22-38"></a>            <span class="bu">print</span>(<span class="ss">f"status=</span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb22-39"><a href="#cb22-39"></a>    </span>
-<span id="cb22-40"><a href="#cb22-40"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
-<span id="cb22-41"><a href="#cb22-41"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-42"><a href="#cb22-42"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-43"><a href="#cb22-43"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((num_vehicles, num_nodes, num_nodes), dtype<span class="op">=</span><span class="bu">object</span>)</span>
-<span id="cb22-44"><a href="#cb22-44"></a>        <span class="cf">for</span> k, i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(num_nodes), <span class="bu">range</span>(num_nodes)):</span>
-<span id="cb22-45"><a href="#cb22-45"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
-<span id="cb22-46"><a href="#cb22-46"></a>            <span class="va">self</span>._var_x[k][i][j] <span class="op">=</span> <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f"x_</span><span class="sc">{</span>i<span class="sc">,</span> j<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb22-47"><a href="#cb22-47"></a>            </span>
-<span id="cb22-48"><a href="#cb22-48"></a>        <span class="va">self</span>._var_y <span class="op">=</span> np.empty((num_vehicles, num_nodes), dtype<span class="op">=</span><span class="bu">object</span>)</span>
-<span id="cb22-49"><a href="#cb22-49"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(num_nodes)):</span>
-<span id="cb22-50"><a href="#cb22-50"></a>            <span class="va">self</span>._var_y[k][i] <span class="op">=</span> <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'y_</span><span class="sc">{</span>k<span class="sc">,</span> i<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb22-51"><a href="#cb22-51"></a>        </span>
-<span id="cb22-52"><a href="#cb22-52"></a>        infinity <span class="op">=</span> <span class="va">self</span>._solver.Infinity()</span>
-<span id="cb22-53"><a href="#cb22-53"></a>        <span class="va">self</span>._var_u <span class="op">=</span> np.empty((num_vehicles, num_nodes), dtype<span class="op">=</span><span class="bu">object</span>)</span>
-<span id="cb22-54"><a href="#cb22-54"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)):</span>
-<span id="cb22-55"><a href="#cb22-55"></a>            <span class="va">self</span>._var_u[k][i] <span class="op">=</span> <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="ss">f'u_</span><span class="sc">{</span>i<span class="sc">,</span> k<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb22-56"><a href="#cb22-56"></a></span>
-<span id="cb22-57"><a href="#cb22-57"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
-<span id="cb22-58"><a href="#cb22-58"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-59"><a href="#cb22-59"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-60"><a href="#cb22-60"></a>        obj_expr <span class="op">=</span> [</span>
-<span id="cb22-61"><a href="#cb22-61"></a>            <span class="va">self</span>._data_center.distance(i, j, integer<span class="op">=</span><span class="va">True</span>) <span class="op">*</span> </span>
-<span id="cb22-62"><a href="#cb22-62"></a>                <span class="va">self</span>._var_x[k][i][j]</span>
-<span id="cb22-63"><a href="#cb22-63"></a>                <span class="cf">for</span> k, i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(num_nodes), <span class="bu">range</span>(num_nodes))</span>
-<span id="cb22-64"><a href="#cb22-64"></a>                <span class="cf">if</span> i <span class="op">!=</span> j</span>
-<span id="cb22-65"><a href="#cb22-65"></a>        ]</span>
-<span id="cb22-66"><a href="#cb22-66"></a>        <span class="va">self</span>._solver.Minimize(<span class="va">self</span>._solver.Sum(obj_expr))</span>
-<span id="cb22-67"><a href="#cb22-67"></a>            </span>
-<span id="cb22-68"><a href="#cb22-68"></a>    <span class="kw">def</span> _create_constr_customer_must_be_visited(<span class="va">self</span>):</span>
-<span id="cb22-69"><a href="#cb22-69"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-70"><a href="#cb22-70"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-71"><a href="#cb22-71"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes):</span>
-<span id="cb22-72"><a href="#cb22-72"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_y[k][i] <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles)]</span>
-<span id="cb22-73"><a href="#cb22-73"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="dv">1</span>)</span>
-<span id="cb22-74"><a href="#cb22-74"></a>    </span>
-<span id="cb22-75"><a href="#cb22-75"></a>    <span class="kw">def</span> _create_constr_flow(<span class="va">self</span>):</span>
-<span id="cb22-76"><a href="#cb22-76"></a>        <span class="co"># create incoming and outgoing arc constraints</span></span>
-<span id="cb22-77"><a href="#cb22-77"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-78"><a href="#cb22-78"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-79"><a href="#cb22-79"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):</span>
-<span id="cb22-80"><a href="#cb22-80"></a>            expr1 <span class="op">=</span> [<span class="va">self</span>._var_x[k][<span class="dv">0</span>][j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)]</span>
-<span id="cb22-81"><a href="#cb22-81"></a>            expr2 <span class="op">=</span> [<span class="va">self</span>._var_x[k][j][<span class="dv">0</span>] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)]</span>
-<span id="cb22-82"><a href="#cb22-82"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr1) <span class="op">-</span> </span>
-<span id="cb22-83"><a href="#cb22-83"></a>                            <span class="va">self</span>._solver.Sum(expr2) <span class="op">==</span> <span class="dv">1</span>)</span>
-<span id="cb22-84"><a href="#cb22-84"></a></span>
-<span id="cb22-85"><a href="#cb22-85"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)):</span>
-<span id="cb22-86"><a href="#cb22-86"></a>            expr1 <span class="op">=</span> [<span class="va">self</span>._var_x[k][i][j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, num_nodes) <span class="cf">if</span> j <span class="op">!=</span> i]</span>
-<span id="cb22-87"><a href="#cb22-87"></a>            expr2 <span class="op">=</span> [<span class="va">self</span>._var_x[k][j][i] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, num_nodes) <span class="cf">if</span> j <span class="op">!=</span> i]</span>
-<span id="cb22-88"><a href="#cb22-88"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr1) <span class="op">-</span> </span>
-<span id="cb22-89"><a href="#cb22-89"></a>                            <span class="va">self</span>._solver.Sum(expr2) <span class="op">==</span> <span class="dv">0</span>)</span>
-<span id="cb22-90"><a href="#cb22-90"></a></span>
-<span id="cb22-91"><a href="#cb22-91"></a>    <span class="kw">def</span> _create_constr_fleet(<span class="va">self</span>):</span>
-<span id="cb22-92"><a href="#cb22-92"></a>        <span class="co"># create fleet size constraint</span></span>
-<span id="cb22-93"><a href="#cb22-93"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-94"><a href="#cb22-94"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-95"><a href="#cb22-95"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):</span>
-<span id="cb22-96"><a href="#cb22-96"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[k][j][<span class="dv">0</span>] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)]</span>
-<span id="cb22-97"><a href="#cb22-97"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="va">self</span>._var_y[k][<span class="dv">0</span>])</span>
-<span id="cb22-98"><a href="#cb22-98"></a></span>
-<span id="cb22-99"><a href="#cb22-99"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)):</span>
-<span id="cb22-100"><a href="#cb22-100"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[k][i][j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes) <span class="cf">if</span> j <span class="op">!=</span> i]</span>
-<span id="cb22-101"><a href="#cb22-101"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="va">self</span>._var_y[k][i])</span>
-<span id="cb22-102"><a href="#cb22-102"></a>    </span>
-<span id="cb22-103"><a href="#cb22-103"></a>    <span class="kw">def</span> _create_constr_subtour(<span class="va">self</span>):</span>
-<span id="cb22-104"><a href="#cb22-104"></a>        <span class="co"># create subtour elimination constraint</span></span>
-<span id="cb22-105"><a href="#cb22-105"></a>        constraints <span class="op">=</span> []</span>
-<span id="cb22-106"><a href="#cb22-106"></a>        nodes <span class="op">=</span> <span class="va">self</span>._data_center.nodes</span>
-<span id="cb22-107"><a href="#cb22-107"></a>        vehicle_capacity <span class="op">=</span> <span class="va">self</span>._data_center.vehicle_capacity</span>
-<span id="cb22-108"><a href="#cb22-108"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-109"><a href="#cb22-109"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-110"><a href="#cb22-110"></a>        <span class="cf">for</span> k, ni <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), nodes):</span>
-<span id="cb22-111"><a href="#cb22-111"></a>            <span class="cf">if</span> ni.<span class="bu">id</span> <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
-<span id="cb22-112"><a href="#cb22-112"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._var_u[k][ni.<span class="bu">id</span>] <span class="op">&gt;=</span> ni.demand)</span>
-<span id="cb22-113"><a href="#cb22-113"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._var_u[k][ni.<span class="bu">id</span>] <span class="op">&lt;=</span> vehicle_capacity)</span>
-<span id="cb22-114"><a href="#cb22-114"></a>        </span>
-<span id="cb22-115"><a href="#cb22-115"></a>        <span class="cf">for</span> k, ni, nj <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), nodes, nodes):</span>
-<span id="cb22-116"><a href="#cb22-116"></a>            <span class="cf">if</span> ni.<span class="bu">id</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> nj.<span class="bu">id</span> <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
-<span id="cb22-117"><a href="#cb22-117"></a>            <span class="cf">if</span> ni.<span class="bu">id</span> <span class="op">==</span> nj.<span class="bu">id</span>: <span class="cf">continue</span></span>
-<span id="cb22-118"><a href="#cb22-118"></a>            constr <span class="op">=</span> <span class="va">self</span>._solver.Add(</span>
-<span id="cb22-119"><a href="#cb22-119"></a>                <span class="va">self</span>._var_u[k][ni.<span class="bu">id</span>] <span class="op">&lt;=</span></span>
-<span id="cb22-120"><a href="#cb22-120"></a>                <span class="va">self</span>._var_u[k][nj.<span class="bu">id</span>] <span class="op">-</span></span>
-<span id="cb22-121"><a href="#cb22-121"></a>                nj.demand <span class="op">+</span></span>
-<span id="cb22-122"><a href="#cb22-122"></a>                vehicle_capacity <span class="op">*</span> (</span>
-<span id="cb22-123"><a href="#cb22-123"></a>                    <span class="dv">1</span> <span class="op">-</span> <span class="va">self</span>._var_x[k][ni.<span class="bu">id</span>][nj.<span class="bu">id</span>]</span>
-<span id="cb22-124"><a href="#cb22-124"></a>                )</span>
-<span id="cb22-125"><a href="#cb22-125"></a>            )</span>
-<span id="cb22-126"><a href="#cb22-126"></a>            constraints.append(constr)</span>
-<span id="cb22-127"><a href="#cb22-127"></a></span>
-<span id="cb22-128"><a href="#cb22-128"></a>        <span class="bu">print</span>(<span class="ss">f"No. subtour elimination constraints: </span><span class="sc">{</span><span class="bu">len</span>(constraints)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb22-129"><a href="#cb22-129"></a>    </span>
-<span id="cb22-130"><a href="#cb22-130"></a>    <span class="kw">def</span> show_model_summary(<span class="va">self</span>):</span>
-<span id="cb22-131"><a href="#cb22-131"></a>        <span class="bu">print</span>(<span class="ss">f"No. of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb22-132"><a href="#cb22-132"></a>        <span class="bu">print</span>(<span class="ss">f"No. of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb22-133"><a href="#cb22-133"></a>    </span>
-<span id="cb22-134"><a href="#cb22-134"></a>    <span class="kw">def</span> _retrieve_opt_solution(<span class="va">self</span>):</span>
-<span id="cb22-135"><a href="#cb22-135"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
-<span id="cb22-136"><a href="#cb22-136"></a>        <span class="bu">print</span>(<span class="ss">f'optimal value: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_obj<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb22-137"><a href="#cb22-137"></a>        </span>
-<span id="cb22-138"><a href="#cb22-138"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-139"><a href="#cb22-139"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-140"><a href="#cb22-140"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((num_vehicles, num_nodes, num_nodes))</span>
-<span id="cb22-141"><a href="#cb22-141"></a>        <span class="cf">for</span> k, i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(num_nodes), <span class="bu">range</span>(num_nodes)):</span>
-<span id="cb22-142"><a href="#cb22-142"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
-<span id="cb22-143"><a href="#cb22-143"></a>            <span class="va">self</span>._opt_x[k][i][j] <span class="op">=</span> <span class="bu">int</span>(<span class="va">self</span>._var_x[k][i][j].solution_value())</span>
-<span id="cb22-144"><a href="#cb22-144"></a></span>
-<span id="cb22-145"><a href="#cb22-145"></a>    <span class="kw">def</span> _retrieve_opt_routes(<span class="va">self</span>):</span>
-<span id="cb22-146"><a href="#cb22-146"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
-<span id="cb22-147"><a href="#cb22-147"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
-<span id="cb22-148"><a href="#cb22-148"></a>        <span class="va">self</span>._routes <span class="op">=</span> []</span>
-<span id="cb22-149"><a href="#cb22-149"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):     </span>
-<span id="cb22-150"><a href="#cb22-150"></a>            route <span class="op">=</span> []   </span>
-<span id="cb22-151"><a href="#cb22-151"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes):</span>
-<span id="cb22-152"><a href="#cb22-152"></a>                <span class="cf">if</span> <span class="va">self</span>._opt_x[k][<span class="dv">0</span>][i] <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
-<span id="cb22-153"><a href="#cb22-153"></a></span>
-<span id="cb22-154"><a href="#cb22-154"></a>                <span class="co"># new route found</span></span>
-<span id="cb22-155"><a href="#cb22-155"></a>                route_length <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb22-156"><a href="#cb22-156"></a>                <span class="co"># add the first arc</span></span>
-<span id="cb22-157"><a href="#cb22-157"></a>                arc_start <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb22-158"><a href="#cb22-158"></a>                arc_end <span class="op">=</span> i</span>
-<span id="cb22-159"><a href="#cb22-159"></a>                route.append((arc_start, arc_end))</span>
-<span id="cb22-160"><a href="#cb22-160"></a>                route_length <span class="op">+=</span> <span class="va">self</span>._data_center<span class="op">\</span></span>
-<span id="cb22-161"><a href="#cb22-161"></a>                        .distance(arc_start, </span>
-<span id="cb22-162"><a href="#cb22-162"></a>                                arc_end,</span>
-<span id="cb22-163"><a href="#cb22-163"></a>                                integer<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb22-164"><a href="#cb22-164"></a>                </span>
-<span id="cb22-165"><a href="#cb22-165"></a>                <span class="co"># add remaining arcs on the route</span></span>
-<span id="cb22-166"><a href="#cb22-166"></a>                arc_start <span class="op">=</span> arc_end</span>
-<span id="cb22-167"><a href="#cb22-167"></a>                <span class="cf">while</span> <span class="va">True</span>:</span>
-<span id="cb22-168"><a href="#cb22-168"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes):</span>
-<span id="cb22-169"><a href="#cb22-169"></a>                        <span class="cf">if</span> <span class="va">self</span>._opt_x[k][arc_start][j] <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb22-170"><a href="#cb22-170"></a>                            arc_end <span class="op">=</span> j</span>
-<span id="cb22-171"><a href="#cb22-171"></a>                            <span class="cf">break</span></span>
-<span id="cb22-172"><a href="#cb22-172"></a>                    route.append((arc_start, arc_end))</span>
-<span id="cb22-173"><a href="#cb22-173"></a>                    route_length <span class="op">+=</span> <span class="va">self</span>._data_center<span class="op">\</span></span>
-<span id="cb22-174"><a href="#cb22-174"></a>                        .distance(arc_start,</span>
-<span id="cb22-175"><a href="#cb22-175"></a>                                arc_end,</span>
-<span id="cb22-176"><a href="#cb22-176"></a>                                integer<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb22-177"><a href="#cb22-177"></a>                    <span class="cf">if</span> arc_end <span class="op">==</span> <span class="dv">0</span>: <span class="cf">break</span></span>
-<span id="cb22-178"><a href="#cb22-178"></a>                    arc_start <span class="op">=</span> arc_end</span>
-<span id="cb22-179"><a href="#cb22-179"></a></span>
-<span id="cb22-180"><a href="#cb22-180"></a>                <span class="va">self</span>._routes.append(route)</span>
-<span id="cb22-181"><a href="#cb22-181"></a>                <span class="bu">print</span>(<span class="ss">f'route: </span><span class="sc">{</span>route<span class="sc">}</span><span class="ss">, length: </span><span class="sc">{</span>route_length<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb22-182"><a href="#cb22-182"></a>                </span>
-<span id="cb22-183"><a href="#cb22-183"></a>                <span class="cf">break</span></span>
-<span id="cb22-184"><a href="#cb22-184"></a>    </span>
-<span id="cb22-185"><a href="#cb22-185"></a>    <span class="kw">def</span> show_opt_routes(<span class="va">self</span>):</span>
-<span id="cb22-186"><a href="#cb22-186"></a>        nodes <span class="op">=</span> <span class="va">self</span>._data_center.nodes</span>
-<span id="cb22-187"><a href="#cb22-187"></a>        locations <span class="op">=</span> {</span>
-<span id="cb22-188"><a href="#cb22-188"></a>            node.<span class="bu">id</span>: (node.x_coord, node.y_coord)</span>
-<span id="cb22-189"><a href="#cb22-189"></a>            <span class="cf">for</span> node <span class="kw">in</span> nodes</span>
-<span id="cb22-190"><a href="#cb22-190"></a>        }</span>
-<span id="cb22-191"><a href="#cb22-191"></a></span>
-<span id="cb22-192"><a href="#cb22-192"></a>        edges <span class="op">=</span> []</span>
-<span id="cb22-193"><a href="#cb22-193"></a>        vehicle_idx <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb22-194"><a href="#cb22-194"></a>        <span class="cf">for</span> route <span class="kw">in</span> <span class="va">self</span>._routes:</span>
-<span id="cb22-195"><a href="#cb22-195"></a>            <span class="cf">for</span> arc <span class="kw">in</span> route:</span>
-<span id="cb22-196"><a href="#cb22-196"></a>                edges.append((arc[<span class="dv">0</span>], arc[<span class="dv">1</span>], {<span class="st">'vehicle'</span>: <span class="bu">str</span>(vehicle_idx)}))</span>
-<span id="cb22-197"><a href="#cb22-197"></a>            vehicle_idx <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb22-198"><a href="#cb22-198"></a>        edges</span>
-<span id="cb22-199"><a href="#cb22-199"></a></span>
-<span id="cb22-200"><a href="#cb22-200"></a>        show_vehicle_routes(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="72">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a>cvrp3 <span class="op">=</span> Cvrp3(CvrpDataCenter())</span>
-<span id="cb23-2"><a href="#cb23-2"></a>cvrp3.read_instance(<span class="st">"./data/cvrp/P-n16-k8.vrp"</span>)</span>
-<span id="cb23-3"><a href="#cb23-3"></a>cvrp3.build_model()</span>
-<span id="cb23-4"><a href="#cb23-4"></a>cvrp3.show_model_summary()</span>
-<span id="cb23-5"><a href="#cb23-5"></a>cvrp3.optimize()</span>
-<span id="cb23-6"><a href="#cb23-6"></a>cvrp3.show_opt_routes()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-23"><a href="#cb22-23"></a>        </span>
+<span id="cb22-24"><a href="#cb22-24"></a>        nodes <span class="op">=</span> <span class="va">self</span>._data_center.nodes</span>
+<span id="cb22-25"><a href="#cb22-25"></a>        <span class="cf">for</span> node <span class="kw">in</span> nodes:</span>
+<span id="cb22-26"><a href="#cb22-26"></a>            <span class="bu">print</span>(node)</span>
+<span id="cb22-27"><a href="#cb22-27"></a>            </span>
+<span id="cb22-28"><a href="#cb22-28"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-29"><a href="#cb22-29"></a>        <span class="bu">print</span>(<span class="ss">f"num_nodes = </span><span class="sc">{</span>num_nodes<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-30"><a href="#cb22-30"></a></span>
+<span id="cb22-31"><a href="#cb22-31"></a>        vehicle_capacity <span class="op">=</span> <span class="va">self</span>._data_center.vehicle_capacity</span>
+<span id="cb22-32"><a href="#cb22-32"></a>        <span class="bu">print</span>(<span class="ss">f"vehicle_capacity = </span><span class="sc">{</span>vehicle_capacity<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-33"><a href="#cb22-33"></a></span>
+<span id="cb22-34"><a href="#cb22-34"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
+<span id="cb22-35"><a href="#cb22-35"></a>        <span class="va">self</span>._create_variables()</span>
+<span id="cb22-36"><a href="#cb22-36"></a>        <span class="va">self</span>._create_objective()</span>
+<span id="cb22-37"><a href="#cb22-37"></a>        <span class="va">self</span>._create_constr_flow()</span>
+<span id="cb22-38"><a href="#cb22-38"></a>        <span class="va">self</span>._create_constr_customer_must_be_visited()</span>
+<span id="cb22-39"><a href="#cb22-39"></a>        <span class="va">self</span>._create_constr_subtour()</span>
+<span id="cb22-40"><a href="#cb22-40"></a>        </span>
+<span id="cb22-41"><a href="#cb22-41"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
+<span id="cb22-42"><a href="#cb22-42"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb22-43"><a href="#cb22-43"></a>        <span class="bu">print</span>(<span class="st">"solve complete!"</span>)</span>
+<span id="cb22-44"><a href="#cb22-44"></a>        <span class="cf">if</span> <span class="kw">not</span> status:</span>
+<span id="cb22-45"><a href="#cb22-45"></a>            <span class="va">self</span>._retrieve_opt_solution()</span>
+<span id="cb22-46"><a href="#cb22-46"></a>            <span class="co"># self._retrieve_opt_routes()</span></span>
+<span id="cb22-47"><a href="#cb22-47"></a>        <span class="cf">else</span>:</span>
+<span id="cb22-48"><a href="#cb22-48"></a>            <span class="bu">print</span>(<span class="ss">f"status=</span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-49"><a href="#cb22-49"></a>    </span>
+<span id="cb22-50"><a href="#cb22-50"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb22-51"><a href="#cb22-51"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-52"><a href="#cb22-52"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-53"><a href="#cb22-53"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((num_vehicles, num_nodes, num_nodes), </span>
+<span id="cb22-54"><a href="#cb22-54"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb22-55"><a href="#cb22-55"></a>        <span class="cf">for</span> k, i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), </span>
+<span id="cb22-56"><a href="#cb22-56"></a>                            <span class="bu">range</span>(num_nodes),</span>
+<span id="cb22-57"><a href="#cb22-57"></a>                            <span class="bu">range</span>(num_nodes)):</span>
+<span id="cb22-58"><a href="#cb22-58"></a>            <span class="va">self</span>._var_x[k][i][j] <span class="op">=</span> <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f"x_</span><span class="sc">{</span>k<span class="sc">,</span> i<span class="sc">,</span> j<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-59"><a href="#cb22-59"></a>            </span>
+<span id="cb22-60"><a href="#cb22-60"></a>        <span class="va">self</span>._var_y <span class="op">=</span> np.empty((num_vehicles, num_nodes), dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb22-61"><a href="#cb22-61"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles),</span>
+<span id="cb22-62"><a href="#cb22-62"></a>                            <span class="bu">range</span>(num_nodes)):</span>
+<span id="cb22-63"><a href="#cb22-63"></a>            <span class="va">self</span>._var_y[k][i] <span class="op">=</span> <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'y_</span><span class="sc">{</span>k<span class="sc">,</span> i<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb22-64"><a href="#cb22-64"></a>        </span>
+<span id="cb22-65"><a href="#cb22-65"></a>        vehicle_capacity <span class="op">=</span> <span class="va">self</span>._data_center.vehicle_capacity</span>
+<span id="cb22-66"><a href="#cb22-66"></a>        <span class="va">self</span>._var_u <span class="op">=</span> np.empty(num_nodes, dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb22-67"><a href="#cb22-67"></a>        <span class="cf">for</span> node <span class="kw">in</span> <span class="va">self</span>._data_center.nodes:</span>
+<span id="cb22-68"><a href="#cb22-68"></a>            <span class="va">self</span>._var_u[node.<span class="bu">id</span>] <span class="op">=</span> <span class="va">self</span>._solver.NumVar(</span>
+<span id="cb22-69"><a href="#cb22-69"></a>                <span class="bu">float</span>(node.demand),</span>
+<span id="cb22-70"><a href="#cb22-70"></a>                vehicle_capacity,</span>
+<span id="cb22-71"><a href="#cb22-71"></a>                name<span class="op">=</span><span class="ss">f'u_</span><span class="sc">{</span>node<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb22-72"><a href="#cb22-72"></a></span>
+<span id="cb22-73"><a href="#cb22-73"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb22-74"><a href="#cb22-74"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-75"><a href="#cb22-75"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-76"><a href="#cb22-76"></a>        obj_expr <span class="op">=</span> [</span>
+<span id="cb22-77"><a href="#cb22-77"></a>            <span class="va">self</span>._data_center.distance(i, j, integer<span class="op">=</span><span class="va">True</span>) <span class="op">*</span> </span>
+<span id="cb22-78"><a href="#cb22-78"></a>                <span class="va">self</span>._var_x[k][i][j]</span>
+<span id="cb22-79"><a href="#cb22-79"></a>                <span class="cf">for</span> k, i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(num_nodes), <span class="bu">range</span>(num_nodes))</span>
+<span id="cb22-80"><a href="#cb22-80"></a>                <span class="cf">if</span> i <span class="op">!=</span> j</span>
+<span id="cb22-81"><a href="#cb22-81"></a>        ]</span>
+<span id="cb22-82"><a href="#cb22-82"></a>        <span class="va">self</span>._solver.Minimize(<span class="va">self</span>._solver.Sum(obj_expr))</span>
+<span id="cb22-83"><a href="#cb22-83"></a>    </span>
+<span id="cb22-84"><a href="#cb22-84"></a>    <span class="kw">def</span> _create_constr_flow(<span class="va">self</span>):</span>
+<span id="cb22-85"><a href="#cb22-85"></a>        <span class="co"># create incoming and outgoing arc constraints</span></span>
+<span id="cb22-86"><a href="#cb22-86"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-87"><a href="#cb22-87"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-88"><a href="#cb22-88"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles),</span>
+<span id="cb22-89"><a href="#cb22-89"></a>                            <span class="bu">range</span>(num_nodes)):</span>
+<span id="cb22-90"><a href="#cb22-90"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._var_x[k][i][i] <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb22-91"><a href="#cb22-91"></a>            </span>
+<span id="cb22-92"><a href="#cb22-92"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles),</span>
+<span id="cb22-93"><a href="#cb22-93"></a>                            <span class="bu">range</span>(num_nodes)):</span>
+<span id="cb22-94"><a href="#cb22-94"></a>            expr1 <span class="op">=</span> [<span class="va">self</span>._var_x[k][i][j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes)]</span>
+<span id="cb22-95"><a href="#cb22-95"></a>            expr2 <span class="op">=</span> [<span class="va">self</span>._var_x[k][j][i] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes)]</span>
+<span id="cb22-96"><a href="#cb22-96"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr1) <span class="op">==</span> </span>
+<span id="cb22-97"><a href="#cb22-97"></a>                            <span class="va">self</span>._solver.Sum(expr2))</span>
+<span id="cb22-98"><a href="#cb22-98"></a>    </span>
+<span id="cb22-99"><a href="#cb22-99"></a>    <span class="kw">def</span> _create_constr_customer_must_be_visited(<span class="va">self</span>):</span>
+<span id="cb22-100"><a href="#cb22-100"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-101"><a href="#cb22-101"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-102"><a href="#cb22-102"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes):</span>
+<span id="cb22-103"><a href="#cb22-103"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_y[k][i] <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles)]</span>
+<span id="cb22-104"><a href="#cb22-104"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb22-105"><a href="#cb22-105"></a>        </span>
+<span id="cb22-106"><a href="#cb22-106"></a>        <span class="cf">for</span> k, i <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles),</span>
+<span id="cb22-107"><a href="#cb22-107"></a>                            <span class="bu">range</span>(num_nodes)):</span>
+<span id="cb22-108"><a href="#cb22-108"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[k][i][j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes)]</span>
+<span id="cb22-109"><a href="#cb22-109"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">==</span></span>
+<span id="cb22-110"><a href="#cb22-110"></a>                            <span class="va">self</span>._var_y[k][i])</span>
+<span id="cb22-111"><a href="#cb22-111"></a>        </span>
+<span id="cb22-112"><a href="#cb22-112"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):</span>
+<span id="cb22-113"><a href="#cb22-113"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._var_y[k][<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb22-114"><a href="#cb22-114"></a></span>
+<span id="cb22-115"><a href="#cb22-115"></a>    <span class="kw">def</span> _create_constr_subtour(<span class="va">self</span>):</span>
+<span id="cb22-116"><a href="#cb22-116"></a>        <span class="co"># create subtour elimination constraint</span></span>
+<span id="cb22-117"><a href="#cb22-117"></a>        constraints <span class="op">=</span> []</span>
+<span id="cb22-118"><a href="#cb22-118"></a>        nodes <span class="op">=</span> <span class="va">self</span>._data_center.nodes</span>
+<span id="cb22-119"><a href="#cb22-119"></a>        vehicle_capacity <span class="op">=</span> <span class="va">self</span>._data_center.vehicle_capacity</span>
+<span id="cb22-120"><a href="#cb22-120"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-121"><a href="#cb22-121"></a>        <span class="cf">for</span> k, ni, nj <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), nodes, nodes):</span>
+<span id="cb22-122"><a href="#cb22-122"></a>            <span class="cf">if</span> ni.<span class="bu">id</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> nj.<span class="bu">id</span> <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
+<span id="cb22-123"><a href="#cb22-123"></a>            <span class="cf">if</span> ni.<span class="bu">id</span> <span class="op">==</span> nj.<span class="bu">id</span>: <span class="cf">continue</span></span>
+<span id="cb22-124"><a href="#cb22-124"></a>            constr <span class="op">=</span> <span class="va">self</span>._solver.Add(<span class="va">self</span>._var_u[ni.<span class="bu">id</span>] <span class="op">&lt;=</span></span>
+<span id="cb22-125"><a href="#cb22-125"></a>                    <span class="va">self</span>._var_u[nj.<span class="bu">id</span>] <span class="op">-</span></span>
+<span id="cb22-126"><a href="#cb22-126"></a>                    <span class="bu">float</span>(nj.demand) <span class="op">+</span></span>
+<span id="cb22-127"><a href="#cb22-127"></a>                    vehicle_capacity <span class="op">*</span> (</span>
+<span id="cb22-128"><a href="#cb22-128"></a>                        <span class="dv">1</span> <span class="op">-</span> <span class="va">self</span>._var_x[k][ni.<span class="bu">id</span>][nj.<span class="bu">id</span>]</span>
+<span id="cb22-129"><a href="#cb22-129"></a>                    )</span>
+<span id="cb22-130"><a href="#cb22-130"></a>                )</span>
+<span id="cb22-131"><a href="#cb22-131"></a>            constraints.append(constr)</span>
+<span id="cb22-132"><a href="#cb22-132"></a></span>
+<span id="cb22-133"><a href="#cb22-133"></a>        <span class="bu">print</span>(<span class="ss">f"No. subtour elimination constraints: </span><span class="sc">{</span><span class="bu">len</span>(constraints)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-134"><a href="#cb22-134"></a>    </span>
+<span id="cb22-135"><a href="#cb22-135"></a>    <span class="kw">def</span> show_model_summary(<span class="va">self</span>):</span>
+<span id="cb22-136"><a href="#cb22-136"></a>        <span class="bu">print</span>(<span class="ss">f"No. of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-137"><a href="#cb22-137"></a>        <span class="bu">print</span>(<span class="ss">f"No. of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb22-138"><a href="#cb22-138"></a>    </span>
+<span id="cb22-139"><a href="#cb22-139"></a>    <span class="kw">def</span> _retrieve_opt_solution(<span class="va">self</span>):</span>
+<span id="cb22-140"><a href="#cb22-140"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
+<span id="cb22-141"><a href="#cb22-141"></a>        <span class="bu">print</span>(<span class="ss">f'optimal value: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_obj<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb22-142"><a href="#cb22-142"></a>        </span>
+<span id="cb22-143"><a href="#cb22-143"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-144"><a href="#cb22-144"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-145"><a href="#cb22-145"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((num_vehicles, num_nodes, num_nodes))</span>
+<span id="cb22-146"><a href="#cb22-146"></a>        <span class="cf">for</span> k, i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_vehicles), <span class="bu">range</span>(num_nodes), <span class="bu">range</span>(num_nodes)):</span>
+<span id="cb22-147"><a href="#cb22-147"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
+<span id="cb22-148"><a href="#cb22-148"></a>            <span class="va">self</span>._opt_x[k][i][j] <span class="op">=</span> <span class="bu">int</span>(<span class="va">self</span>._var_x[k][i][j].solution_value())</span>
+<span id="cb22-149"><a href="#cb22-149"></a></span>
+<span id="cb22-150"><a href="#cb22-150"></a>    <span class="kw">def</span> _retrieve_opt_routes(<span class="va">self</span>):</span>
+<span id="cb22-151"><a href="#cb22-151"></a>        num_nodes <span class="op">=</span> <span class="va">self</span>._data_center.num_nodes</span>
+<span id="cb22-152"><a href="#cb22-152"></a>        num_vehicles <span class="op">=</span> <span class="va">self</span>._data_center.num_vehicles</span>
+<span id="cb22-153"><a href="#cb22-153"></a>        <span class="va">self</span>._routes <span class="op">=</span> []</span>
+<span id="cb22-154"><a href="#cb22-154"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(num_vehicles):     </span>
+<span id="cb22-155"><a href="#cb22-155"></a>            route <span class="op">=</span> []   </span>
+<span id="cb22-156"><a href="#cb22-156"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes):</span>
+<span id="cb22-157"><a href="#cb22-157"></a>                <span class="cf">if</span> <span class="va">self</span>._opt_x[k][<span class="dv">0</span>][i] <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
+<span id="cb22-158"><a href="#cb22-158"></a></span>
+<span id="cb22-159"><a href="#cb22-159"></a>                <span class="co"># new route found</span></span>
+<span id="cb22-160"><a href="#cb22-160"></a>                route_length <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb22-161"><a href="#cb22-161"></a>                <span class="co"># add the first arc</span></span>
+<span id="cb22-162"><a href="#cb22-162"></a>                arc_start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb22-163"><a href="#cb22-163"></a>                arc_end <span class="op">=</span> i</span>
+<span id="cb22-164"><a href="#cb22-164"></a>                route.append((arc_start, arc_end))</span>
+<span id="cb22-165"><a href="#cb22-165"></a>                route_length <span class="op">+=</span> <span class="va">self</span>._data_center<span class="op">\</span></span>
+<span id="cb22-166"><a href="#cb22-166"></a>                        .distance(arc_start, </span>
+<span id="cb22-167"><a href="#cb22-167"></a>                                arc_end,</span>
+<span id="cb22-168"><a href="#cb22-168"></a>                                integer<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-169"><a href="#cb22-169"></a>                </span>
+<span id="cb22-170"><a href="#cb22-170"></a>                <span class="co"># add remaining arcs on the route</span></span>
+<span id="cb22-171"><a href="#cb22-171"></a>                arc_start <span class="op">=</span> arc_end</span>
+<span id="cb22-172"><a href="#cb22-172"></a>                <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb22-173"><a href="#cb22-173"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes):</span>
+<span id="cb22-174"><a href="#cb22-174"></a>                        <span class="cf">if</span> <span class="va">self</span>._opt_x[k][arc_start][j] <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb22-175"><a href="#cb22-175"></a>                            arc_end <span class="op">=</span> j</span>
+<span id="cb22-176"><a href="#cb22-176"></a>                            <span class="cf">break</span></span>
+<span id="cb22-177"><a href="#cb22-177"></a>                    route.append((arc_start, arc_end))</span>
+<span id="cb22-178"><a href="#cb22-178"></a>                    route_length <span class="op">+=</span> <span class="va">self</span>._data_center<span class="op">\</span></span>
+<span id="cb22-179"><a href="#cb22-179"></a>                        .distance(arc_start,</span>
+<span id="cb22-180"><a href="#cb22-180"></a>                                arc_end,</span>
+<span id="cb22-181"><a href="#cb22-181"></a>                                integer<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-182"><a href="#cb22-182"></a>                    <span class="cf">if</span> arc_end <span class="op">==</span> <span class="dv">0</span>: <span class="cf">break</span></span>
+<span id="cb22-183"><a href="#cb22-183"></a>                    arc_start <span class="op">=</span> arc_end</span>
+<span id="cb22-184"><a href="#cb22-184"></a></span>
+<span id="cb22-185"><a href="#cb22-185"></a>                <span class="va">self</span>._routes.append(route)</span>
+<span id="cb22-186"><a href="#cb22-186"></a>                <span class="bu">print</span>(<span class="ss">f'route: </span><span class="sc">{</span>route<span class="sc">}</span><span class="ss">, length: </span><span class="sc">{</span>route_length<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb22-187"><a href="#cb22-187"></a>                </span>
+<span id="cb22-188"><a href="#cb22-188"></a>                <span class="cf">break</span></span>
+<span id="cb22-189"><a href="#cb22-189"></a>    </span>
+<span id="cb22-190"><a href="#cb22-190"></a>    <span class="kw">def</span> show_opt_routes(<span class="va">self</span>):</span>
+<span id="cb22-191"><a href="#cb22-191"></a>        nodes <span class="op">=</span> <span class="va">self</span>._data_center.nodes</span>
+<span id="cb22-192"><a href="#cb22-192"></a>        locations <span class="op">=</span> {</span>
+<span id="cb22-193"><a href="#cb22-193"></a>            node.<span class="bu">id</span>: (node.x_coord, node.y_coord)</span>
+<span id="cb22-194"><a href="#cb22-194"></a>            <span class="cf">for</span> node <span class="kw">in</span> nodes</span>
+<span id="cb22-195"><a href="#cb22-195"></a>        }</span>
+<span id="cb22-196"><a href="#cb22-196"></a></span>
+<span id="cb22-197"><a href="#cb22-197"></a>        edges <span class="op">=</span> []</span>
+<span id="cb22-198"><a href="#cb22-198"></a>        vehicle_idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb22-199"><a href="#cb22-199"></a>        <span class="cf">for</span> route <span class="kw">in</span> <span class="va">self</span>._routes:</span>
+<span id="cb22-200"><a href="#cb22-200"></a>            <span class="cf">for</span> arc <span class="kw">in</span> route:</span>
+<span id="cb22-201"><a href="#cb22-201"></a>                edges.append((arc[<span class="dv">0</span>], arc[<span class="dv">1</span>], {<span class="st">'vehicle'</span>: <span class="bu">str</span>(vehicle_idx)}))</span>
+<span id="cb22-202"><a href="#cb22-202"></a>            vehicle_idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb22-203"><a href="#cb22-203"></a>        edges</span>
+<span id="cb22-204"><a href="#cb22-204"></a></span>
+<span id="cb22-205"><a href="#cb22-205"></a>        show_vehicle_routes(locations, edges)</span>
+<span id="cb22-206"><a href="#cb22-206"></a>        </span>
+<span id="cb22-207"><a href="#cb22-207"></a>cvrp3 <span class="op">=</span> Cvrp3(CvrpDataCenter())</span>
+<span id="cb22-208"><a href="#cb22-208"></a>cvrp3.read_instance(<span class="st">"./data/cvrp/E-n13-k4.vrp"</span>)</span>
+<span id="cb22-209"><a href="#cb22-209"></a>cvrp3.build_model()</span>
+<span id="cb22-210"><a href="#cb22-210"></a>cvrp3.show_model_summary()</span>
+<span id="cb22-211"><a href="#cb22-211"></a>cvrp3.optimize()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>No. subtour elimination constraints: 1680
-No. of variables: 2168
-No. of constraints: 2191
-status=2</code></pre>
+<pre><code>id: 0,            x_coord: 0,            y_coord: 0,            demand: 0
+id: 1,            x_coord: 0,            y_coord: 0,            demand: 1200
+id: 2,            x_coord: 0,            y_coord: 0,            demand: 1700
+id: 3,            x_coord: 0,            y_coord: 0,            demand: 1500
+id: 4,            x_coord: 0,            y_coord: 0,            demand: 1400
+id: 5,            x_coord: 0,            y_coord: 0,            demand: 1700
+id: 6,            x_coord: 0,            y_coord: 0,            demand: 1400
+id: 7,            x_coord: 0,            y_coord: 0,            demand: 1200
+id: 8,            x_coord: 0,            y_coord: 0,            demand: 1900
+id: 9,            x_coord: 0,            y_coord: 0,            demand: 1800
+id: 10,            x_coord: 0,            y_coord: 0,            demand: 1600
+id: 11,            x_coord: 0,            y_coord: 0,            demand: 1700
+id: 12,            x_coord: 0,            y_coord: 0,            demand: 1100
+num_nodes = 13
+vehicle_capacity = 6000
+No. subtour elimination constraints: 528
+No. of variables: 741
+No. of constraints: 700
+solve complete!
+optimal value: 289.99999999999994</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="123">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a>cvrp3 <span class="op">=</span> Cvrp3(CvrpDataCenter())</span>
+<span id="cb24-2"><a href="#cb24-2"></a></span>
+<span id="cb24-3"><a href="#cb24-3"></a>cvrp3.read_instance(<span class="st">"./data/cvrp/E-n13-k4.vrp"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4"></a>cvrp3.build_model()</span>
+<span id="cb24-5"><a href="#cb24-5"></a>cvrp3.show_model_summary()</span>
+<span id="cb24-6"><a href="#cb24-6"></a>cvrp3.optimize()</span>
+<span id="cb24-7"><a href="#cb24-7"></a>cvrp3.show_opt_routes()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>id: 0,            x_coord: 0,            y_coord: 0,            demand: 0
+id: 1,            x_coord: 0,            y_coord: 0,            demand: 1200
+id: 2,            x_coord: 0,            y_coord: 0,            demand: 1700
+id: 3,            x_coord: 0,            y_coord: 0,            demand: 1500
+id: 4,            x_coord: 0,            y_coord: 0,            demand: 1400
+id: 5,            x_coord: 0,            y_coord: 0,            demand: 1700
+id: 6,            x_coord: 0,            y_coord: 0,            demand: 1400
+id: 7,            x_coord: 0,            y_coord: 0,            demand: 1200
+id: 8,            x_coord: 0,            y_coord: 0,            demand: 1900
+id: 9,            x_coord: 0,            y_coord: 0,            demand: 1800
+id: 10,            x_coord: 0,            y_coord: 0,            demand: 1600
+id: 11,            x_coord: 0,            y_coord: 0,            demand: 1700
+id: 12,            x_coord: 0,            y_coord: 0,            demand: 1100
+num_nodes = 13
+vehicle_capacity = 6000
+No. subtour elimination constraints: 528
+No. of variables: 741
+No. of constraints: 700
+solve complete!
+optimal value: 289.99999999999994</code></pre>
 </div>
 <div class="cell-output cell-output-error">
 <pre><code>AttributeError: 'Cvrp3' object has no attribute '_routes'</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="115">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a><span class="im">import</span> vrplib</span>
+<span id="cb27-2"><a href="#cb27-2"></a></span>
+<span id="cb27-3"><a href="#cb27-3"></a>instance <span class="op">=</span> vrplib.read_instance(<span class="st">"./data/cvrp/E-n13-k4.vrp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="116">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1"></a>instance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="116">
+<pre><code>{'name': 'E-n13-k4',
+ 'comment': '(Eilon et al, Min no of trucks: 4, Optimal value: 247)',
+ 'type': 'CVRP',
+ 'dimension': 13,
+ 'edge_weight_type': 'EXPLICIT',
+ 'edge_weight_format': 'LOWER_ROW',
+ 'display_data_type': 'NO_DISPLAY',
+ 'capacity': 6000,
+ 'edge_weight': array([[ 0.,  9., 14., 21., 23., 22., 25., 32., 36., 38., 42., 50., 52.],
+        [ 9.,  0.,  5., 12., 22., 21., 24., 31., 35., 37., 41., 49., 51.],
+        [14.,  5.,  0.,  7., 17., 16., 23., 26., 30., 36., 36., 44., 46.],
+        [21., 12.,  7.,  0., 10., 21., 30., 27., 37., 43., 31., 37., 39.],
+        [23., 22., 17., 10.,  0., 19., 28., 25., 35., 41., 29., 31., 29.],
+        [22., 21., 16., 21., 19.,  0.,  9., 10., 16., 22., 20., 28., 30.],
+        [25., 24., 23., 30., 28.,  9.,  0.,  7., 11., 13., 17., 25., 27.],
+        [32., 31., 26., 27., 25., 10.,  7.,  0., 10., 16., 10., 18., 20.],
+        [36., 35., 30., 37., 35., 16., 11., 10.,  0.,  6.,  6., 14., 16.],
+        [38., 37., 36., 43., 41., 22., 13., 16.,  6.,  0., 12., 12., 20.],
+        [42., 41., 36., 31., 29., 20., 17., 10.,  6., 12.,  0.,  8., 10.],
+        [50., 49., 44., 37., 31., 28., 25., 18., 14., 12.,  8.,  0., 10.],
+        [52., 51., 46., 39., 29., 30., 27., 20., 16., 20., 10., 10.,  0.]]),
+ 'demand': array([   0, 1200, 1700, 1500, 1400, 1700, 1400, 1200, 1900, 1800, 1600,
+        1700, 1100]),
+ 'depot': array([0])}</code></pre>
 </div>
 </div>
 
@@ -1644,8 +1741,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./summary.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ip-knapsack.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
