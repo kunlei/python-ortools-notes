@@ -279,6 +279,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   <ul>
   <li><a href="#single-dimensional-knapsack-problem" id="toc-single-dimensional-knapsack-problem" class="nav-link active" data-scroll-target="#single-dimensional-knapsack-problem"><span class="header-section-number">8.1</span> Single-dimensional Knapsack Problem</a></li>
   <li><a href="#multi-dimensional-knapsack-problem" id="toc-multi-dimensional-knapsack-problem" class="nav-link" data-scroll-target="#multi-dimensional-knapsack-problem"><span class="header-section-number">8.2</span> Multi-dimensional Knapsack Problem</a></li>
+  <li><a href="#multi-choice-knapsack-problem" id="toc-multi-choice-knapsack-problem" class="nav-link" data-scroll-target="#multi-choice-knapsack-problem"><span class="header-section-number">8.3</span> Multi-Choice Knapsack Problem</a></li>
+  <li><a href="#multi-choice-multi-dimensional-knapsack-problem" id="toc-multi-choice-multi-dimensional-knapsack-problem" class="nav-link" data-scroll-target="#multi-choice-multi-dimensional-knapsack-problem"><span class="header-section-number">8.4</span> Multi-Choice Multi-Dimensional Knapsack Problem</a></li>
   </ul>
 </nav>
     </div>
@@ -305,11 +307,11 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <p>The knapsack problem is a classic optimization problem in the field of operations research. It involves selecting a subset of items from a given set of items to maximize the total value/profit while satisfying certain constraints. This problem is NP-hard, meaning that it is computationally difficult to find an optimal solution for large instances of the problem. Various algorithms have been developed to solve this problem, including dynamic programming, branch and bound, and heuristic methods. The knapsack problem has applications in a variety of fields, including computer science, finance, and logistics, among others. In this chapter, we’ll examine two variants of the knapsack problem, namely, the single-dimensional knapsack problem and the multi-dimensional knapsack problem.</p>
 <section id="single-dimensional-knapsack-problem" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="single-dimensional-knapsack-problem"><span class="header-section-number">8.1</span> Single-dimensional Knapsack Problem</h2>
-<p>In the single-dimensional knapsack problem (SDKP), we are given a set of <span class="math inline">\(n\)</span> items, each with a weight <span class="math inline">\(w_i\)</span> and a value <span class="math inline">\(v_i\)</span>, and a knapsack with a maximum weight capacity <span class="math inline">\(W\)</span>, the goal is to select a subset of items such that the sum of their weights is less than or equal to <span class="math inline">\(W\)</span>, and the sum of their values is maximized. The SDKP can be formally formulated as follows (<span class="citation" data-cites="dudzinski_exact_1987">Dudziński and Walukiewicz (<a href="references.html#ref-dudzinski_exact_1987" role="doc-biblioref">1987</a>)</span>).</p>
+<p>In the single-dimensional knapsack problem (SDKP), we are given a set of <span class="math inline">\(n\)</span> items, each with a weight <span class="math inline">\(w_j\)</span> and a value <span class="math inline">\(v_j\)</span>, and a knapsack with a maximum weight capacity <span class="math inline">\(W\)</span>, the goal is to select a subset of items such that the sum of their weights is less than or equal to <span class="math inline">\(W\)</span>, and the sum of their values is maximized. The SDKP can be formally formulated as follows (<span class="citation" data-cites="dudzinski_exact_1987">Dudziński and Walukiewicz (<a href="references.html#ref-dudzinski_exact_1987" role="doc-biblioref">1987</a>)</span>).</p>
 <p><span class="math display">\[\begin{align}
-    \text{max.} &amp;\quad \sum_{i = 1}^nv_i x_i \label{knapsack1-obj} \\
-    \text{s.t.} &amp;\quad \sum_{i=1}^n w_i x_i \leq W \label{knapsack1-cons1} \\
-    &amp;\quad x_i \in \{0, 1\}, \ i = 1, \cdots, n \label{knapsack1-cons2}
+    \text{max.} &amp;\quad \sum_{j = 1}^nv_i x_j \label{knapsack1-obj} \\
+    \text{s.t.} &amp;\quad \sum_{j=1}^n w_j x_j \leq W \label{knapsack1-cons1} \\
+    &amp;\quad x_j \in \{0, 1\}, \ j = 1, \cdots, n \label{knapsack1-cons2}
 \end{align}\]</span></p>
 <p>In the model, the <span class="math inline">\(n\)</span> represents the total amount of items that are being considered. The binary decision variable <span class="math inline">\(x_i\)</span> has a value of 1 when item <span class="math inline">\(i\)</span> is chosen, and 0 when it’s not. The value or profit of selecting item <span class="math inline">\(i\)</span> is indicated by <span class="math inline">\(v_i\)</span>, and the weight of item <span class="math inline">\(i\)</span> is represented by <span class="math inline">\(w_i\)</span>. Finally, <span class="math inline">\(W\)</span> specifies the maximum weight capacity of the knapsack.</p>
 <p>To represent the list of items in the problem, we first define a class <code>Item</code> that has three attributes:</p>
@@ -318,7 +320,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <li><code>_profit</code>: this is the profit or value of selecting the item</li>
 <li><code>_properties</code>: this dictionary saves an item’s properties, including weight</li>
 </ul>
-<div class="cell" data-execution_count="82">
+<div class="cell" data-execution_count="152">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">class</span> Item:</span>
 <span id="cb1-2"><a href="#cb1-2"></a>    <span class="co">"""An item represents an object that can be placed within a knapsack</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="co">    """</span></span>
@@ -359,57 +361,63 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <li><code>_capacities</code>: this saves the maximal capacity of the knapsack corresponding to different properties, including weight.</li>
 </ul>
 <p>The class also defines a method <code>read_data_set_f()</code> that reads and parses some benchmarking instancese available online.</p>
-<div class="cell" data-execution_count="79">
+<div class="cell" data-execution_count="153">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> KnapsackDataCenter:</span>
 <span id="cb2-2"><a href="#cb2-2"></a>    </span>
 <span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
 <span id="cb2-4"><a href="#cb2-4"></a>        <span class="va">self</span>._items <span class="op">=</span> []</span>
 <span id="cb2-5"><a href="#cb2-5"></a>        <span class="va">self</span>._capacities <span class="op">=</span> {}</span>
-<span id="cb2-6"><a href="#cb2-6"></a>        </span>
-<span id="cb2-7"><a href="#cb2-7"></a>    <span class="kw">def</span> read_data_set_f(<span class="va">self</span>, data_file: <span class="bu">str</span>):</span>
-<span id="cb2-8"><a href="#cb2-8"></a>        <span class="co">"""this function reads and parses data presented in </span></span>
-<span id="cb2-9"><a href="#cb2-9"></a><span class="co">        http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP/</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="co">        Args:</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co">            data_file (str): path to the data file</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a><span class="co">            num_items (int): number of items in the file</span></span>
-<span id="cb2-14"><a href="#cb2-14"></a><span class="co">            capacity (int): knapsack capacity</span></span>
-<span id="cb2-15"><a href="#cb2-15"></a><span class="co">        """</span></span>
-<span id="cb2-16"><a href="#cb2-16"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
-<span id="cb2-17"><a href="#cb2-17"></a>            first_line <span class="op">=</span> f.readline()</span>
-<span id="cb2-18"><a href="#cb2-18"></a>            num_items, capacity <span class="op">=</span> first_line.split()</span>
-<span id="cb2-19"><a href="#cb2-19"></a>            <span class="va">self</span>._capacities[<span class="st">'weight'</span>] <span class="op">=</span> <span class="bu">float</span>(capacity)</span>
-<span id="cb2-20"><a href="#cb2-20"></a>            </span>
-<span id="cb2-21"><a href="#cb2-21"></a>            item_idx <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb2-22"><a href="#cb2-22"></a>            rest_lines <span class="op">=</span> f.readlines()</span>
-<span id="cb2-23"><a href="#cb2-23"></a>            <span class="cf">for</span> line <span class="kw">in</span> rest_lines:</span>
-<span id="cb2-24"><a href="#cb2-24"></a>                profit, weight <span class="op">=</span> line.split()</span>
-<span id="cb2-25"><a href="#cb2-25"></a>                item <span class="op">=</span> Item(item_idx, <span class="bu">float</span>(profit))</span>
-<span id="cb2-26"><a href="#cb2-26"></a>                item.set_property(<span class="st">'weight'</span>, <span class="bu">float</span>(weight))</span>
-<span id="cb2-27"><a href="#cb2-27"></a>                <span class="va">self</span>._items.append(item)</span>
-<span id="cb2-28"><a href="#cb2-28"></a>                item_idx <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb2-29"><a href="#cb2-29"></a>                <span class="cf">if</span> item_idx <span class="op">==</span> <span class="bu">int</span>(num_items): <span class="cf">break</span></span>
-<span id="cb2-30"><a href="#cb2-30"></a>                </span>
-<span id="cb2-31"><a href="#cb2-31"></a>    <span class="at">@property</span></span>
-<span id="cb2-32"><a href="#cb2-32"></a>    <span class="kw">def</span> items(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._items</span>
-<span id="cb2-33"><a href="#cb2-33"></a>    </span>
-<span id="cb2-34"><a href="#cb2-34"></a>    <span class="at">@property</span></span>
-<span id="cb2-35"><a href="#cb2-35"></a>    <span class="kw">def</span> capacities(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._capacities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-6"><a href="#cb2-6"></a>                </span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="at">@property</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="kw">def</span> items(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._items</span>
+<span id="cb2-9"><a href="#cb2-9"></a>    </span>
+<span id="cb2-10"><a href="#cb2-10"></a>    <span class="at">@property</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>    <span class="kw">def</span> capacities(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._capacities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="154">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">class</span> SDKPDataCenter(KnapsackDataCenter):</span>
+<span id="cb3-2"><a href="#cb3-2"></a>    </span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb3-4"><a href="#cb3-4"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb3-5"><a href="#cb3-5"></a>        </span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">def</span> read_sdkp_dataset_f(<span class="va">self</span>, data_file: <span class="bu">str</span>):</span>
+<span id="cb3-7"><a href="#cb3-7"></a>        <span class="co">"""this function reads and parses data presented in </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">        http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP/</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">        Args:</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">            data_file (str): path to the data file</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">            num_items (int): number of items in the file</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">            capacity (int): knapsack capacity</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">        """</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
+<span id="cb3-16"><a href="#cb3-16"></a>            first_line <span class="op">=</span> f.readline()</span>
+<span id="cb3-17"><a href="#cb3-17"></a>            num_items, capacity <span class="op">=</span> first_line.split()</span>
+<span id="cb3-18"><a href="#cb3-18"></a>            <span class="va">self</span>._capacities[<span class="st">'weight'</span>] <span class="op">=</span> <span class="bu">float</span>(capacity)</span>
+<span id="cb3-19"><a href="#cb3-19"></a>            </span>
+<span id="cb3-20"><a href="#cb3-20"></a>            item_idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>            rest_lines <span class="op">=</span> f.readlines()</span>
+<span id="cb3-22"><a href="#cb3-22"></a>            <span class="cf">for</span> line <span class="kw">in</span> rest_lines:</span>
+<span id="cb3-23"><a href="#cb3-23"></a>                profit, weight <span class="op">=</span> line.split()</span>
+<span id="cb3-24"><a href="#cb3-24"></a>                item <span class="op">=</span> Item(item_idx, <span class="bu">float</span>(profit))</span>
+<span id="cb3-25"><a href="#cb3-25"></a>                item.set_property(<span class="st">'weight'</span>, <span class="bu">float</span>(weight))</span>
+<span id="cb3-26"><a href="#cb3-26"></a>                <span class="va">self</span>._items.append(item)</span>
+<span id="cb3-27"><a href="#cb3-27"></a>                item_idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-28"><a href="#cb3-28"></a>                <span class="cf">if</span> item_idx <span class="op">==</span> <span class="bu">int</span>(num_items): <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The code snippet below reads the instance <code>f1_l-d_kp_10_269</code> and shows its key information.</p>
-<div class="cell" data-execution_count="84">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>data_file <span class="op">=</span> <span class="st">"./data/knapsack/instances_01_KP/low-dimensional/f1_l-d_kp_10_269"</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>data_center <span class="op">=</span> KnapsackDataCenter()</span>
-<span id="cb3-4"><a href="#cb3-4"></a>data_center.read_data_set_f(data_file)</span>
-<span id="cb3-5"><a href="#cb3-5"></a></span>
-<span id="cb3-6"><a href="#cb3-6"></a>capacities <span class="op">=</span> data_center.capacities</span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="bu">print</span>(<span class="ss">f"Knapsack info: </span><span class="sc">{</span>capacities<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8"></a></span>
-<span id="cb3-9"><a href="#cb3-9"></a>items <span class="op">=</span> data_center.items</span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="bu">print</span>(<span class="st">"Item info: "</span>)</span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="cf">for</span> item <span class="kw">in</span> items:</span>
-<span id="cb3-12"><a href="#cb3-12"></a>    <span class="bu">print</span>(item)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="155">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>data_file <span class="op">=</span> <span class="st">"./data/knapsack/SDKP/instances_01_KP/low-dimensional/f1_l-d_kp_10_269"</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a>data_center <span class="op">=</span> SDKPDataCenter()</span>
+<span id="cb4-4"><a href="#cb4-4"></a>data_center.read_sdkp_dataset_f(data_file)</span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a>capacities <span class="op">=</span> data_center.capacities</span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="bu">print</span>(<span class="ss">f"Knapsack info: </span><span class="sc">{</span>capacities<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a>items <span class="op">=</span> data_center.items</span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="bu">print</span>(<span class="st">"Item info: "</span>)</span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="cf">for</span> item <span class="kw">in</span> items:</span>
+<span id="cb4-12"><a href="#cb4-12"></a>    <span class="bu">print</span>(item)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Knapsack info: {'weight': 269.0}
 Item info: 
@@ -438,72 +446,72 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <li><code>build_model()</code>: this is responsible for instantiating the solver object, creating variables, generating constraints and defining the objective function</li>
 <li><code>optimize()</code>: this is the place where the OR-Tools searches for the optimal solution</li>
 </ul>
-<div class="cell" data-execution_count="87">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
-<span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">class</span> SDKnapsackSolver:</span>
-<span id="cb5-4"><a href="#cb5-4"></a>    </span>
-<span id="cb5-5"><a href="#cb5-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, data_center):</span>
-<span id="cb5-6"><a href="#cb5-6"></a>        <span class="va">self</span>._data_center <span class="op">=</span> data_center</span>
-<span id="cb5-7"><a href="#cb5-7"></a></span>
-<span id="cb5-8"><a href="#cb5-8"></a>        <span class="va">self</span>._solver <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>        <span class="va">self</span>._var_x <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a></span>
-<span id="cb5-11"><a href="#cb5-11"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a>        </span>
-<span id="cb5-14"><a href="#cb5-14"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
-<span id="cb5-15"><a href="#cb5-15"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
-<span id="cb5-16"><a href="#cb5-16"></a></span>
-<span id="cb5-17"><a href="#cb5-17"></a>        <span class="va">self</span>._create_variables()</span>
-<span id="cb5-18"><a href="#cb5-18"></a>        <span class="va">self</span>._create_objective()</span>
-<span id="cb5-19"><a href="#cb5-19"></a>        <span class="va">self</span>._create_constraints()</span>
-<span id="cb5-20"><a href="#cb5-20"></a>        </span>
-<span id="cb5-21"><a href="#cb5-21"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
-<span id="cb5-22"><a href="#cb5-22"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
-<span id="cb5-23"><a href="#cb5-23"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
-<span id="cb5-24"><a href="#cb5-24"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
-<span id="cb5-25"><a href="#cb5-25"></a>            items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
-<span id="cb5-26"><a href="#cb5-26"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> [</span>
-<span id="cb5-27"><a href="#cb5-27"></a>                    <span class="va">self</span>._var_x[item.index].solution_value()</span>
-<span id="cb5-28"><a href="#cb5-28"></a>                    <span class="cf">for</span> item <span class="kw">in</span> items</span>
-<span id="cb5-29"><a href="#cb5-29"></a>                ]</span>
-<span id="cb5-30"><a href="#cb5-30"></a>    </span>
-<span id="cb5-31"><a href="#cb5-31"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
-<span id="cb5-32"><a href="#cb5-32"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
-<span id="cb5-33"><a href="#cb5-33"></a>        <span class="va">self</span>._var_x <span class="op">=</span> [<span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb5-34"><a href="#cb5-34"></a>                    <span class="cf">for</span> i, item <span class="kw">in</span> <span class="bu">enumerate</span>(items)]</span>
-<span id="cb5-35"><a href="#cb5-35"></a>    </span>
-<span id="cb5-36"><a href="#cb5-36"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
-<span id="cb5-37"><a href="#cb5-37"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
-<span id="cb5-38"><a href="#cb5-38"></a>        obj_expr <span class="op">=</span> [</span>
-<span id="cb5-39"><a href="#cb5-39"></a>                <span class="va">self</span>._var_x[item.index] <span class="op">*</span> item.profit</span>
-<span id="cb5-40"><a href="#cb5-40"></a>                <span class="cf">for</span> item <span class="kw">in</span> items</span>
-<span id="cb5-41"><a href="#cb5-41"></a>                ]</span>
-<span id="cb5-42"><a href="#cb5-42"></a>        <span class="va">self</span>._solver.Maximize(<span class="va">self</span>._solver.Sum(obj_expr))</span>
-<span id="cb5-43"><a href="#cb5-43"></a>        </span>
-<span id="cb5-44"><a href="#cb5-44"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
-<span id="cb5-45"><a href="#cb5-45"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
-<span id="cb5-46"><a href="#cb5-46"></a>        capacities <span class="op">=</span> <span class="va">self</span>._data_center.capacities</span>
-<span id="cb5-47"><a href="#cb5-47"></a>        expr <span class="op">=</span> [</span>
-<span id="cb5-48"><a href="#cb5-48"></a>            <span class="va">self</span>._var_x[item.index] <span class="op">*</span> </span>
-<span id="cb5-49"><a href="#cb5-49"></a>                item.get_property(<span class="st">'weight'</span>)</span>
-<span id="cb5-50"><a href="#cb5-50"></a>            <span class="cf">for</span> item <span class="kw">in</span> items</span>
-<span id="cb5-51"><a href="#cb5-51"></a>            ]</span>
-<span id="cb5-52"><a href="#cb5-52"></a>        <span class="va">self</span>._solver.Add(</span>
-<span id="cb5-53"><a href="#cb5-53"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> capacities[<span class="st">'weight'</span>]</span>
-<span id="cb5-54"><a href="#cb5-54"></a>            )</span>
-<span id="cb5-55"><a href="#cb5-55"></a>        </span>
-<span id="cb5-56"><a href="#cb5-56"></a>    <span class="at">@property</span></span>
-<span id="cb5-57"><a href="#cb5-57"></a>    <span class="kw">def</span> opt_obj(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_obj</span>
-<span id="cb5-58"><a href="#cb5-58"></a>    </span>
-<span id="cb5-59"><a href="#cb5-59"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
-<span id="cb5-60"><a href="#cb5-60"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="156">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw">class</span> SDKnapsackSolver:</span>
+<span id="cb6-4"><a href="#cb6-4"></a>    </span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, data_center):</span>
+<span id="cb6-6"><a href="#cb6-6"></a>        <span class="va">self</span>._data_center <span class="op">=</span> data_center</span>
+<span id="cb6-7"><a href="#cb6-7"></a></span>
+<span id="cb6-8"><a href="#cb6-8"></a>        <span class="va">self</span>._solver <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>        <span class="va">self</span>._var_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>        </span>
+<span id="cb6-14"><a href="#cb6-14"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
+<span id="cb6-15"><a href="#cb6-15"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb6-16"><a href="#cb6-16"></a></span>
+<span id="cb6-17"><a href="#cb6-17"></a>        <span class="va">self</span>._create_variables()</span>
+<span id="cb6-18"><a href="#cb6-18"></a>        <span class="va">self</span>._create_objective()</span>
+<span id="cb6-19"><a href="#cb6-19"></a>        <span class="va">self</span>._create_constraints()</span>
+<span id="cb6-20"><a href="#cb6-20"></a>        </span>
+<span id="cb6-21"><a href="#cb6-21"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
+<span id="cb6-22"><a href="#cb6-22"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb6-23"><a href="#cb6-23"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb6-24"><a href="#cb6-24"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
+<span id="cb6-25"><a href="#cb6-25"></a>            items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb6-26"><a href="#cb6-26"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> [</span>
+<span id="cb6-27"><a href="#cb6-27"></a>                    <span class="va">self</span>._var_x[item.index].solution_value()</span>
+<span id="cb6-28"><a href="#cb6-28"></a>                    <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb6-29"><a href="#cb6-29"></a>                ]</span>
+<span id="cb6-30"><a href="#cb6-30"></a>    </span>
+<span id="cb6-31"><a href="#cb6-31"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb6-32"><a href="#cb6-32"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb6-33"><a href="#cb6-33"></a>        <span class="va">self</span>._var_x <span class="op">=</span> [<span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb6-34"><a href="#cb6-34"></a>                    <span class="cf">for</span> i, item <span class="kw">in</span> <span class="bu">enumerate</span>(items)]</span>
+<span id="cb6-35"><a href="#cb6-35"></a>    </span>
+<span id="cb6-36"><a href="#cb6-36"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb6-37"><a href="#cb6-37"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb6-38"><a href="#cb6-38"></a>        obj_expr <span class="op">=</span> [</span>
+<span id="cb6-39"><a href="#cb6-39"></a>                <span class="va">self</span>._var_x[item.index] <span class="op">*</span> item.profit</span>
+<span id="cb6-40"><a href="#cb6-40"></a>                <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb6-41"><a href="#cb6-41"></a>                ]</span>
+<span id="cb6-42"><a href="#cb6-42"></a>        <span class="va">self</span>._solver.Maximize(<span class="va">self</span>._solver.Sum(obj_expr))</span>
+<span id="cb6-43"><a href="#cb6-43"></a>        </span>
+<span id="cb6-44"><a href="#cb6-44"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
+<span id="cb6-45"><a href="#cb6-45"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb6-46"><a href="#cb6-46"></a>        capacities <span class="op">=</span> <span class="va">self</span>._data_center.capacities</span>
+<span id="cb6-47"><a href="#cb6-47"></a>        expr <span class="op">=</span> [</span>
+<span id="cb6-48"><a href="#cb6-48"></a>            <span class="va">self</span>._var_x[item.index] <span class="op">*</span> </span>
+<span id="cb6-49"><a href="#cb6-49"></a>                item.get_property(<span class="st">'weight'</span>)</span>
+<span id="cb6-50"><a href="#cb6-50"></a>            <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb6-51"><a href="#cb6-51"></a>            ]</span>
+<span id="cb6-52"><a href="#cb6-52"></a>        <span class="va">self</span>._solver.Add(</span>
+<span id="cb6-53"><a href="#cb6-53"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> capacities[<span class="st">'weight'</span>]</span>
+<span id="cb6-54"><a href="#cb6-54"></a>            )</span>
+<span id="cb6-55"><a href="#cb6-55"></a>        </span>
+<span id="cb6-56"><a href="#cb6-56"></a>    <span class="at">@property</span></span>
+<span id="cb6-57"><a href="#cb6-57"></a>    <span class="kw">def</span> opt_obj(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_obj</span>
+<span id="cb6-58"><a href="#cb6-58"></a>    </span>
+<span id="cb6-59"><a href="#cb6-59"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
+<span id="cb6-60"><a href="#cb6-60"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We employ the model to tackle 10 benchmark instances that were downloaded from an online source (http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP/). <a href="#tbl-knapsack-data">Table&nbsp;<span>8.1</span></a> displays the computational results.</p>
 <p>More specifically, the first column of the table lists the names of the instances, while the second and third columns indicate the number of items and the capacity of the knapsack for each instance, respectively. The last two columns report the optimal solution’s objective value and the number of selected items, respectively.</p>
-<div class="cell" data-execution_count="98">
-<div class="cell-output cell-output-display" data-execution_count="98">
+<div class="cell" data-execution_count="157">
+<div class="cell-output cell-output-display" data-execution_count="157">
 <div id="tbl-knapsack-data" class="anchored">
 <table class="table table-sm table-striped small">
 <caption>Table&nbsp;8.1: Computational results of Knapsack problems</caption>
@@ -595,11 +603,159 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 </section>
 <section id="multi-dimensional-knapsack-problem" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="multi-dimensional-knapsack-problem"><span class="header-section-number">8.2</span> Multi-dimensional Knapsack Problem</h2>
+<p>The multi-dimensional knapsack problem is a variant of the classical knapsack problem where there are multiple types of items, and each item has multiple attributes or dimensions (<span class="citation" data-cites="petersen_computational_1967">Petersen (<a href="references.html#ref-petersen_computational_1967" role="doc-biblioref">1967</a>)</span>). The goal is to select a subset of items that maximizes the total value subject to the constraint that the sum of the attribute values of the selected items does not exceed certain limits.</p>
+<p>Formally, let there be <span class="math inline">\(n\)</span> items, and for each item <span class="math inline">\(j \ (1 ≤ j ≤ n)\)</span>, let:</p>
+<ul>
+<li><span class="math inline">\(v_j\)</span> be the profit of selecting it</li>
+<li><span class="math inline">\(w_{ij}\)</span> be the <span class="math inline">\(i\)</span>th attribute value of item <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(m\)</span> is the number of dimensions or attributes</li>
+<li><span class="math inline">\(W_i\)</span> is the capacity of the knapsack for dimension <span class="math inline">\(i\)</span></li>
+</ul>
+<p>The multi-dimensional knapsack problem can then be formulated as the following optimization problem:</p>
+<p><span class="math display">\[\begin{align}
+    \text{max.} &amp;\quad \sum_{j = 1}^n v_j x_j \label{knapsack2-obj} \\
+    \text{s.t.} &amp;\quad \sum_{j=1}^n w_{ij} x_j \leq W_i, \ \forall i = 1, \cdots, m \label{knapsack2-cons1} \\
+    &amp;\quad x_j \in \{0, 1\}, \ j = 1, \cdots, n \label{knapsack2-cons2}
+\end{align}\]</span></p>
+<div class="cell" data-execution_count="167">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">class</span> MDKPDataCenter(KnapsackDataCenter):</span>
+<span id="cb7-2"><a href="#cb7-2"></a>    </span>
+<span id="cb7-3"><a href="#cb7-3"></a>    <span class="kw">def</span> read_mdkp_dataset_1(<span class="va">self</span>, data_file: <span class="bu">str</span>):</span>
+<span id="cb7-4"><a href="#cb7-4"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
+<span id="cb7-5"><a href="#cb7-5"></a>            first_line <span class="op">=</span> f.readline()</span>
+<span id="cb7-6"><a href="#cb7-6"></a>            num_items, num_constraints, opt_val <span class="op">=</span> first_line.split()</span>
+<span id="cb7-7"><a href="#cb7-7"></a>            </span>
+<span id="cb7-8"><a href="#cb7-8"></a>            second_line <span class="op">=</span> f.readline()</span>
+<span id="cb7-9"><a href="#cb7-9"></a>            profits <span class="op">=</span> second_line.split()</span>
+<span id="cb7-10"><a href="#cb7-10"></a>            item_idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a>            <span class="cf">for</span> p <span class="kw">in</span> profits:</span>
+<span id="cb7-12"><a href="#cb7-12"></a>                item <span class="op">=</span> Item(item_idx, <span class="bu">float</span>(p))</span>
+<span id="cb7-13"><a href="#cb7-13"></a>                <span class="va">self</span>._items.append(item)</span>
+<span id="cb7-14"><a href="#cb7-14"></a>                item_idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a></span>
+<span id="cb7-16"><a href="#cb7-16"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">int</span>(num_constraints)):</span>
+<span id="cb7-17"><a href="#cb7-17"></a>                line <span class="op">=</span> f.readline()</span>
+<span id="cb7-18"><a href="#cb7-18"></a>                weights <span class="op">=</span> line.split()</span>
+<span id="cb7-19"><a href="#cb7-19"></a>                prop <span class="op">=</span> <span class="ss">f'prop_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a>                <span class="cf">for</span> idx, val <span class="kw">in</span> <span class="bu">enumerate</span>(weights):</span>
+<span id="cb7-21"><a href="#cb7-21"></a>                    <span class="va">self</span>._items[idx].set_property(prop, <span class="bu">float</span>(val))</span>
+<span id="cb7-22"><a href="#cb7-22"></a></span>
+<span id="cb7-23"><a href="#cb7-23"></a>            last_line <span class="op">=</span> f.readline()</span>
+<span id="cb7-24"><a href="#cb7-24"></a>            <span class="cf">for</span> idx, val <span class="kw">in</span> <span class="bu">enumerate</span>(last_line.split()):</span>
+<span id="cb7-25"><a href="#cb7-25"></a>                prop <span class="op">=</span> <span class="ss">f'prop_</span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb7-26"><a href="#cb7-26"></a>                <span class="va">self</span>._capacities[prop] <span class="op">=</span> <span class="bu">float</span>(val)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="174">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">class</span> MDKnapsackSolver:</span>
+<span id="cb8-4"><a href="#cb8-4"></a>    </span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, data_center):</span>
+<span id="cb8-6"><a href="#cb8-6"></a>        <span class="va">self</span>._data_center <span class="op">=</span> data_center</span>
+<span id="cb8-7"><a href="#cb8-7"></a></span>
+<span id="cb8-8"><a href="#cb8-8"></a>        <span class="va">self</span>._solver <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a>        <span class="va">self</span>._var_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a></span>
+<span id="cb8-11"><a href="#cb8-11"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a>        </span>
+<span id="cb8-14"><a href="#cb8-14"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
+<span id="cb8-15"><a href="#cb8-15"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16"></a></span>
+<span id="cb8-17"><a href="#cb8-17"></a>        <span class="va">self</span>._create_variables()</span>
+<span id="cb8-18"><a href="#cb8-18"></a>        <span class="va">self</span>._create_objective()</span>
+<span id="cb8-19"><a href="#cb8-19"></a>        <span class="va">self</span>._create_constraints()</span>
+<span id="cb8-20"><a href="#cb8-20"></a>        </span>
+<span id="cb8-21"><a href="#cb8-21"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
+<span id="cb8-22"><a href="#cb8-22"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb8-23"><a href="#cb8-23"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb8-24"><a href="#cb8-24"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
+<span id="cb8-25"><a href="#cb8-25"></a>            items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb8-26"><a href="#cb8-26"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> [</span>
+<span id="cb8-27"><a href="#cb8-27"></a>                    <span class="va">self</span>._var_x[item.index].solution_value()</span>
+<span id="cb8-28"><a href="#cb8-28"></a>                    <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb8-29"><a href="#cb8-29"></a>                ]</span>
+<span id="cb8-30"><a href="#cb8-30"></a>    </span>
+<span id="cb8-31"><a href="#cb8-31"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb8-32"><a href="#cb8-32"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb8-33"><a href="#cb8-33"></a>        <span class="va">self</span>._var_x <span class="op">=</span> [<span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb8-34"><a href="#cb8-34"></a>                    <span class="cf">for</span> i, item <span class="kw">in</span> <span class="bu">enumerate</span>(items)]</span>
+<span id="cb8-35"><a href="#cb8-35"></a>    </span>
+<span id="cb8-36"><a href="#cb8-36"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb8-37"><a href="#cb8-37"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb8-38"><a href="#cb8-38"></a>        obj_expr <span class="op">=</span> [</span>
+<span id="cb8-39"><a href="#cb8-39"></a>                <span class="va">self</span>._var_x[item.index] <span class="op">*</span> item.profit</span>
+<span id="cb8-40"><a href="#cb8-40"></a>                <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb8-41"><a href="#cb8-41"></a>                ]</span>
+<span id="cb8-42"><a href="#cb8-42"></a>        <span class="va">self</span>._solver.Maximize(<span class="va">self</span>._solver.Sum(obj_expr))</span>
+<span id="cb8-43"><a href="#cb8-43"></a>        </span>
+<span id="cb8-44"><a href="#cb8-44"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
+<span id="cb8-45"><a href="#cb8-45"></a>        items <span class="op">=</span> <span class="va">self</span>._data_center.items</span>
+<span id="cb8-46"><a href="#cb8-46"></a>        capacities <span class="op">=</span> <span class="va">self</span>._data_center.capacities</span>
+<span id="cb8-47"><a href="#cb8-47"></a>        num_properties <span class="op">=</span> <span class="bu">len</span>(capacities)</span>
+<span id="cb8-48"><a href="#cb8-48"></a>        <span class="cf">for</span> p_idx <span class="kw">in</span> <span class="bu">range</span>(num_properties):</span>
+<span id="cb8-49"><a href="#cb8-49"></a>            prop <span class="op">=</span> <span class="ss">f'prop_</span><span class="sc">{</span>p_idx<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb8-50"><a href="#cb8-50"></a>            expr <span class="op">=</span> [</span>
+<span id="cb8-51"><a href="#cb8-51"></a>                <span class="va">self</span>._var_x[item.index] <span class="op">*</span> </span>
+<span id="cb8-52"><a href="#cb8-52"></a>                    item.get_property(prop)</span>
+<span id="cb8-53"><a href="#cb8-53"></a>                <span class="cf">for</span> item <span class="kw">in</span> items</span>
+<span id="cb8-54"><a href="#cb8-54"></a>                ]</span>
+<span id="cb8-55"><a href="#cb8-55"></a>            <span class="va">self</span>._solver.Add(</span>
+<span id="cb8-56"><a href="#cb8-56"></a>                    <span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> capacities[prop], name<span class="op">=</span><span class="ss">f'cons_</span><span class="sc">{</span>p_idx<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb8-57"><a href="#cb8-57"></a>                )</span>
+<span id="cb8-58"><a href="#cb8-58"></a>        </span>
+<span id="cb8-59"><a href="#cb8-59"></a>    <span class="at">@property</span></span>
+<span id="cb8-60"><a href="#cb8-60"></a>    <span class="kw">def</span> opt_obj(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_obj</span>
+<span id="cb8-61"><a href="#cb8-61"></a>    </span>
+<span id="cb8-62"><a href="#cb8-62"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
+<span id="cb8-63"><a href="#cb8-63"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="175">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="im">import</span> os</span>
+<span id="cb9-2"><a href="#cb9-2"></a></span>
+<span id="cb9-3"><a href="#cb9-3"></a>data_dir <span class="op">=</span> <span class="st">"./data/knapsack/MDKP/mknap1/"</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>data_file <span class="op">=</span> <span class="st">"inst1.txt"</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a>data_center <span class="op">=</span> MDKPDataCenter()</span>
+<span id="cb9-7"><a href="#cb9-7"></a>data_center.read_mdkp_dataset_1(os.path.join(data_dir, data_file))</span>
+<span id="cb9-8"><a href="#cb9-8"></a></span>
+<span id="cb9-9"><a href="#cb9-9"></a>solver <span class="op">=</span> MDKnapsackSolver(data_center)</span>
+<span id="cb9-10"><a href="#cb9-10"></a>solver.build_model()</span>
+<span id="cb9-11"><a href="#cb9-11"></a>solver.optimize()</span>
+<span id="cb9-12"><a href="#cb9-12"></a></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="bu">print</span>(solver.opt_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3800.0</code></pre>
+</div>
+</div>
+</section>
+<section id="multi-choice-knapsack-problem" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="multi-choice-knapsack-problem"><span class="header-section-number">8.3</span> Multi-Choice Knapsack Problem</h2>
+<div class="cell" data-execution_count="160">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">class</span> MCKPDataCenter(KnapsackDataCenter):</span>
+<span id="cb11-2"><a href="#cb11-2"></a>    </span>
+<span id="cb11-3"><a href="#cb11-3"></a>    <span class="kw">def</span> read_mckp_dataset_1(<span class="va">self</span>, data_file: <span class="bu">str</span>):</span>
+<span id="cb11-4"><a href="#cb11-4"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
+<span id="cb11-5"><a href="#cb11-5"></a>            <span class="cf">pass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="multi-choice-multi-dimensional-knapsack-problem" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="multi-choice-multi-dimensional-knapsack-problem"><span class="header-section-number">8.4</span> Multi-Choice Multi-Dimensional Knapsack Problem</h2>
+<div class="cell" data-execution_count="161">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">class</span> MCMDKPDataCenter(KnapsackDataCenter):</span>
+<span id="cb12-2"><a href="#cb12-2"></a>    </span>
+<span id="cb12-3"><a href="#cb12-3"></a>    <span class="kw">def</span> read_mcmdkp_dataset_1(<span class="va">self</span>, data_file: <span class="bu">str</span>):</span>
+<span id="cb12-4"><a href="#cb12-4"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
+<span id="cb12-5"><a href="#cb12-5"></a>            <span class="cf">pass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-dudzinski_exact_1987" class="csl-entry" role="listitem">
 Dudziński, Krzysztof, and Stanisław Walukiewicz. 1987. <span>“Exact Methods for the Knapsack Problem and Its Generalizations.”</span> <em>European Journal of Operational Research</em> 28 (1): 3–21. <a href="https://doi.org/10.1016/0377-2217(87)90165-2">https://doi.org/10.1016/0377-2217(87)90165-2</a>.
+</div>
+<div id="ref-petersen_computational_1967" class="csl-entry" role="listitem">
+Petersen, Clifford C. 1967. <span>“Computational <span>Experience</span> with <span>Variants</span> of the <span>Balas</span> <span>Algorithm</span> <span>Applied</span> to the <span>Selection</span> of <span>R</span>&amp;<span>D</span> <span>Projects</span>.”</span> <em>Management Science</em> 13 (9): 736–50. <a href="https://doi.org/10.1287/mnsc.13.9.736">https://doi.org/10.1287/mnsc.13.9.736</a>.
 </div>
 </div>
 </section>
