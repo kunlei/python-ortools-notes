@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -125,7 +144,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 
 <meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 9&nbsp; The N-queens Problem">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://kunlei.github.io/python-ortools-notes/ip-nqueens_files/figure-html/fig-4-queens-sol-output-1.png">
+<meta name="twitter:image" content="https://kunlei.github.io/python-ortools-notes/ip-nqueens_files/figure-html/fig-8-queens-sol-example-output-1.png">
 <meta name="twitter:image-height" content="813">
 <meta name="twitter:image-width" content="808">
 <meta name="twitter:card" content="summary_large_image">
@@ -285,14 +304,54 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 
 </header>
 
+<p>The n-queens problem is a classic puzzle that involves placing <span class="math inline">\(n\)</span> queens on an <span class="math inline">\(n \times n\)</span> chessboard in such a way that no two queens threaten each other. In other words, no two queens can be placed on the same row, column, or diagonal. The problem is called the <span class="math inline">\(n\)</span>-queens problem because it can be generalized to any size of <span class="math inline">\(n\)</span>.</p>
+<p>For example, the 8-queens problem involves placing 8 queens on an 8x8 chessboard, and the solution requires that no two queens share the same row, column, or diagonal.</p>
+<p>The n-queens problem is a well-known problem in computer science and has been studied extensively because it has applications in various fields, such as optimization, artificial intelligence, and computer graphics. There are various algorithms and techniques that can be used to solve the n-queens problem, including brute-force search, backtracking, and genetic algorithms. In this chapter, we’ll model this problem as an integer programming problem and solve it using OR-Tools.</p>
+<p>To model this problem on an <span class="math inline">\(n \times n\)</span> chessboard, we define the following decision variable:</p>
+<ul>
+<li><span class="math inline">\(x_{ij}\)</span>: a binary variable that equals 1 if a queen is place on position <span class="math inline">\((i, j)\)</span>, where <span class="math inline">\(i, j = 0, \cdots, n-1\)</span>; and 0 otherwise</li>
+</ul>
+<p>The complete model given below is based on <span class="citation" data-cites="letavec_n_2002">Letavec and Ruggiero (<a href="references.html#ref-letavec_n_2002" role="doc-biblioref">2002</a>)</span>.</p>
 <p><span class="math display">\[\begin{align}
-    \text{max.} &amp;\quad \sum_{i=0}^{n-1} \sum_{j=0}^{n-1} x_{ij} \\
-    \text{s.t.} &amp;\quad \sum_{j=0}^{n-1} x_{ij} \leq 1, \ \forall i = 0, \cdots, n-1 \\
-    &amp;\quad \sum_{i=0}^{n-1} x_{ij} \leq 1, \ \forall j = 0, \cdots, n-1\\
-    &amp;\quad \sum_{i=0}^{n-1} \sum_{j=0, i+j=k}^{n-1} x_{ij} \leq 1, \ \forall k = 1, \cdots, 2(n-1) - 1\\
-    &amp;\quad \sum_{i=0}^{n-1} \sum_{j=0, i-j=k}^{n-1} x_{ij} \leq 1, \ \forall k = 2-n, \cdots, n-2\\
+    \text{max.} &amp;\quad 0 \label{nq-obj}\\
+    \text{s.t.} &amp;\quad \sum_{i=0}^{n-1} \sum_{j=0}^{n-1} x_{ij} = n \label{nq-cons1} \\
+    &amp;\quad \sum_{j=0}^{n-1} x_{ij} \leq 1, \ \forall i = 0, \cdots, n-1 \label{nq-cons2} \\
+    &amp;\quad \sum_{i=0}^{n-1} x_{ij} \leq 1, \ \forall j = 0, \cdots, n-1 \label{nq-cons3}\\
+    &amp;\quad \sum_{i=0}^{n-1} \sum_{j=0, i+j=k}^{n-1} x_{ij} \leq 1, \ \forall k = 1, \cdots, 2(n-1) - 1 \label{nq-cons4}\\
+    &amp;\quad \sum_{i=0}^{n-1} \sum_{j=0, i-j=k}^{n-1} x_{ij} \leq 1, \ \forall k = 2-n, \cdots, n-2 \label{nq-cons5}\\
+    &amp;\quad x_{ij} \in \{0, 1\},\  i, j = 0, \cdots, n-1
 \end{align}\]</span></p>
-<div class="cell" data-execution_count="52">
+<p>In the formulation, the objective function <span class="math inline">\(\eqref{nq-obj}\)</span> serves no practical use as our goal is to find any feasible solution to the puzzle. Constraints <span class="math inline">\(\eqref{nq-cons1}\)</span> require that there are exactly <span class="math inline">\(n\)</span> queens be placed on a board of size <span class="math inline">\(n \times n\)</span>. Constraints <span class="math inline">\(\eqref{nq-cons2}\)</span> make sure that there is at most one queen be placed in any row of the board. Similarly, constraints <span class="math inline">\(\eqref{nq-cons3}\)</span> ensure that there is at most one queen be placed in any column of the board. To understand constraints <span class="math inline">\(\eqref{nq-cons4}\)</span> and <span class="math inline">\(\eqref{nq-cons5}\)</span>, let’s look at a 8-queens solution in <a href="#fig-8-queens-sol-example">Figure&nbsp;<span>9.1</span></a>.</p>
+<p>Note that no two queens can be placed on the same diagonal anywhere on the board. Upon observing the chessboard, we can see that there are two types of diagonals:</p>
+<ul>
+<li>Diagonals that start from the upper left corner and move to the bottom right corner
+<ul>
+<li>Positions (1, 0), (0, 1) form a diagonal - sum of position coordinates = 1</li>
+<li>Positions (2, 0), (1, 1), (0, 2) form a diagonal - sum of position coordinates = 2</li>
+<li>…</li>
+<li>Positions (7, 6), (6, 7) form a diagonal - sum of position coordinates = 2 * (8 - 1) - 1</li>
+</ul></li>
+<li>Diagonals that start from the upper right corner and move to the bottom left corner
+<ul>
+<li>Positions (0, 6), (1, 7) form a diagonal - difference of position coordinates = -6</li>
+<li>Positions (0, 5), (1, 6), (2, 7) form a diagonal - difference of position coordinates = -5</li>
+<li>…</li>
+<li>Positions (6, 0), (7, 1) form a diagonal - difference of position coordinates = 8 - 2</li>
+</ul></li>
+</ul>
+<p>The first type of diagonals can be expressed as constraints <span class="math inline">\(\eqref{nq-cons4}\)</span> and the second type of diagonals can be expressed as constraints <span class="math inline">\(\eqref{nq-cons5}\)</span>. Both constraints guarantee that there cannot be any two queens showing up in the same diagonal.</p>
+<div class="cell" data-execution_count="60">
+<div class="cell-output cell-output-display">
+<div id="fig-8-queens-sol-example" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="ip-nqueens_files/figure-html/fig-8-queens-sol-example-output-1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;9.1: A 8-Queens solution</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The complete code to solve the problem is given below.</p>
+<div class="cell" data-execution_count="63">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
@@ -307,99 +366,116 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb1-12"><a href="#cb1-12"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> <span class="va">None</span></span>
 <span id="cb1-13"><a href="#cb1-13"></a>        </span>
 <span id="cb1-14"><a href="#cb1-14"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
-<span id="cb1-15"><a href="#cb1-15"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
-<span id="cb1-16"><a href="#cb1-16"></a></span>
-<span id="cb1-17"><a href="#cb1-17"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((<span class="va">self</span>._size, <span class="va">self</span>._size), </span>
-<span id="cb1-18"><a href="#cb1-18"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
-<span id="cb1-19"><a href="#cb1-19"></a>        <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(<span class="va">self</span>._size), </span>
-<span id="cb1-20"><a href="#cb1-20"></a>                            <span class="bu">range</span>(<span class="va">self</span>._size)):</span>
-<span id="cb1-21"><a href="#cb1-21"></a>            <span class="va">self</span>._var_x[i][j] <span class="op">=</span> <span class="op">\</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a>                <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>i<span class="sc">,</span>j<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb1-23"><a href="#cb1-23"></a></span>
-<span id="cb1-24"><a href="#cb1-24"></a>        expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
-<span id="cb1-25"><a href="#cb1-25"></a>                <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-26"><a href="#cb1-26"></a>                <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)]</span>
-<span id="cb1-27"><a href="#cb1-27"></a>        <span class="va">self</span>._solver.Maximize(<span class="va">self</span>._solver.Sum(expr))</span>
-<span id="cb1-28"><a href="#cb1-28"></a></span>
-<span id="cb1-29"><a href="#cb1-29"></a>        <span class="cf">for</span> row <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size):</span>
-<span id="cb1-30"><a href="#cb1-30"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[row][j]</span>
-<span id="cb1-31"><a href="#cb1-31"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)]</span>
-<span id="cb1-32"><a href="#cb1-32"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb1-33"><a href="#cb1-33"></a></span>
-<span id="cb1-34"><a href="#cb1-34"></a>        <span class="cf">for</span> col <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size):</span>
-<span id="cb1-35"><a href="#cb1-35"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][col]</span>
-<span id="cb1-36"><a href="#cb1-36"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)]</span>
-<span id="cb1-37"><a href="#cb1-37"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb1-38"><a href="#cb1-38"></a></span>
-<span id="cb1-39"><a href="#cb1-39"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">2</span> <span class="op">*</span> (<span class="va">self</span>._size <span class="op">-</span> <span class="dv">1</span>) <span class="op">-</span> <span class="dv">1</span>):</span>
-<span id="cb1-40"><a href="#cb1-40"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
-<span id="cb1-41"><a href="#cb1-41"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-42"><a href="#cb1-42"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-43"><a href="#cb1-43"></a>                    <span class="cf">if</span> i <span class="op">+</span> j <span class="op">==</span> k]</span>
-<span id="cb1-44"><a href="#cb1-44"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb1-45"><a href="#cb1-45"></a></span>
-<span id="cb1-46"><a href="#cb1-46"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span> <span class="op">-</span> <span class="va">self</span>._size, <span class="va">self</span>._size <span class="op">-</span> <span class="dv">2</span>):</span>
-<span id="cb1-47"><a href="#cb1-47"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
-<span id="cb1-48"><a href="#cb1-48"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-49"><a href="#cb1-49"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-50"><a href="#cb1-50"></a>                    <span class="cf">if</span> i <span class="op">-</span> j <span class="op">==</span> k]</span>
-<span id="cb1-51"><a href="#cb1-51"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb1-52"><a href="#cb1-52"></a>    </span>
-<span id="cb1-53"><a href="#cb1-53"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
-<span id="cb1-54"><a href="#cb1-54"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
-<span id="cb1-55"><a href="#cb1-55"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
-<span id="cb1-56"><a href="#cb1-56"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((<span class="va">self</span>._size, </span>
-<span id="cb1-57"><a href="#cb1-57"></a>                                    <span class="va">self</span>._size))</span>
-<span id="cb1-58"><a href="#cb1-58"></a>            <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(<span class="va">self</span>._size), </span>
-<span id="cb1-59"><a href="#cb1-59"></a>                                <span class="bu">range</span>(<span class="va">self</span>._size)):</span>
-<span id="cb1-60"><a href="#cb1-60"></a>                <span class="va">self</span>._opt_x[i][j] <span class="op">=</span> <span class="op">\</span></span>
-<span id="cb1-61"><a href="#cb1-61"></a>                    <span class="va">self</span>._var_x[i][j].solution_value()</span>
-<span id="cb1-62"><a href="#cb1-62"></a>        <span class="cf">else</span>:</span>
-<span id="cb1-63"><a href="#cb1-63"></a>            <span class="bu">print</span>(<span class="st">"solve failure!"</span>)</span>
-<span id="cb1-64"><a href="#cb1-64"></a>            <span class="bu">print</span>(<span class="ss">f"status=</span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb1-65"><a href="#cb1-65"></a></span>
-<span id="cb1-66"><a href="#cb1-66"></a>    <span class="at">@property</span></span>
-<span id="cb1-67"><a href="#cb1-67"></a>    <span class="kw">def</span> opt_x(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_x</span>
-<span id="cb1-68"><a href="#cb1-68"></a>    </span>
-<span id="cb1-69"><a href="#cb1-69"></a>    <span class="kw">def</span> get_queen_coordinates(<span class="va">self</span>):</span>
-<span id="cb1-70"><a href="#cb1-70"></a>        coordinates <span class="op">=</span> [(i, j) </span>
-<span id="cb1-71"><a href="#cb1-71"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-72"><a href="#cb1-72"></a>            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
-<span id="cb1-73"><a href="#cb1-73"></a>            <span class="cf">if</span> <span class="va">self</span>._opt_x[i][j] <span class="op">==</span> <span class="dv">1</span>]</span>
-<span id="cb1-74"><a href="#cb1-74"></a>        <span class="cf">return</span> coordinates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-15"><a href="#cb1-15"></a>        <span class="co"># instantiate solver</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a>        <span class="co"># create decision variables</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((<span class="va">self</span>._size, <span class="va">self</span>._size), </span>
+<span id="cb1-20"><a href="#cb1-20"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb1-21"><a href="#cb1-21"></a>        <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(<span class="va">self</span>._size), </span>
+<span id="cb1-22"><a href="#cb1-22"></a>                            <span class="bu">range</span>(<span class="va">self</span>._size)):</span>
+<span id="cb1-23"><a href="#cb1-23"></a>            <span class="va">self</span>._var_x[i][j] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>                <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>i<span class="sc">,</span>j<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-25"><a href="#cb1-25"></a></span>
+<span id="cb1-26"><a href="#cb1-26"></a>        <span class="co"># declare objective function</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>        <span class="va">self</span>._solver.Maximize(<span class="dv">0</span>)</span>
+<span id="cb1-28"><a href="#cb1-28"></a>        </span>
+<span id="cb1-29"><a href="#cb1-29"></a>        <span class="co"># constraint: there must be n queens on the board</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a>        expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
+<span id="cb1-31"><a href="#cb1-31"></a>                <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-32"><a href="#cb1-32"></a>                <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)]</span>
+<span id="cb1-33"><a href="#cb1-33"></a>        <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="va">self</span>._size)</span>
+<span id="cb1-34"><a href="#cb1-34"></a></span>
+<span id="cb1-35"><a href="#cb1-35"></a>        <span class="co"># constraint: no two queens can be in the same row</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a>        <span class="cf">for</span> row <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size):</span>
+<span id="cb1-37"><a href="#cb1-37"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[row][j]</span>
+<span id="cb1-38"><a href="#cb1-38"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)]</span>
+<span id="cb1-39"><a href="#cb1-39"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb1-40"><a href="#cb1-40"></a>            </span>
+<span id="cb1-41"><a href="#cb1-41"></a>        <span class="co"># constraint: no two queens can be in the same column</span></span>
+<span id="cb1-42"><a href="#cb1-42"></a>        <span class="cf">for</span> col <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size):</span>
+<span id="cb1-43"><a href="#cb1-43"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][col]</span>
+<span id="cb1-44"><a href="#cb1-44"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)]</span>
+<span id="cb1-45"><a href="#cb1-45"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb1-46"><a href="#cb1-46"></a></span>
+<span id="cb1-47"><a href="#cb1-47"></a>        <span class="co"># constraint: no two queens can be in the same diagonal</span></span>
+<span id="cb1-48"><a href="#cb1-48"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">2</span> <span class="op">*</span> (<span class="va">self</span>._size <span class="op">-</span> <span class="dv">1</span>) <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb1-49"><a href="#cb1-49"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
+<span id="cb1-50"><a href="#cb1-50"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-51"><a href="#cb1-51"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-52"><a href="#cb1-52"></a>                    <span class="cf">if</span> i <span class="op">+</span> j <span class="op">==</span> k]</span>
+<span id="cb1-53"><a href="#cb1-53"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb1-54"><a href="#cb1-54"></a></span>
+<span id="cb1-55"><a href="#cb1-55"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span> <span class="op">-</span> <span class="va">self</span>._size, <span class="va">self</span>._size <span class="op">-</span> <span class="dv">2</span>):</span>
+<span id="cb1-56"><a href="#cb1-56"></a>            expr <span class="op">=</span> [<span class="va">self</span>._var_x[i][j]</span>
+<span id="cb1-57"><a href="#cb1-57"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-58"><a href="#cb1-58"></a>                    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-59"><a href="#cb1-59"></a>                    <span class="cf">if</span> i <span class="op">-</span> j <span class="op">==</span> k]</span>
+<span id="cb1-60"><a href="#cb1-60"></a>            <span class="va">self</span>._solver.Add(<span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb1-61"><a href="#cb1-61"></a>    </span>
+<span id="cb1-62"><a href="#cb1-62"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
+<span id="cb1-63"><a href="#cb1-63"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb1-64"><a href="#cb1-64"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb1-65"><a href="#cb1-65"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((<span class="va">self</span>._size, </span>
+<span id="cb1-66"><a href="#cb1-66"></a>                                    <span class="va">self</span>._size))</span>
+<span id="cb1-67"><a href="#cb1-67"></a>            <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(<span class="va">self</span>._size), </span>
+<span id="cb1-68"><a href="#cb1-68"></a>                                <span class="bu">range</span>(<span class="va">self</span>._size)):</span>
+<span id="cb1-69"><a href="#cb1-69"></a>                <span class="va">self</span>._opt_x[i][j] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb1-70"><a href="#cb1-70"></a>                    <span class="va">self</span>._var_x[i][j].solution_value()</span>
+<span id="cb1-71"><a href="#cb1-71"></a>        <span class="cf">else</span>:</span>
+<span id="cb1-72"><a href="#cb1-72"></a>            <span class="bu">print</span>(<span class="st">"solve failure!"</span>)</span>
+<span id="cb1-73"><a href="#cb1-73"></a>            <span class="bu">print</span>(<span class="ss">f"status=</span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-74"><a href="#cb1-74"></a></span>
+<span id="cb1-75"><a href="#cb1-75"></a>    <span class="at">@property</span></span>
+<span id="cb1-76"><a href="#cb1-76"></a>    <span class="kw">def</span> opt_x(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_x</span>
+<span id="cb1-77"><a href="#cb1-77"></a>    </span>
+<span id="cb1-78"><a href="#cb1-78"></a>    <span class="kw">def</span> get_queen_coordinates(<span class="va">self</span>):</span>
+<span id="cb1-79"><a href="#cb1-79"></a>        coordinates <span class="op">=</span> [(i, j) </span>
+<span id="cb1-80"><a href="#cb1-80"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-81"><a href="#cb1-81"></a>            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._size)</span>
+<span id="cb1-82"><a href="#cb1-82"></a>            <span class="cf">if</span> <span class="va">self</span>._opt_x[i][j] <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb1-83"><a href="#cb1-83"></a>        <span class="cf">return</span> coordinates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="48">
+<p><a href="#fig-4-queens-sol">Figure&nbsp;<span>9.2</span></a> shows a 4-Queens puzzle solution.</p>
+<div class="cell" data-execution_count="58">
 <div class="cell-output cell-output-display">
 <div id="fig-4-queens-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-nqueens_files/figure-html/fig-4-queens-sol-output-1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;9.1: 4-Queens solution</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;9.2: A 4-Queens solution</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="50">
+<p><a href="#fig-10-queens-sol">Figure&nbsp;<span>9.3</span></a> shows a 10-Queens puzzle solution.</p>
+<div class="cell" data-execution_count="61">
 <div class="cell-output cell-output-display">
-<div id="fig-8-queens-sol" class="quarto-figure quarto-figure-center anchored">
+<div id="fig-10-queens-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="ip-nqueens_files/figure-html/fig-8-queens-sol-output-1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;9.2: 8-Queens solution</figcaption><p></p>
+<p><img src="ip-nqueens_files/figure-html/fig-10-queens-sol-output-1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;9.3: A 10-Queens solution</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="51">
+<p><a href="#fig-20-queens-sol">Figure&nbsp;<span>9.4</span></a> shows a 20-Queens puzzle solution.</p>
+<div class="cell" data-execution_count="62">
 <div class="cell-output cell-output-display">
 <div id="fig-20-queens-sol" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="ip-nqueens_files/figure-html/fig-20-queens-sol-output-1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;9.3: 20-Queens solution</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;9.4: A 20-Queens solution</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-letavec_n_2002" class="csl-entry" role="listitem">
+Letavec, Craig, and John Ruggiero. 2002. <span>“The <em>n</em> -<span>Queens</span> <span>Problem</span>.”</span> <em>INFORMS Transactions on Education</em> 2 (3): 101–3. <a href="https://doi.org/10.1287/ited.2.3.101">https://doi.org/10.1287/ited.2.3.101</a>.
+</div>
+</div>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
