@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.306">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Hands-on Optimization with OR-Tools in Python - 10&nbsp; Single Row Facility Layout Problem</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./summary.html" rel="next">
+<link href="./ip-nqueens.html" rel="prev">
+<link href="./logo.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DTVHQH448R"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: { equationNumbers: {autoNumber: "AMS"} },
+        tex2jax: {inlineMath: [ ['$','$'], ["\\(","\\)"] ]}
+    });
+    </script>
+
+<!-- This is what works with Quarto -->
+<script>
+    MathJax = {
+        tex: {
+            tags: 'ams'  // should be 'ams', 'none', or 'all'
+        }
+    };
+</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 10&nbsp; Single Row Facility Layout Problem">
+<meta name="twitter:description" content="">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-srflp.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Single Row Facility Layout Problem</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Hands-on Optimization with OR-Tools in Python</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://twitter.com/intent/tweet?url=|url|" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">For the Impatient</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./env-setup.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Environment Setup</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Mathematical Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./linear-programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Linear Programming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./integer-programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Integer Programming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-jsp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-tsp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-cvrp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-knapsack.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-nqueens.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The N-queens Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-srflp.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Single Row Facility Layout Problem</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-single-row-facilty-layout" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Single Row Facility Layout Problem</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Single Row Facility Layout Problem (SRFLP) is a type of optimization problem in which the objective is to arrange a set of facilities in a single row in such a way as to minimize the total cost of movement between facilities. In other words, the goal is to find the best possible arrangement of facilities in a linear fashion that minimizes the total distance traveled by workers or materials between facilities. The SRFLP has a wide range of applications in various industries:</p>
+<ul>
+<li><p>Manufacturing Industry: In manufacturing plants, the SRFLP is used to determine the optimal placement of machines, workstations, and other facilities in a single line to minimize material handling and transportation costs. By arranging the facilities in an optimal sequence, the movement of raw materials, work-in-progress, and finished products can be minimized, reducing production time and costs.</p></li>
+<li><p>Warehousing and Distribution: In the warehousing and distribution industry, the SRFLP is used to optimize the layout of storage areas, packing and shipping stations, and other facilities. By minimizing the distance traveled between facilities, the time and cost of moving products within the warehouse or distribution center can be reduced.</p></li>
+<li><p>Retail Industry: The SRFLP can be used to optimize the layout of retail stores, such as supermarkets and department stores. By arranging product displays and checkout stations in an optimal sequence, customer flow can be improved, and waiting times can be reduced, resulting in better customer satisfaction and increased sales.</p></li>
+<li><p>Healthcare Industry: In hospitals and clinics, the SRFLP can be used to optimize the layout of patient rooms, laboratories, and other medical facilities. By arranging these facilities in an optimal sequence, healthcare professionals can move more efficiently, reducing patient wait times and improving the quality of care.</p></li>
+<li><p>Office Layout: The SRFLP can also be used to optimize the layout of office spaces, including the arrangement of desks, meeting rooms, and common areas. By minimizing the distance between facilities, the productivity and efficiency of workers can be improved.</p></li>
+</ul>
+<p>In summary, the SRFLP has many applications in different industries, where the optimization of facility layout can result in significant cost savings, improved productivity, and increased customer satisfaction.</p>
+<p>The SRFLP can be defined as follows: Assume there are <span class="math inline">\(n\)</span> rooms of different lengths <span class="math inline">\(h_i\)</span> that need to be arranged in a single row. The flow of materials between each pair of rooms, denoted by <span class="math inline">\(w_{ij}\)</span>, is already known. Let <span class="math inline">\(\mathcal{N}\)</span> represent the set of rooms to be arranged, which consists of integers from 0 to <span class="math inline">\(n-1\)</span>. Let <span class="math inline">\(H\)</span> be the sum of the lengths of all the rooms, and let <span class="math inline">\(V\)</span> be a large number.</p>
+<p>To formulate the problem mathematically, we introduce the following variables:</p>
+<ul>
+<li><span class="math inline">\(x_{ij}\)</span>: a binary variable that takes the value of 1 if room <span class="math inline">\(i\)</span> is placed to the left of room <span class="math inline">\(j\)</span>, and 0 otherwise.</li>
+<li><span class="math inline">\(y_i\)</span>: a continuous variable that represents the location of the starting point of room <span class="math inline">\(i\)</span> on the line.</li>
+<li><span class="math inline">\(l_{ij}\)</span>: a continuous variable that represents the distance between the centroid of room <span class="math inline">\(i\)</span> and the centroid of room <span class="math inline">\(j\)</span> if room <span class="math inline">\(i\)</span> is placed to the left of room <span class="math inline">\(j\)</span>, and 0 otherwise.</li>
+<li><span class="math inline">\(r_{ij}\)</span>: a continuous variable that represents the distance between the centroid of room <span class="math inline">\(i\)</span> and the centroid of room <span class="math inline">\(j\)</span> if room <span class="math inline">\(i\)</span> is placed to the right of room <span class="math inline">\(j\)</span>, and 0 otherwise.</li>
+</ul>
+<p>The SRFLP can then be formulated as follows:</p>
+<p><span class="math display">\[\begin{align}
+    \text{min.} &amp;\quad \sum_{i=0}^{n-2} \sum_{j=i+1}^{n-1} w_{ij} \cdot (l_{ij} + r_{ij}) \label{srfl-obj}\\
+    \text{s.t.} &amp;\quad 0 \leq y_i \leq H, \ \forall i = 0, \cdots, n-1 \label{srfl-cons1} \\
+    &amp;\quad y_i \geq y_j + h_j - V \cdot x_{ij}, \ \forall i, j \in \mathcal{N}, \ i &lt; j \label{srfl-cons2}  \\
+    &amp;\quad y_j \geq y_i + h_i - V \cdot (1 - x_{ij}), \ \forall i, j \in \mathcal{N}, \ i &lt; j \label{srfl-cons3}  \\
+    &amp;\quad r_{ij} - l_{ij} = y_i - y_j + \frac{1}{2} (h_i - h_j), \ \forall i, j \in \mathcal{N}, i \neq j \label{srfl-cons4}  \\
+    &amp;\quad x_{ij} \in \{0, 1\}, \ \forall i, j \in \mathcal{N}, i \neq j \label{srfl-cons5} \\
+    &amp;\quad y_i \geq 0, \ \forall i \in \mathcal{N} \label{srfl-cons6} \\
+    &amp;\quad l_{ij} \geq 0, \ \forall i, j \in \mathcal{N}, i \neq j \label{srfl-cons7}  \\
+    &amp;\quad r_{ij} \geq 0, \ \forall i, j \in \mathcal{N}, i \neq j  \label{srfl-cons8} \\
+\end{align}\]</span></p>
+<p>The goal of the objective function <span class="math inline">\(\eqref{srfl-obj}\)</span> is to minimize the total cost of moving all the rooms. The constraints <span class="math inline">\(\eqref{srfl-cons1}\)</span> ensure that the starting point of each room is within the range of <span class="math inline">\([0, H]\)</span>. Constraints <span class="math inline">\(\eqref{srfl-cons2}\)</span> and <span class="math inline">\(\eqref{srfl-cons3}\)</span> are complementary disjunctive constraints that ensure that no two rooms overlap with each other. Constraints <span class="math inline">\(\eqref{srfl-cons4}\)</span> calculate the distance between the centroids of any two rooms placed in a specific order on the line. The remaining constraints specify the type of variables used.</p>
+<p>To evaluate the effectiveness of the formulated model, we utilize benchmarking instances obtained from an online source (https://grafo.etsii.urjc.es/optsicom/srflp.html). In the following code, we define a class called SRFLPDataCenter. This class is responsible for parsing the instance file and storing the relevant information in its attributes.</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">class</span> SRFLPDataCenter:</span>
+<span id="cb1-4"><a href="#cb1-4"></a>    </span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb1-6"><a href="#cb1-6"></a>        <span class="va">self</span>._num_rooms <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>        <span class="va">self</span>._room_lengths <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>        <span class="va">self</span>._distance_matrix <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>        </span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="kw">def</span> read_data(<span class="va">self</span>, data_file):</span>
+<span id="cb1-11"><a href="#cb1-11"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
+<span id="cb1-12"><a href="#cb1-12"></a>            first_line <span class="op">=</span> f.readline()</span>
+<span id="cb1-13"><a href="#cb1-13"></a>            <span class="va">self</span>._num_rooms <span class="op">=</span> <span class="bu">int</span>(first_line)</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a>            second_line <span class="op">=</span> f.readline().split()</span>
+<span id="cb1-16"><a href="#cb1-16"></a>            <span class="va">self</span>._room_lengths <span class="op">=</span> [</span>
+<span id="cb1-17"><a href="#cb1-17"></a>                <span class="bu">float</span>(v) <span class="cf">for</span> v <span class="kw">in</span> second_line</span>
+<span id="cb1-18"><a href="#cb1-18"></a>            ]</span>
+<span id="cb1-19"><a href="#cb1-19"></a>            </span>
+<span id="cb1-20"><a href="#cb1-20"></a>            <span class="va">self</span>._distance_matrix <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>                np.zeros((<span class="va">self</span>._num_rooms, <span class="va">self</span>._num_rooms))</span>
+<span id="cb1-22"><a href="#cb1-22"></a>            <span class="cf">for</span> row <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._num_rooms):</span>
+<span id="cb1-23"><a href="#cb1-23"></a>                line <span class="op">=</span> f.readline().split()</span>
+<span id="cb1-24"><a href="#cb1-24"></a>                <span class="cf">for</span> col <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>._num_rooms):</span>
+<span id="cb1-25"><a href="#cb1-25"></a>                    <span class="va">self</span>._distance_matrix[row][col] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>                        <span class="bu">float</span>(line[col])</span>
+<span id="cb1-27"><a href="#cb1-27"></a>                    </span>
+<span id="cb1-28"><a href="#cb1-28"></a>    <span class="at">@property</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a>    <span class="kw">def</span> num_rooms(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._num_rooms</span>
+<span id="cb1-30"><a href="#cb1-30"></a>    </span>
+<span id="cb1-31"><a href="#cb1-31"></a>    <span class="kw">def</span> get_room_length(<span class="va">self</span>, room_idx):</span>
+<span id="cb1-32"><a href="#cb1-32"></a>        <span class="cf">return</span> <span class="va">self</span>._room_lengths[room_idx]</span>
+<span id="cb1-33"><a href="#cb1-33"></a></span>
+<span id="cb1-34"><a href="#cb1-34"></a>    <span class="kw">def</span> get_distance(<span class="va">self</span>, i, j):</span>
+<span id="cb1-35"><a href="#cb1-35"></a>        <span class="cf">return</span> <span class="va">self</span>._distance_matrix[i][j]</span>
+<span id="cb1-36"><a href="#cb1-36"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The following code provides a comprehensive program that uses OR-Tools to solve the SRFLP.</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">class</span> SRFLPSolver:</span>
+<span id="cb2-6"><a href="#cb2-6"></a>    </span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, data_center):</span>
+<span id="cb2-8"><a href="#cb2-8"></a>        <span class="va">self</span>._data_center <span class="op">=</span> data_center</span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a>        <span class="va">self</span>._solver <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>        <span class="va">self</span>._var_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>        <span class="va">self</span>._var_y <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a>        <span class="va">self</span>._var_l <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>        <span class="va">self</span>._var_r <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>        </span>
+<span id="cb2-16"><a href="#cb2-16"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>        <span class="va">self</span>._opt_y <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>        </span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
+<span id="cb2-20"><a href="#cb2-20"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb2-21"><a href="#cb2-21"></a>        </span>
+<span id="cb2-22"><a href="#cb2-22"></a>        <span class="va">self</span>._create_variables()</span>
+<span id="cb2-23"><a href="#cb2-23"></a>        <span class="va">self</span>._create_objective()</span>
+<span id="cb2-24"><a href="#cb2-24"></a>        <span class="va">self</span>._create_constraints()</span>
+<span id="cb2-25"><a href="#cb2-25"></a>        </span>
+<span id="cb2-26"><a href="#cb2-26"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb2-27"><a href="#cb2-27"></a>        num_rooms <span class="op">=</span> <span class="va">self</span>._data_center.num_rooms</span>
+<span id="cb2-28"><a href="#cb2-28"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty(</span>
+<span id="cb2-29"><a href="#cb2-29"></a>                        (num_rooms, num_rooms), </span>
+<span id="cb2-30"><a href="#cb2-30"></a>                        dtype<span class="op">=</span><span class="bu">object</span></span>
+<span id="cb2-31"><a href="#cb2-31"></a>                    )</span>
+<span id="cb2-32"><a href="#cb2-32"></a>        <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_rooms), </span>
+<span id="cb2-33"><a href="#cb2-33"></a>                            <span class="bu">range</span>(num_rooms)):</span>
+<span id="cb2-34"><a href="#cb2-34"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
+<span id="cb2-35"><a href="#cb2-35"></a>            <span class="va">self</span>._var_x[i][j] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb2-36"><a href="#cb2-36"></a>                <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>i<span class="sc">,</span> j<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-37"><a href="#cb2-37"></a></span>
+<span id="cb2-38"><a href="#cb2-38"></a>        H <span class="op">=</span> <span class="bu">sum</span>([<span class="va">self</span>._data_center.get_room_length(r)</span>
+<span id="cb2-39"><a href="#cb2-39"></a>                <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(num_rooms)])</span>
+<span id="cb2-40"><a href="#cb2-40"></a>        <span class="va">self</span>._var_y <span class="op">=</span> [</span>
+<span id="cb2-41"><a href="#cb2-41"></a>                    <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, H, name<span class="op">=</span><span class="ss">f"y_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-42"><a href="#cb2-42"></a>                    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_rooms)</span>
+<span id="cb2-43"><a href="#cb2-43"></a>                ]</span>
+<span id="cb2-44"><a href="#cb2-44"></a></span>
+<span id="cb2-45"><a href="#cb2-45"></a>        infinity <span class="op">=</span> <span class="va">self</span>._solver.Infinity()</span>
+<span id="cb2-46"><a href="#cb2-46"></a>        <span class="va">self</span>._var_l <span class="op">=</span> np.empty((num_rooms, num_rooms), </span>
+<span id="cb2-47"><a href="#cb2-47"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb2-48"><a href="#cb2-48"></a>        <span class="va">self</span>._var_r <span class="op">=</span> np.empty((num_rooms, num_rooms),</span>
+<span id="cb2-49"><a href="#cb2-49"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb2-50"><a href="#cb2-50"></a>        <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_rooms), </span>
+<span id="cb2-51"><a href="#cb2-51"></a>                            <span class="bu">range</span>(num_rooms)):</span>
+<span id="cb2-52"><a href="#cb2-52"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
+<span id="cb2-53"><a href="#cb2-53"></a>            <span class="va">self</span>._var_l[i][j] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb2-54"><a href="#cb2-54"></a>                <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, </span>
+<span id="cb2-55"><a href="#cb2-55"></a>                                    infinity, </span>
+<span id="cb2-56"><a href="#cb2-56"></a>                                    name<span class="op">=</span><span class="ss">f"l_</span><span class="sc">{</span>i<span class="sc">,</span>j<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-57"><a href="#cb2-57"></a>            <span class="va">self</span>._var_r[i][j] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb2-58"><a href="#cb2-58"></a>                <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, </span>
+<span id="cb2-59"><a href="#cb2-59"></a>                                    infinity, </span>
+<span id="cb2-60"><a href="#cb2-60"></a>                                    name<span class="op">=</span><span class="ss">f"r_</span><span class="sc">{</span>i<span class="sc">,</span>j<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-61"><a href="#cb2-61"></a></span>
+<span id="cb2-62"><a href="#cb2-62"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb2-63"><a href="#cb2-63"></a>        num_rooms <span class="op">=</span> <span class="va">self</span>._data_center.num_rooms</span>
+<span id="cb2-64"><a href="#cb2-64"></a>        expr <span class="op">=</span> [</span>
+<span id="cb2-65"><a href="#cb2-65"></a>            <span class="va">self</span>._data_center.get_distance(i, j) <span class="op">*</span></span>
+<span id="cb2-66"><a href="#cb2-66"></a>            (<span class="va">self</span>._var_l[i][j] <span class="op">+</span> <span class="va">self</span>._var_r[i][j])</span>
+<span id="cb2-67"><a href="#cb2-67"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, num_rooms <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb2-68"><a href="#cb2-68"></a>            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(i <span class="op">+</span> <span class="dv">1</span>, num_rooms)</span>
+<span id="cb2-69"><a href="#cb2-69"></a>        ]</span>
+<span id="cb2-70"><a href="#cb2-70"></a>        <span class="va">self</span>._solver.Minimize(<span class="va">self</span>._solver.Sum(expr))</span>
+<span id="cb2-71"><a href="#cb2-71"></a></span>
+<span id="cb2-72"><a href="#cb2-72"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
+<span id="cb2-73"><a href="#cb2-73"></a>        num_rooms <span class="op">=</span> <span class="va">self</span>._data_center.num_rooms</span>
+<span id="cb2-74"><a href="#cb2-74"></a>        H <span class="op">=</span> <span class="bu">sum</span>([<span class="va">self</span>._data_center.get_room_length(r)</span>
+<span id="cb2-75"><a href="#cb2-75"></a>                <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(num_rooms)])</span>
+<span id="cb2-76"><a href="#cb2-76"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, num_rooms):</span>
+<span id="cb2-77"><a href="#cb2-77"></a>            hi <span class="op">=</span> <span class="va">self</span>._data_center.get_room_length(i)</span>
+<span id="cb2-78"><a href="#cb2-78"></a>            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(i <span class="op">+</span> <span class="dv">1</span>, num_rooms):</span>
+<span id="cb2-79"><a href="#cb2-79"></a>                hj <span class="op">=</span> <span class="va">self</span>._data_center.get_room_length(j)</span>
+<span id="cb2-80"><a href="#cb2-80"></a>                <span class="va">self</span>._solver.Add(</span>
+<span id="cb2-81"><a href="#cb2-81"></a>                    <span class="va">self</span>._var_y[i] <span class="op">&gt;=</span></span>
+<span id="cb2-82"><a href="#cb2-82"></a>                    <span class="va">self</span>._var_y[j] <span class="op">+</span></span>
+<span id="cb2-83"><a href="#cb2-83"></a>                    hj <span class="op">-</span></span>
+<span id="cb2-84"><a href="#cb2-84"></a>                    H <span class="op">*</span> <span class="va">self</span>._var_x[i][j]</span>
+<span id="cb2-85"><a href="#cb2-85"></a>                )</span>
+<span id="cb2-86"><a href="#cb2-86"></a>                </span>
+<span id="cb2-87"><a href="#cb2-87"></a>                <span class="va">self</span>._solver.Add(</span>
+<span id="cb2-88"><a href="#cb2-88"></a>                    <span class="va">self</span>._var_y[j] <span class="op">&gt;=</span></span>
+<span id="cb2-89"><a href="#cb2-89"></a>                    <span class="va">self</span>._var_y[i] <span class="op">+</span></span>
+<span id="cb2-90"><a href="#cb2-90"></a>                    hi <span class="op">-</span></span>
+<span id="cb2-91"><a href="#cb2-91"></a>                    H <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> <span class="va">self</span>._var_x[i][j])</span>
+<span id="cb2-92"><a href="#cb2-92"></a>                )</span>
+<span id="cb2-93"><a href="#cb2-93"></a></span>
+<span id="cb2-94"><a href="#cb2-94"></a>        <span class="cf">for</span> i, j <span class="kw">in</span> product(<span class="bu">range</span>(num_rooms), </span>
+<span id="cb2-95"><a href="#cb2-95"></a>                            <span class="bu">range</span>(num_rooms)):</span>
+<span id="cb2-96"><a href="#cb2-96"></a>            <span class="cf">if</span> i <span class="op">==</span> j: <span class="cf">continue</span></span>
+<span id="cb2-97"><a href="#cb2-97"></a>            hi <span class="op">=</span> <span class="va">self</span>._data_center.get_room_length(i)</span>
+<span id="cb2-98"><a href="#cb2-98"></a>            hj <span class="op">=</span> <span class="va">self</span>._data_center.get_room_length(j)</span>
+<span id="cb2-99"><a href="#cb2-99"></a>            <span class="va">self</span>._solver.Add(</span>
+<span id="cb2-100"><a href="#cb2-100"></a>                <span class="va">self</span>._var_r[i][j] <span class="op">-</span> <span class="va">self</span>._var_l[i][j] <span class="op">==</span></span>
+<span id="cb2-101"><a href="#cb2-101"></a>                <span class="va">self</span>._var_y[i] <span class="op">-</span> <span class="va">self</span>._var_y[j] <span class="op">+</span></span>
+<span id="cb2-102"><a href="#cb2-102"></a>                <span class="fl">0.5</span> <span class="op">*</span> (hi <span class="op">-</span> hj)</span>
+<span id="cb2-103"><a href="#cb2-103"></a>            )</span>
+<span id="cb2-104"><a href="#cb2-104"></a></span>
+<span id="cb2-105"><a href="#cb2-105"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
+<span id="cb2-106"><a href="#cb2-106"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb2-107"><a href="#cb2-107"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb2-108"><a href="#cb2-108"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
+<span id="cb2-109"><a href="#cb2-109"></a>            <span class="bu">print</span>(<span class="ss">f"obj = </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_obj<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb2-110"><a href="#cb2-110"></a>            </span>
+<span id="cb2-111"><a href="#cb2-111"></a>            num_rooms <span class="op">=</span> <span class="va">self</span>._data_center.num_rooms</span>
+<span id="cb2-112"><a href="#cb2-112"></a>            <span class="va">self</span>._opt_y <span class="op">=</span> [</span>
+<span id="cb2-113"><a href="#cb2-113"></a>                <span class="va">self</span>._var_y[r].solution_value()</span>
+<span id="cb2-114"><a href="#cb2-114"></a>                <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(num_rooms)</span>
+<span id="cb2-115"><a href="#cb2-115"></a>            ]</span>
+<span id="cb2-116"><a href="#cb2-116"></a>            <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(num_rooms):</span>
+<span id="cb2-117"><a href="#cb2-117"></a>                <span class="bu">print</span>(<span class="ss">f"room </span><span class="sc">{</span>r<span class="sc">}</span><span class="ss"> starting position: </span><span class="ch">\</span></span>
+<span id="cb2-118"><a href="#cb2-118"></a><span class="ss">                    </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_opt_y[r]<span class="sc">:.2f}</span><span class="ss">,</span><span class="ch">\t\</span></span>
+<span id="cb2-119"><a href="#cb2-119"></a><span class="ss">                    length: </span><span class="ch">\</span></span>
+<span id="cb2-120"><a href="#cb2-120"></a><span class="ss">                        </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_data_center<span class="sc">.</span>get_room_length(r)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To test the program since the original instance is too large, we use the first 8 rooms from the instance <em>AnKeVa_2005_60dept_set1</em> and solve it using OR-Tools. The program will output the optimal objective value and the positions of all the rooms.</p>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">import</span> os</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a>data_dir <span class="op">=</span> <span class="st">"./data/srflp/Anjos"</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>data_file <span class="op">=</span> <span class="st">"AnKeVa_2005_60dept_set1-mini.txt"</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a>data_center <span class="op">=</span> SRFLPDataCenter()</span>
+<span id="cb3-7"><a href="#cb3-7"></a>data_center.read_data(os.path.join(data_dir, data_file))</span>
+<span id="cb3-8"><a href="#cb3-8"></a></span>
+<span id="cb3-9"><a href="#cb3-9"></a>solver <span class="op">=</span> SRFLPSolver(data_center)</span>
+<span id="cb3-10"><a href="#cb3-10"></a>solver.build_model()</span>
+<span id="cb3-11"><a href="#cb3-11"></a>solver.optimize()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>obj = 3715.00
+room 0 starting position: 217.00,                       length: 53.0
+room 1 starting position: 138.00,                       length: 7.0
+room 2 starting position: 53.00,                        length: 47.0
+room 3 starting position: 147.00,                       length: 15.0
+room 4 starting position: 100.00,                       length: 38.0
+room 5 starting position: 189.00,                       length: 28.0
+room 6 starting position: 162.00,                       length: 27.0
+room 7 starting position: 145.00,                       length: 2.0</code></pre>
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="kunlei/python-ortools-notes" data-repo-id="R_kgDOI-7w-A" data-category="General" data-category-id="DIC_kwDOI-7w-M4CVd98" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ip-nqueens.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The N-queens Problem</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./summary.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
