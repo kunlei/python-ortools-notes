@@ -1,0 +1,9 @@
+Warehouses = 1;
+Stores = 3;
+
+Capacity = [47];
+FixedCost = [115];
+Goods = [11, 17, 9];
+SupplyCost = [|57
+              |35
+              |66|];
