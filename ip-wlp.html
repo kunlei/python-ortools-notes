@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.306">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Hands-on Optimization with OR-Tools in Python - 11&nbsp; Warehouse Location Problem</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./summary.html" rel="next">
+<link href="./ip-srflp.html" rel="prev">
+<link href="./logo.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-DTVHQH448R"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: { equationNumbers: {autoNumber: "AMS"} },
+        tex2jax: {inlineMath: [ ['$','$'], ["\\(","\\)"] ]}
+    });
+    </script>
+
+<!-- This is what works with Quarto -->
+<script>
+    MathJax = {
+        tex: {
+            tags: 'ams'  // should be 'ams', 'none', or 'all'
+        }
+    };
+</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 11&nbsp; Warehouse Location Problem">
+<meta name="twitter:description" content="">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-wlp.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Warehouse Location Problem</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Hands-on Optimization with OR-Tools in Python</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://twitter.com/intent/tweet?url=|url|" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">For the Impatient</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./env-setup.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Environment Setup</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Mathematical Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./linear-programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Linear Programming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./integer-programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Integer Programming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-jsp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-tsp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-cvrp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-knapsack.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-nqueens.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The N-queens Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-srflp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Single Row Facility Layout Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-wlp.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Warehouse Location Problem</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-wlp" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Warehouse Location Problem</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>The warehouse location problem (WLP) is a classic optimization problem in operations research that aims to find the optimal locations for warehouses in order to minimize transportation costs while meeting the demand for goods from a set of customers. The problem is particularly relevant for businesses that need to distribute their products across a large geographic region.</p>
+<p>The problem can be formulated as follows: Given a set of stores <span class="math inline">\(\mathcal{S} = \{1, \cdots, s\}\)</span> and a set of potential warehouse locations <span class="math inline">\(\mathcal{W} = \{1, \cdots, w\}\)</span>, the objective is to select a subset of warehouse locations and allocate stores to these locations such that the total transportation cost is minimized. The transportation cost typically depends on the distance between each store and the warehouse they are assigned to, as well as the quantity of goods that need to be transported.</p>
+<p>In order to simplify our mathematical model, we utilize the following symbols to indicate the input parameters:</p>
+<ul>
+<li><span class="math inline">\(f_w\)</span>: the fixed cost required for initiating warehouse <span class="math inline">\(w\)</span></li>
+<li><span class="math inline">\(c_{ws}\)</span>: the cost of transporting goods from warehouse <span class="math inline">\(w\)</span> to store <span class="math inline">\(s\)</span></li>
+<li><span class="math inline">\(d_s\)</span>: the quantity of goods demanded by store <span class="math inline">\(s\)</span></li>
+<li><span class="math inline">\(N_w\)</span>: the storage capacity of warehouse <span class="math inline">\(w\)</span></li>
+</ul>
+<p>We can then define two variables:</p>
+<ul>
+<li><span class="math inline">\(y_s\)</span>: a binary variable that takes on a value of 1 if warehouse <span class="math inline">\(s\)</span> is chosen, and 0 otherwise</li>
+<li><span class="math inline">\(x_{ws}\)</span>: a continuous variable that represents the fraction of store <span class="math inline">\(s\)</span>’s demand that will be met by warehouse <span class="math inline">\(w\)</span></li>
+</ul>
+<p>The complete model of this problem is given below.</p>
+<p><span class="math display">\[\begin{align}
+    \text{min.} &amp;\quad \sum_{w \in \mathcal{W}} \sum_{s \in \mathcal{S}} c_{ws} d_s x_{ws} + \sum_{w \in \mathcal{W}} f_w y_w \label{wlp-obj} \\
+    \text{s.t.} &amp;\quad \sum_{w \in \mathcal{W}} x_{ws} = 1, \ \forall s \in \mathcal{S} \label{wlp-cons1} \\
+    &amp;\quad \sum_{s \in \mathcal{S}} d_s x_{ws} \leq N_w y_w, \ \forall w \in \mathcal{W} \label{wlp-cons2} \\
+    &amp;\quad 0 \leq x_{ws} \leq 1, \ \forall w \in \mathcal{W}, s \in \mathcal{S} \label{wlp-cons3} \\
+    &amp;\quad y_w \in \{0, 1\}, \ \forall w \in \mathcal{W} \label{wlp-cons4}
+\end{align}\]</span></p>
+<p>The objective function <span class="math inline">\(\eqref{wlp-obj}\)</span> is to minimize the total cost of transportation and the fixed cost of opening warehouses. The first term of the objective function sums up the transportation cost of moving goods from each warehouse <span class="math inline">\(w\)</span> to each store <span class="math inline">\(s\)</span>, multiplied by the proportion of store <span class="math inline">\(s\)</span>’s demand met by warehouse <span class="math inline">\(w\)</span>, represented by <span class="math inline">\(x_{ws}\)</span>. The second term of the objective function sums up the fixed cost of opening each warehouse <span class="math inline">\(w\)</span>, represented by <span class="math inline">\(f_w\)</span>, multiplied by a binary variable <span class="math inline">\(y_w\)</span> that takes on a value of 1 if warehouse <span class="math inline">\(w\)</span> is selected, and 0 otherwise.</p>
+<p>The model is subject to four constraints:</p>
+<ul>
+<li>Constraint <span class="math inline">\(\eqref{wlp-cons1}\)</span> ensures that the entire demand of each store <span class="math inline">\(s\)</span> is met. The sum of <span class="math inline">\(x_{ws}\)</span> over all warehouses must be equal to 1 for each store <span class="math inline">\(s\)</span>.</li>
+<li>Constraint <span class="math inline">\(\eqref{wlp-cons2}\)</span> ensures that the total demand of all stores served by warehouse <span class="math inline">\(w\)</span> does not exceed its capacity <span class="math inline">\(N_w\)</span>. The sum of <span class="math inline">\(d_s x_{ws}\)</span> over all stores <span class="math inline">\(s\)</span> must be less than or equal to <span class="math inline">\(N_w y_w\)</span> for each warehouse <span class="math inline">\(w\)</span>.</li>
+<li>Constraint <span class="math inline">\(\eqref{wlp-cons3}\)</span> ensures that the fraction of store <span class="math inline">\(s\)</span>’s demand met by warehouse <span class="math inline">\(w\)</span>, represented by <span class="math inline">\(x_{ws}\)</span>, is between 0 and 1.</li>
+<li>Constraint <span class="math inline">\(\eqref{wlp-cons4}\)</span> ensures that the binary variable <span class="math inline">\(y_w\)</span> takes on a value of either 0 or 1, indicating whether or not warehouse <span class="math inline">\(w\)</span> is selected.</li>
+</ul>
+<p>To demonstrate the solution process for the Warehouse Location Problem (WLP) using OR-Tools, we will use some sample instances available online from the website https://opthub.uniud.it/problem/facility-location/wlp. Specifically, we will be using an instance file called <em>wlp2</em>, the contents of which are shown below.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource {bash} number-lines code-with-copy"><code class="sourceCode"><span id="cb1-1"><a href="#cb1-1"></a>Warehouses = 2;</span>
+<span id="cb1-2"><a href="#cb1-2"></a>Stores = 5;</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a>Capacity = [65, 47];</span>
+<span id="cb1-5"><a href="#cb1-5"></a>FixedCost = [80, 184];</span>
+<span id="cb1-6"><a href="#cb1-6"></a>Goods = [4, 15, 17, 6, 6];</span>
+<span id="cb1-7"><a href="#cb1-7"></a>SupplyCost = [|57, 71</span>
+<span id="cb1-8"><a href="#cb1-8"></a>              |30, 59</span>
+<span id="cb1-9"><a href="#cb1-9"></a>              |43, 71</span>
+<span id="cb1-10"><a href="#cb1-10"></a>              |37, 72</span>
+<span id="cb1-11"><a href="#cb1-11"></a>              |30, 68|];</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this instance file, there are 2 warehouses and 5 stores. The <em>Capacity</em> array specifies the maximum capacity of each warehouse, where the first warehouse has a capacity of 65 and the second has a capacity of 47. The <em>FixedCost</em> array specifies the fixed cost of opening each warehouse, where the first warehouse has a fixed cost of 80 and the second has a fixed cost of 184. The <em>Goods</em> array specifies the demand for each store, where the first store has a demand of 4, the second store has a demand of 15, the third store has a demand of 17, the fourth store has a demand of 6, and the fifth store has a demand of 6. The <em>SupplyCost</em> matrix specifies the transportation cost of moving goods from each warehouse to each store. The entry in row <span class="math inline">\(i\)</span> and column <span class="math inline">\(j\)</span> of the matrix represents the transportation cost of moving goods from warehouse <span class="math inline">\(j\)</span> to store <span class="math inline">\(i\)</span>. For example, the transportation cost of moving goods from the first warehouse to the first store is 57, the transportation cost of moving goods from the second warehouse to the fourth store is 71, etc.</p>
+<p>We will create a <code>WlpDataCenter</code> class that will be responsible for reading and storing the necessary information required for solving the problem later on.</p>
+<div class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> re</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">class</span> WlpDataCenter:</span>
+<span id="cb2-4"><a href="#cb2-4"></a>    </span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb2-6"><a href="#cb2-6"></a>        <span class="va">self</span>._num_warehouses <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>        <span class="va">self</span>._num_stores <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>        <span class="va">self</span>._capacities <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>        <span class="va">self</span>._fixed_costs <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>        <span class="va">self</span>._demands <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>        <span class="va">self</span>._transport_costs <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>    </span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="kw">def</span> read_data(<span class="va">self</span>, data_file):</span>
+<span id="cb2-14"><a href="#cb2-14"></a>        <span class="cf">with</span> <span class="bu">open</span>(data_file) <span class="im">as</span> f:</span>
+<span id="cb2-15"><a href="#cb2-15"></a>            lines <span class="op">=</span> f.readlines()</span>
+<span id="cb2-16"><a href="#cb2-16"></a>    </span>
+<span id="cb2-17"><a href="#cb2-17"></a>        <span class="va">self</span>._num_warehouses <span class="op">=</span> <span class="bu">int</span>(re.findall(<span class="vs">r'\d+'</span>, </span>
+<span id="cb2-18"><a href="#cb2-18"></a>                                            lines[<span class="dv">0</span>])[<span class="dv">0</span>])</span>
+<span id="cb2-19"><a href="#cb2-19"></a>        <span class="va">self</span>._num_stores <span class="op">=</span> <span class="bu">int</span>(re.findall(<span class="vs">r'\d+'</span>, </span>
+<span id="cb2-20"><a href="#cb2-20"></a>                                        lines[<span class="dv">1</span>])[<span class="dv">0</span>])</span>
+<span id="cb2-21"><a href="#cb2-21"></a></span>
+<span id="cb2-22"><a href="#cb2-22"></a>        <span class="va">self</span>._capacities <span class="op">=</span> [</span>
+<span id="cb2-23"><a href="#cb2-23"></a>                    <span class="bu">int</span>(num)</span>
+<span id="cb2-24"><a href="#cb2-24"></a>                    <span class="cf">for</span> num <span class="kw">in</span> re.findall(<span class="vs">r'\d+'</span>, lines[<span class="dv">3</span>])</span>
+<span id="cb2-25"><a href="#cb2-25"></a>                ]</span>
+<span id="cb2-26"><a href="#cb2-26"></a>        <span class="va">self</span>._fixed_costs <span class="op">=</span> [</span>
+<span id="cb2-27"><a href="#cb2-27"></a>                    <span class="bu">int</span>(num)</span>
+<span id="cb2-28"><a href="#cb2-28"></a>                    <span class="cf">for</span> num <span class="kw">in</span> re.findall(<span class="vs">r'\d+'</span>, lines[<span class="dv">4</span>])</span>
+<span id="cb2-29"><a href="#cb2-29"></a>                ]</span>
+<span id="cb2-30"><a href="#cb2-30"></a>        <span class="va">self</span>._demands <span class="op">=</span> [</span>
+<span id="cb2-31"><a href="#cb2-31"></a>                    <span class="bu">int</span>(num)</span>
+<span id="cb2-32"><a href="#cb2-32"></a>                    <span class="cf">for</span> num <span class="kw">in</span> re.findall(<span class="vs">r'\d+'</span>, lines[<span class="dv">5</span>])</span>
+<span id="cb2-33"><a href="#cb2-33"></a>                ]</span>
+<span id="cb2-34"><a href="#cb2-34"></a>        <span class="va">self</span>._transport_costs <span class="op">=</span> []</span>
+<span id="cb2-35"><a href="#cb2-35"></a>        <span class="cf">for</span> line <span class="kw">in</span> lines[<span class="dv">6</span>:]:</span>
+<span id="cb2-36"><a href="#cb2-36"></a>            numbers <span class="op">=</span> [</span>
+<span id="cb2-37"><a href="#cb2-37"></a>                    <span class="bu">int</span>(num)</span>
+<span id="cb2-38"><a href="#cb2-38"></a>                    <span class="cf">for</span> num <span class="kw">in</span> re.findall(<span class="vs">r'\d+'</span>, line)</span>
+<span id="cb2-39"><a href="#cb2-39"></a>                ]</span>
+<span id="cb2-40"><a href="#cb2-40"></a>            <span class="va">self</span>._transport_costs.append(numbers)</span>
+<span id="cb2-41"><a href="#cb2-41"></a>    </span>
+<span id="cb2-42"><a href="#cb2-42"></a>    <span class="at">@property</span></span>
+<span id="cb2-43"><a href="#cb2-43"></a>    <span class="kw">def</span> num_warehouses(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._num_warehouses</span>
+<span id="cb2-44"><a href="#cb2-44"></a>    </span>
+<span id="cb2-45"><a href="#cb2-45"></a>    <span class="at">@property</span></span>
+<span id="cb2-46"><a href="#cb2-46"></a>    <span class="kw">def</span> num_stores(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._num_stores</span>
+<span id="cb2-47"><a href="#cb2-47"></a>    </span>
+<span id="cb2-48"><a href="#cb2-48"></a>    <span class="at">@property</span></span>
+<span id="cb2-49"><a href="#cb2-49"></a>    <span class="kw">def</span> capacities(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._capacities</span>
+<span id="cb2-50"><a href="#cb2-50"></a>    </span>
+<span id="cb2-51"><a href="#cb2-51"></a>    <span class="at">@property</span></span>
+<span id="cb2-52"><a href="#cb2-52"></a>    <span class="kw">def</span> demands(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._demands</span>
+<span id="cb2-53"><a href="#cb2-53"></a>    </span>
+<span id="cb2-54"><a href="#cb2-54"></a>    <span class="at">@property</span></span>
+<span id="cb2-55"><a href="#cb2-55"></a>    <span class="kw">def</span> fixed_costs(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._fixed_costs</span>
+<span id="cb2-56"><a href="#cb2-56"></a>    </span>
+<span id="cb2-57"><a href="#cb2-57"></a>    <span class="at">@property</span></span>
+<span id="cb2-58"><a href="#cb2-58"></a>    <span class="kw">def</span> transport_costs(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._transport_costs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we are ready to solve the WLP using OR-Tools!</p>
+<div class="cell" data-execution_count="84">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-4"><a href="#cb3-4"></a></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">class</span> WlpSolver:</span>
+<span id="cb3-6"><a href="#cb3-6"></a>    </span>
+<span id="cb3-7"><a href="#cb3-7"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, data_center):</span>
+<span id="cb3-8"><a href="#cb3-8"></a>        <span class="va">self</span>._data_center: WlpDataCenter <span class="op">=</span> data_center</span>
+<span id="cb3-9"><a href="#cb3-9"></a>        </span>
+<span id="cb3-10"><a href="#cb3-10"></a>        <span class="va">self</span>._solver <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>        <span class="va">self</span>._var_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>        <span class="va">self</span>._var_y <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a>        </span>
+<span id="cb3-14"><a href="#cb3-14"></a>        <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>        <span class="va">self</span>._opt_x <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a>        <span class="va">self</span>._opt_y <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>        </span>
+<span id="cb3-18"><a href="#cb3-18"></a>    <span class="kw">def</span> build_model(<span class="va">self</span>):</span>
+<span id="cb3-19"><a href="#cb3-19"></a>        <span class="va">self</span>._solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb3-20"><a href="#cb3-20"></a></span>
+<span id="cb3-21"><a href="#cb3-21"></a>        <span class="va">self</span>._create_variables()</span>
+<span id="cb3-22"><a href="#cb3-22"></a>        <span class="va">self</span>._create_objective()</span>
+<span id="cb3-23"><a href="#cb3-23"></a>        <span class="va">self</span>._create_constraints()</span>
+<span id="cb3-24"><a href="#cb3-24"></a>        </span>
+<span id="cb3-25"><a href="#cb3-25"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
+<span id="cb3-26"><a href="#cb3-26"></a>        model <span class="op">=</span> <span class="va">self</span>._solver.ExportModelAsLpFormat(<span class="va">False</span>)</span>
+<span id="cb3-27"><a href="#cb3-27"></a>        <span class="bu">print</span>(model)</span>
+<span id="cb3-28"><a href="#cb3-28"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb3-29"><a href="#cb3-29"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb3-30"><a href="#cb3-30"></a>            <span class="bu">print</span>(<span class="ss">f"solver success!"</span>)</span>
+<span id="cb3-31"><a href="#cb3-31"></a>            num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-32"><a href="#cb3-32"></a>            num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-33"><a href="#cb3-33"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
+<span id="cb3-34"><a href="#cb3-34"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((num_warehouses, num_stores))</span>
+<span id="cb3-35"><a href="#cb3-35"></a>            <span class="cf">for</span> w, s <span class="kw">in</span> product(<span class="bu">range</span>(num_warehouses),</span>
+<span id="cb3-36"><a href="#cb3-36"></a>                                <span class="bu">range</span>(num_stores)):</span>
+<span id="cb3-37"><a href="#cb3-37"></a>                <span class="va">self</span>._opt_x[w][s] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb3-38"><a href="#cb3-38"></a>                    <span class="va">self</span>._var_x[w][s].solution_value()</span>
+<span id="cb3-39"><a href="#cb3-39"></a>            </span>
+<span id="cb3-40"><a href="#cb3-40"></a>            <span class="va">self</span>._opt_y <span class="op">=</span> [</span>
+<span id="cb3-41"><a href="#cb3-41"></a>                <span class="va">self</span>._var_y[w] <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-42"><a href="#cb3-42"></a>            ]</span>
+<span id="cb3-43"><a href="#cb3-43"></a>    </span>
+<span id="cb3-44"><a href="#cb3-44"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb3-45"><a href="#cb3-45"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-46"><a href="#cb3-46"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-47"><a href="#cb3-47"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((num_warehouses, num_stores),</span>
+<span id="cb3-48"><a href="#cb3-48"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb3-49"><a href="#cb3-49"></a>        <span class="cf">for</span> w, s <span class="kw">in</span> product(<span class="bu">range</span>(num_warehouses),</span>
+<span id="cb3-50"><a href="#cb3-50"></a>                            <span class="bu">range</span>(num_stores)):</span>
+<span id="cb3-51"><a href="#cb3-51"></a>            <span class="va">self</span>._var_x[w][s] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb3-52"><a href="#cb3-52"></a>                <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb3-53"><a href="#cb3-53"></a>                                    name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>w<span class="sc">,</span>s<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-54"><a href="#cb3-54"></a>        </span>
+<span id="cb3-55"><a href="#cb3-55"></a>        <span class="va">self</span>._var_y <span class="op">=</span> [</span>
+<span id="cb3-56"><a href="#cb3-56"></a>            <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'y_</span><span class="sc">{</span>w<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-57"><a href="#cb3-57"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-58"><a href="#cb3-58"></a>        ]</span>
+<span id="cb3-59"><a href="#cb3-59"></a>    </span>
+<span id="cb3-60"><a href="#cb3-60"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb3-61"><a href="#cb3-61"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-62"><a href="#cb3-62"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-63"><a href="#cb3-63"></a>        demands <span class="op">=</span> <span class="va">self</span>._data_center.demands</span>
+<span id="cb3-64"><a href="#cb3-64"></a>        transport_costs <span class="op">=</span> <span class="va">self</span>._data_center.transport_costs</span>
+<span id="cb3-65"><a href="#cb3-65"></a>        fixed_costs <span class="op">=</span> <span class="va">self</span>._data_center.fixed_costs</span>
+<span id="cb3-66"><a href="#cb3-66"></a>        expr1 <span class="op">=</span> [</span>
+<span id="cb3-67"><a href="#cb3-67"></a>            transport_costs[s][w] <span class="op">*</span></span>
+<span id="cb3-68"><a href="#cb3-68"></a>            demands[s] <span class="op">*</span></span>
+<span id="cb3-69"><a href="#cb3-69"></a>            <span class="va">self</span>._var_x[w][s]</span>
+<span id="cb3-70"><a href="#cb3-70"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-71"><a href="#cb3-71"></a>            <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores)</span>
+<span id="cb3-72"><a href="#cb3-72"></a>        ]</span>
+<span id="cb3-73"><a href="#cb3-73"></a>        expr2 <span class="op">=</span> [</span>
+<span id="cb3-74"><a href="#cb3-74"></a>            fixed_costs[w] <span class="op">*</span></span>
+<span id="cb3-75"><a href="#cb3-75"></a>            <span class="va">self</span>._var_y[w]</span>
+<span id="cb3-76"><a href="#cb3-76"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-77"><a href="#cb3-77"></a>        ]</span>
+<span id="cb3-78"><a href="#cb3-78"></a>        <span class="va">self</span>._solver.Minimize(</span>
+<span id="cb3-79"><a href="#cb3-79"></a>            <span class="va">self</span>._solver.Sum(expr1) <span class="op">+</span></span>
+<span id="cb3-80"><a href="#cb3-80"></a>            <span class="va">self</span>._solver.Sum(expr2)</span>
+<span id="cb3-81"><a href="#cb3-81"></a>        )</span>
+<span id="cb3-82"><a href="#cb3-82"></a>    </span>
+<span id="cb3-83"><a href="#cb3-83"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
+<span id="cb3-84"><a href="#cb3-84"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-85"><a href="#cb3-85"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-86"><a href="#cb3-86"></a>        <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores):</span>
+<span id="cb3-87"><a href="#cb3-87"></a>            expr <span class="op">=</span> [</span>
+<span id="cb3-88"><a href="#cb3-88"></a>                <span class="va">self</span>._var_x[w][s]</span>
+<span id="cb3-89"><a href="#cb3-89"></a>                <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-90"><a href="#cb3-90"></a>            ]</span>
+<span id="cb3-91"><a href="#cb3-91"></a>            <span class="va">self</span>._solver.Add(</span>
+<span id="cb3-92"><a href="#cb3-92"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb3-93"><a href="#cb3-93"></a>            )</span>
+<span id="cb3-94"><a href="#cb3-94"></a>        </span>
+<span id="cb3-95"><a href="#cb3-95"></a>        demands <span class="op">=</span> <span class="va">self</span>._data_center.demands</span>
+<span id="cb3-96"><a href="#cb3-96"></a>        capacities <span class="op">=</span> <span class="va">self</span>._data_center.capacities</span>
+<span id="cb3-97"><a href="#cb3-97"></a>        <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses):</span>
+<span id="cb3-98"><a href="#cb3-98"></a>            expr <span class="op">=</span> [</span>
+<span id="cb3-99"><a href="#cb3-99"></a>                <span class="va">self</span>._var_x[w][s] <span class="op">*</span></span>
+<span id="cb3-100"><a href="#cb3-100"></a>                demands[s]</span>
+<span id="cb3-101"><a href="#cb3-101"></a>            ]</span>
+<span id="cb3-102"><a href="#cb3-102"></a>            <span class="va">self</span>._solver.Add(</span>
+<span id="cb3-103"><a href="#cb3-103"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> </span>
+<span id="cb3-104"><a href="#cb3-104"></a>                capacities[w] <span class="op">*</span></span>
+<span id="cb3-105"><a href="#cb3-105"></a>                <span class="va">self</span>._var_y[w]</span>
+<span id="cb3-106"><a href="#cb3-106"></a>            )</span>
+<span id="cb3-107"><a href="#cb3-107"></a>    </span>
+<span id="cb3-108"><a href="#cb3-108"></a>    <span class="at">@property</span></span>
+<span id="cb3-109"><a href="#cb3-109"></a>    <span class="kw">def</span> opt_obj(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_obj</span>
+<span id="cb3-110"><a href="#cb3-110"></a>    </span>
+<span id="cb3-111"><a href="#cb3-111"></a>    <span class="at">@property</span></span>
+<span id="cb3-112"><a href="#cb3-112"></a>    <span class="kw">def</span> opt_x(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_x</span>
+<span id="cb3-113"><a href="#cb3-113"></a>    </span>
+<span id="cb3-114"><a href="#cb3-114"></a>    <span class="at">@property</span></span>
+<span id="cb3-115"><a href="#cb3-115"></a>    <span class="kw">def</span> opt_y(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="77">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">import</span> os</span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a>data_file <span class="op">=</span> <span class="st">"./data/wlp/wlp/wlp2"</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a>data_center <span class="op">=</span> WlpDataCenter()</span>
+<span id="cb4-6"><a href="#cb4-6"></a>data_center.read_data(data_file)</span>
+<span id="cb4-7"><a href="#cb4-7"></a></span>
+<span id="cb4-8"><a href="#cb4-8"></a>num_warehouses <span class="op">=</span> data_center.num_warehouses</span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="bu">print</span>(num_warehouses)</span>
+<span id="cb4-10"><a href="#cb4-10"></a></span>
+<span id="cb4-11"><a href="#cb4-11"></a>num_stores <span class="op">=</span> data_center.num_stores</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="bu">print</span>(num_stores)</span>
+<span id="cb4-13"><a href="#cb4-13"></a></span>
+<span id="cb4-14"><a href="#cb4-14"></a>demands <span class="op">=</span> data_center.demands</span>
+<span id="cb4-15"><a href="#cb4-15"></a>transport_costs <span class="op">=</span> data_center.transport_costs</span>
+<span id="cb4-16"><a href="#cb4-16"></a>fixed_costs <span class="op">=</span> data_center.fixed_costs</span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="bu">print</span>(demands)</span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="bu">print</span>(transport_costs)</span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="bu">print</span>(fixed_costs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2
+5
+[4, 15, 17, 6, 6]
+[[57, 71], [30, 59], [43, 71], [37, 72], [30, 68]]
+[80, 184]</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="85">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>solver <span class="op">=</span> WlpSolver(data_center)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>solver.build_model()</span>
+<span id="cb6-3"><a href="#cb6-3"></a>solver.optimize()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>\ Generated by MPModelProtoExporter
+\   Name             : 
+\   Format           : Free
+\   Constraints      : 7
+\   Variables        : 12
+\     Binary         : 2
+\     Integer        : 0
+\     Continuous     : 10
+Minimize
+ Obj: +228 x_(0,_0) +450 x_(0,_1) +731 x_(0,_2) +222 x_(0,_3) +180 x_(0,_4) +284 x_(1,_0) +885 x_(1,_1) +1207 x_(1,_2) +432 x_(1,_3) +408 x_(1,_4) +80 y_0 +184 y_1 
+Subject to
+ auto_c_000000000: +1 x_(0,_0) +1 x_(1,_0)  = 1
+ auto_c_000000001: +1 x_(0,_1) +1 x_(1,_1)  = 1
+ auto_c_000000002: +1 x_(0,_2) +1 x_(1,_2)  = 1
+ auto_c_000000003: +1 x_(0,_3) +1 x_(1,_3)  = 1
+ auto_c_000000004: +1 x_(0,_4) +1 x_(1,_4)  = 1
+ auto_c_000000005: +6 x_(0,_4) -65 y_0  = 0
+ auto_c_000000006: +6 x_(1,_4) -47 y_1  = 0
+Bounds
+ 0 &lt;= x_(0,_0) &lt;= 1
+ 0 &lt;= x_(0,_1) &lt;= 1
+ 0 &lt;= x_(0,_2) &lt;= 1
+ 0 &lt;= x_(0,_3) &lt;= 1
+ 0 &lt;= x_(0,_4) &lt;= 1
+ 0 &lt;= x_(1,_0) &lt;= 1
+ 0 &lt;= x_(1,_1) &lt;= 1
+ 0 &lt;= x_(1,_2) &lt;= 1
+ 0 &lt;= x_(1,_3) &lt;= 1
+ 0 &lt;= x_(1,_4) &lt;= 1
+ 0 &lt;= y_0 &lt;= 1
+ 0 &lt;= y_1 &lt;= 1
+Binaries
+ y_0
+ y_1
+End
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="83">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>opt_obj <span class="op">=</span> solver.opt_obj</span>
+<span id="cb8-2"><a href="#cb8-2"></a>opt_y <span class="op">=</span> solver.opt_y</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="bu">print</span>(opt_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>None</code></pre>
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="kunlei/python-ortools-notes" data-repo-id="R_kgDOI-7w-A" data-category="General" data-category-id="DIC_kwDOI-7w-M4CVd98" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ip-srflp.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Single Row Facility Layout Problem</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./summary.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
