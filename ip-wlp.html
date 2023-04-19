@@ -338,7 +338,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb1-11"><a href="#cb1-11"></a>              |30, 68|];</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In this instance file, there are 2 warehouses and 5 stores. The <em>Capacity</em> array specifies the maximum capacity of each warehouse, where the first warehouse has a capacity of 65 and the second has a capacity of 47. The <em>FixedCost</em> array specifies the fixed cost of opening each warehouse, where the first warehouse has a fixed cost of 80 and the second has a fixed cost of 184. The <em>Goods</em> array specifies the demand for each store, where the first store has a demand of 4, the second store has a demand of 15, the third store has a demand of 17, the fourth store has a demand of 6, and the fifth store has a demand of 6. The <em>SupplyCost</em> matrix specifies the transportation cost of moving goods from each warehouse to each store. The entry in row <span class="math inline">\(i\)</span> and column <span class="math inline">\(j\)</span> of the matrix represents the transportation cost of moving goods from warehouse <span class="math inline">\(j\)</span> to store <span class="math inline">\(i\)</span>. For example, the transportation cost of moving goods from the first warehouse to the first store is 57, the transportation cost of moving goods from the second warehouse to the fourth store is 71, etc.</p>
 <p>We will create a <code>WlpDataCenter</code> class that will be responsible for reading and storing the necessary information required for solving the problem later on.</p>
-<div class="cell" data-execution_count="67">
+<div class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> re</span>
 <span id="cb2-2"><a href="#cb2-2"></a></span>
 <span id="cb2-3"><a href="#cb2-3"></a><span class="kw">class</span> WlpDataCenter:</span>
@@ -399,7 +399,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb2-58"><a href="#cb2-58"></a>    <span class="kw">def</span> transport_costs(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._transport_costs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we are ready to solve the WLP using OR-Tools!</p>
-<div class="cell" data-execution_count="84">
+<div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -425,84 +425,84 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb3-23"><a href="#cb3-23"></a>        <span class="va">self</span>._create_constraints()</span>
 <span id="cb3-24"><a href="#cb3-24"></a>        </span>
 <span id="cb3-25"><a href="#cb3-25"></a>    <span class="kw">def</span> optimize(<span class="va">self</span>):</span>
-<span id="cb3-26"><a href="#cb3-26"></a>        model <span class="op">=</span> <span class="va">self</span>._solver.ExportModelAsLpFormat(<span class="va">False</span>)</span>
-<span id="cb3-27"><a href="#cb3-27"></a>        <span class="bu">print</span>(model)</span>
-<span id="cb3-28"><a href="#cb3-28"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
-<span id="cb3-29"><a href="#cb3-29"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
-<span id="cb3-30"><a href="#cb3-30"></a>            <span class="bu">print</span>(<span class="ss">f"solver success!"</span>)</span>
-<span id="cb3-31"><a href="#cb3-31"></a>            num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
-<span id="cb3-32"><a href="#cb3-32"></a>            num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
-<span id="cb3-33"><a href="#cb3-33"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
-<span id="cb3-34"><a href="#cb3-34"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((num_warehouses, num_stores))</span>
-<span id="cb3-35"><a href="#cb3-35"></a>            <span class="cf">for</span> w, s <span class="kw">in</span> product(<span class="bu">range</span>(num_warehouses),</span>
-<span id="cb3-36"><a href="#cb3-36"></a>                                <span class="bu">range</span>(num_stores)):</span>
-<span id="cb3-37"><a href="#cb3-37"></a>                <span class="va">self</span>._opt_x[w][s] <span class="op">=</span> <span class="op">\</span></span>
-<span id="cb3-38"><a href="#cb3-38"></a>                    <span class="va">self</span>._var_x[w][s].solution_value()</span>
-<span id="cb3-39"><a href="#cb3-39"></a>            </span>
-<span id="cb3-40"><a href="#cb3-40"></a>            <span class="va">self</span>._opt_y <span class="op">=</span> [</span>
-<span id="cb3-41"><a href="#cb3-41"></a>                <span class="va">self</span>._var_y[w] <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
-<span id="cb3-42"><a href="#cb3-42"></a>            ]</span>
-<span id="cb3-43"><a href="#cb3-43"></a>    </span>
-<span id="cb3-44"><a href="#cb3-44"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
-<span id="cb3-45"><a href="#cb3-45"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
-<span id="cb3-46"><a href="#cb3-46"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
-<span id="cb3-47"><a href="#cb3-47"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((num_warehouses, num_stores),</span>
-<span id="cb3-48"><a href="#cb3-48"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
-<span id="cb3-49"><a href="#cb3-49"></a>        <span class="cf">for</span> w, s <span class="kw">in</span> product(<span class="bu">range</span>(num_warehouses),</span>
-<span id="cb3-50"><a href="#cb3-50"></a>                            <span class="bu">range</span>(num_stores)):</span>
-<span id="cb3-51"><a href="#cb3-51"></a>            <span class="va">self</span>._var_x[w][s] <span class="op">=</span> <span class="op">\</span></span>
-<span id="cb3-52"><a href="#cb3-52"></a>                <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb3-53"><a href="#cb3-53"></a>                                    name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>w<span class="sc">,</span>s<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb3-54"><a href="#cb3-54"></a>        </span>
-<span id="cb3-55"><a href="#cb3-55"></a>        <span class="va">self</span>._var_y <span class="op">=</span> [</span>
-<span id="cb3-56"><a href="#cb3-56"></a>            <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'y_</span><span class="sc">{</span>w<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb3-57"><a href="#cb3-57"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
-<span id="cb3-58"><a href="#cb3-58"></a>        ]</span>
-<span id="cb3-59"><a href="#cb3-59"></a>    </span>
-<span id="cb3-60"><a href="#cb3-60"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
-<span id="cb3-61"><a href="#cb3-61"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
-<span id="cb3-62"><a href="#cb3-62"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
-<span id="cb3-63"><a href="#cb3-63"></a>        demands <span class="op">=</span> <span class="va">self</span>._data_center.demands</span>
-<span id="cb3-64"><a href="#cb3-64"></a>        transport_costs <span class="op">=</span> <span class="va">self</span>._data_center.transport_costs</span>
-<span id="cb3-65"><a href="#cb3-65"></a>        fixed_costs <span class="op">=</span> <span class="va">self</span>._data_center.fixed_costs</span>
-<span id="cb3-66"><a href="#cb3-66"></a>        expr1 <span class="op">=</span> [</span>
-<span id="cb3-67"><a href="#cb3-67"></a>            transport_costs[s][w] <span class="op">*</span></span>
-<span id="cb3-68"><a href="#cb3-68"></a>            demands[s] <span class="op">*</span></span>
-<span id="cb3-69"><a href="#cb3-69"></a>            <span class="va">self</span>._var_x[w][s]</span>
-<span id="cb3-70"><a href="#cb3-70"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
-<span id="cb3-71"><a href="#cb3-71"></a>            <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores)</span>
-<span id="cb3-72"><a href="#cb3-72"></a>        ]</span>
-<span id="cb3-73"><a href="#cb3-73"></a>        expr2 <span class="op">=</span> [</span>
-<span id="cb3-74"><a href="#cb3-74"></a>            fixed_costs[w] <span class="op">*</span></span>
-<span id="cb3-75"><a href="#cb3-75"></a>            <span class="va">self</span>._var_y[w]</span>
-<span id="cb3-76"><a href="#cb3-76"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
-<span id="cb3-77"><a href="#cb3-77"></a>        ]</span>
-<span id="cb3-78"><a href="#cb3-78"></a>        <span class="va">self</span>._solver.Minimize(</span>
-<span id="cb3-79"><a href="#cb3-79"></a>            <span class="va">self</span>._solver.Sum(expr1) <span class="op">+</span></span>
-<span id="cb3-80"><a href="#cb3-80"></a>            <span class="va">self</span>._solver.Sum(expr2)</span>
-<span id="cb3-81"><a href="#cb3-81"></a>        )</span>
-<span id="cb3-82"><a href="#cb3-82"></a>    </span>
-<span id="cb3-83"><a href="#cb3-83"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
-<span id="cb3-84"><a href="#cb3-84"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
-<span id="cb3-85"><a href="#cb3-85"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
-<span id="cb3-86"><a href="#cb3-86"></a>        <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores):</span>
-<span id="cb3-87"><a href="#cb3-87"></a>            expr <span class="op">=</span> [</span>
-<span id="cb3-88"><a href="#cb3-88"></a>                <span class="va">self</span>._var_x[w][s]</span>
-<span id="cb3-89"><a href="#cb3-89"></a>                <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
-<span id="cb3-90"><a href="#cb3-90"></a>            ]</span>
-<span id="cb3-91"><a href="#cb3-91"></a>            <span class="va">self</span>._solver.Add(</span>
-<span id="cb3-92"><a href="#cb3-92"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="dv">1</span></span>
-<span id="cb3-93"><a href="#cb3-93"></a>            )</span>
-<span id="cb3-94"><a href="#cb3-94"></a>        </span>
-<span id="cb3-95"><a href="#cb3-95"></a>        demands <span class="op">=</span> <span class="va">self</span>._data_center.demands</span>
-<span id="cb3-96"><a href="#cb3-96"></a>        capacities <span class="op">=</span> <span class="va">self</span>._data_center.capacities</span>
-<span id="cb3-97"><a href="#cb3-97"></a>        <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses):</span>
-<span id="cb3-98"><a href="#cb3-98"></a>            expr <span class="op">=</span> [</span>
-<span id="cb3-99"><a href="#cb3-99"></a>                <span class="va">self</span>._var_x[w][s] <span class="op">*</span></span>
-<span id="cb3-100"><a href="#cb3-100"></a>                demands[s]</span>
+<span id="cb3-26"><a href="#cb3-26"></a>        <span class="va">self</span>._solver.SetTimeLimit(<span class="dv">20000</span>)</span>
+<span id="cb3-27"><a href="#cb3-27"></a>        status <span class="op">=</span> <span class="va">self</span>._solver.Solve()</span>
+<span id="cb3-28"><a href="#cb3-28"></a>        <span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb3-29"><a href="#cb3-29"></a>            num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-30"><a href="#cb3-30"></a>            num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-31"><a href="#cb3-31"></a>            <span class="va">self</span>._opt_obj <span class="op">=</span> <span class="va">self</span>._solver.Objective().Value()</span>
+<span id="cb3-32"><a href="#cb3-32"></a>            <span class="va">self</span>._opt_x <span class="op">=</span> np.zeros((num_warehouses,</span>
+<span id="cb3-33"><a href="#cb3-33"></a>                                    num_stores))</span>
+<span id="cb3-34"><a href="#cb3-34"></a>            <span class="cf">for</span> w, s <span class="kw">in</span> product(<span class="bu">range</span>(num_warehouses),</span>
+<span id="cb3-35"><a href="#cb3-35"></a>                                <span class="bu">range</span>(num_stores)):</span>
+<span id="cb3-36"><a href="#cb3-36"></a>                <span class="va">self</span>._opt_x[w][s] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb3-37"><a href="#cb3-37"></a>                    <span class="va">self</span>._var_x[w][s].solution_value()</span>
+<span id="cb3-38"><a href="#cb3-38"></a>            </span>
+<span id="cb3-39"><a href="#cb3-39"></a>            <span class="va">self</span>._opt_y <span class="op">=</span> [</span>
+<span id="cb3-40"><a href="#cb3-40"></a>                <span class="va">self</span>._var_y[w] <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-41"><a href="#cb3-41"></a>            ]</span>
+<span id="cb3-42"><a href="#cb3-42"></a>    </span>
+<span id="cb3-43"><a href="#cb3-43"></a>    <span class="kw">def</span> _create_variables(<span class="va">self</span>):</span>
+<span id="cb3-44"><a href="#cb3-44"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-45"><a href="#cb3-45"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-46"><a href="#cb3-46"></a>        <span class="va">self</span>._var_x <span class="op">=</span> np.empty((num_warehouses, num_stores),</span>
+<span id="cb3-47"><a href="#cb3-47"></a>                            dtype<span class="op">=</span><span class="bu">object</span>)</span>
+<span id="cb3-48"><a href="#cb3-48"></a>        <span class="cf">for</span> w, s <span class="kw">in</span> product(<span class="bu">range</span>(num_warehouses),</span>
+<span id="cb3-49"><a href="#cb3-49"></a>                            <span class="bu">range</span>(num_stores)):</span>
+<span id="cb3-50"><a href="#cb3-50"></a>            <span class="va">self</span>._var_x[w][s] <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb3-51"><a href="#cb3-51"></a>                <span class="va">self</span>._solver.NumVar(<span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb3-52"><a href="#cb3-52"></a>                                    name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>w<span class="sc">,</span>s<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-53"><a href="#cb3-53"></a>        </span>
+<span id="cb3-54"><a href="#cb3-54"></a>        <span class="va">self</span>._var_y <span class="op">=</span> [</span>
+<span id="cb3-55"><a href="#cb3-55"></a>            <span class="va">self</span>._solver.BoolVar(name<span class="op">=</span><span class="ss">f'y_</span><span class="sc">{</span>w<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-56"><a href="#cb3-56"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-57"><a href="#cb3-57"></a>        ]</span>
+<span id="cb3-58"><a href="#cb3-58"></a>    </span>
+<span id="cb3-59"><a href="#cb3-59"></a>    <span class="kw">def</span> _create_objective(<span class="va">self</span>):</span>
+<span id="cb3-60"><a href="#cb3-60"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-61"><a href="#cb3-61"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-62"><a href="#cb3-62"></a>        demands <span class="op">=</span> <span class="va">self</span>._data_center.demands</span>
+<span id="cb3-63"><a href="#cb3-63"></a>        transport_costs <span class="op">=</span> <span class="va">self</span>._data_center.transport_costs</span>
+<span id="cb3-64"><a href="#cb3-64"></a>        fixed_costs <span class="op">=</span> <span class="va">self</span>._data_center.fixed_costs</span>
+<span id="cb3-65"><a href="#cb3-65"></a>        expr1 <span class="op">=</span> [</span>
+<span id="cb3-66"><a href="#cb3-66"></a>            transport_costs[s][w] <span class="op">*</span></span>
+<span id="cb3-67"><a href="#cb3-67"></a>            demands[s] <span class="op">*</span></span>
+<span id="cb3-68"><a href="#cb3-68"></a>            <span class="va">self</span>._var_x[w][s]</span>
+<span id="cb3-69"><a href="#cb3-69"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-70"><a href="#cb3-70"></a>            <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores)</span>
+<span id="cb3-71"><a href="#cb3-71"></a>        ]</span>
+<span id="cb3-72"><a href="#cb3-72"></a>        expr2 <span class="op">=</span> [</span>
+<span id="cb3-73"><a href="#cb3-73"></a>            fixed_costs[w] <span class="op">*</span></span>
+<span id="cb3-74"><a href="#cb3-74"></a>            <span class="va">self</span>._var_y[w]</span>
+<span id="cb3-75"><a href="#cb3-75"></a>            <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-76"><a href="#cb3-76"></a>        ]</span>
+<span id="cb3-77"><a href="#cb3-77"></a>        <span class="va">self</span>._solver.Minimize(</span>
+<span id="cb3-78"><a href="#cb3-78"></a>            <span class="va">self</span>._solver.Sum(expr1) <span class="op">+</span></span>
+<span id="cb3-79"><a href="#cb3-79"></a>            <span class="va">self</span>._solver.Sum(expr2)</span>
+<span id="cb3-80"><a href="#cb3-80"></a>        )</span>
+<span id="cb3-81"><a href="#cb3-81"></a>    </span>
+<span id="cb3-82"><a href="#cb3-82"></a>    <span class="kw">def</span> _create_constraints(<span class="va">self</span>):</span>
+<span id="cb3-83"><a href="#cb3-83"></a>        num_warehouses <span class="op">=</span> <span class="va">self</span>._data_center.num_warehouses</span>
+<span id="cb3-84"><a href="#cb3-84"></a>        num_stores <span class="op">=</span> <span class="va">self</span>._data_center.num_stores</span>
+<span id="cb3-85"><a href="#cb3-85"></a>        <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores):</span>
+<span id="cb3-86"><a href="#cb3-86"></a>            expr <span class="op">=</span> [</span>
+<span id="cb3-87"><a href="#cb3-87"></a>                <span class="va">self</span>._var_x[w][s]</span>
+<span id="cb3-88"><a href="#cb3-88"></a>                <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses)</span>
+<span id="cb3-89"><a href="#cb3-89"></a>            ]</span>
+<span id="cb3-90"><a href="#cb3-90"></a>            <span class="va">self</span>._solver.Add(</span>
+<span id="cb3-91"><a href="#cb3-91"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb3-92"><a href="#cb3-92"></a>            )</span>
+<span id="cb3-93"><a href="#cb3-93"></a>        </span>
+<span id="cb3-94"><a href="#cb3-94"></a>        demands <span class="op">=</span> <span class="va">self</span>._data_center.demands</span>
+<span id="cb3-95"><a href="#cb3-95"></a>        capacities <span class="op">=</span> <span class="va">self</span>._data_center.capacities</span>
+<span id="cb3-96"><a href="#cb3-96"></a>        <span class="cf">for</span> w <span class="kw">in</span> <span class="bu">range</span>(num_warehouses):</span>
+<span id="cb3-97"><a href="#cb3-97"></a>            expr <span class="op">=</span> [</span>
+<span id="cb3-98"><a href="#cb3-98"></a>                <span class="va">self</span>._var_x[w][s] <span class="op">*</span></span>
+<span id="cb3-99"><a href="#cb3-99"></a>                demands[s]</span>
+<span id="cb3-100"><a href="#cb3-100"></a>                <span class="cf">for</span> s <span class="kw">in</span> <span class="bu">range</span>(num_stores)</span>
 <span id="cb3-101"><a href="#cb3-101"></a>            ]</span>
 <span id="cb3-102"><a href="#cb3-102"></a>            <span class="va">self</span>._solver.Add(</span>
-<span id="cb3-103"><a href="#cb3-103"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">==</span> </span>
+<span id="cb3-103"><a href="#cb3-103"></a>                <span class="va">self</span>._solver.Sum(expr) <span class="op">&lt;=</span> </span>
 <span id="cb3-104"><a href="#cb3-104"></a>                capacities[w] <span class="op">*</span></span>
 <span id="cb3-105"><a href="#cb3-105"></a>                <span class="va">self</span>._var_y[w]</span>
 <span id="cb3-106"><a href="#cb3-106"></a>            )</span>
@@ -516,83 +516,124 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb3-114"><a href="#cb3-114"></a>    <span class="at">@property</span></span>
 <span id="cb3-115"><a href="#cb3-115"></a>    <span class="kw">def</span> opt_y(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._opt_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="77">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">import</span> os</span>
-<span id="cb4-2"><a href="#cb4-2"></a></span>
-<span id="cb4-3"><a href="#cb4-3"></a>data_file <span class="op">=</span> <span class="st">"./data/wlp/wlp/wlp2"</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a></span>
-<span id="cb4-5"><a href="#cb4-5"></a>data_center <span class="op">=</span> WlpDataCenter()</span>
-<span id="cb4-6"><a href="#cb4-6"></a>data_center.read_data(data_file)</span>
-<span id="cb4-7"><a href="#cb4-7"></a></span>
-<span id="cb4-8"><a href="#cb4-8"></a>num_warehouses <span class="op">=</span> data_center.num_warehouses</span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="bu">print</span>(num_warehouses)</span>
-<span id="cb4-10"><a href="#cb4-10"></a></span>
-<span id="cb4-11"><a href="#cb4-11"></a>num_stores <span class="op">=</span> data_center.num_stores</span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="bu">print</span>(num_stores)</span>
-<span id="cb4-13"><a href="#cb4-13"></a></span>
-<span id="cb4-14"><a href="#cb4-14"></a>demands <span class="op">=</span> data_center.demands</span>
-<span id="cb4-15"><a href="#cb4-15"></a>transport_costs <span class="op">=</span> data_center.transport_costs</span>
-<span id="cb4-16"><a href="#cb4-16"></a>fixed_costs <span class="op">=</span> data_center.fixed_costs</span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="bu">print</span>(demands)</span>
-<span id="cb4-18"><a href="#cb4-18"></a><span class="bu">print</span>(transport_costs)</span>
-<span id="cb4-19"><a href="#cb4-19"></a><span class="bu">print</span>(fixed_costs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>2
-5
-[4, 15, 17, 6, 6]
-[[57, 71], [30, 59], [43, 71], [37, 72], [30, 68]]
-[80, 184]</code></pre>
+<p>The program defines a class named <code>WlpSolver</code> which has methods to build the model, optimize it and retrieve the optimized solution.</p>
+<p>The <code>WlpSolver</code> class takes an instance of <code>WlpDataCenter</code> as input, which contains the data necessary to solve the problem. The <code>build_model()</code> method creates variables, objectives, and constraints for the problem using the OR-Tools library. The <code>optimize()</code> method solves the problem and saves the optimized objective function value, <code>opt_obj</code>, the matrix <code>opt_x</code> that indicates the optimal assignment of stores to warehouses, and a list <code>opt_y</code> of binary variables that indicate whether or not each warehouse is open.</p>
+<p>The <code>_create_variables()</code> method creates two types of variables: a matrix of continuous variables that indicates the proportion of a store’s demands that’s served by a warehouse and a list of binary variables that indicate whether or not each warehouse is open. The <code>_create_objective()</code> method creates the objective function of the problem, which is to minimize the total cost of opening warehouses and serving stores. The <code>_create_constraints()</code> method creates constraints that ensure that every store’s demands are fully fulfilled and a warehouse’s capacity is not violated.</p>
+<p>Finally, the <code>opt_obj</code>, <code>opt_x</code>, and <code>opt_y</code> properties allow access to the results of the optimization.</p>
+<p><a href="#tbl-wlp-data">Table&nbsp;<span>11.1</span></a> reports the best solutions found within the time limits of 10 seconds for some testing instances.</p>
+<div class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div id="tbl-wlp-data" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;11.1: Computational results of WLP instances</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Instance</th>
+<th style="text-align: right;">No.&nbsp;Warehouses</th>
+<th style="text-align: right;">No.&nbsp;Stores</th>
+<th style="text-align: right;">Best Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">wlp1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1931</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1891</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">4358</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4246</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3502</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">4108</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">4276</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">4888</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">7959</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">8893</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp12</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">4890</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp15</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">14881</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp20</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">9727</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp30</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">11964</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">wlp50</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">15164</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wlp100</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">220</td>
+<td style="text-align: right;">20848</td>
+</tr>
+</tbody>
+</table>
 </div>
-</div>
-<div class="cell" data-execution_count="85">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>solver <span class="op">=</span> WlpSolver(data_center)</span>
-<span id="cb6-2"><a href="#cb6-2"></a>solver.build_model()</span>
-<span id="cb6-3"><a href="#cb6-3"></a>solver.optimize()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>\ Generated by MPModelProtoExporter
-\   Name             : 
-\   Format           : Free
-\   Constraints      : 7
-\   Variables        : 12
-\     Binary         : 2
-\     Integer        : 0
-\     Continuous     : 10
-Minimize
- Obj: +228 x_(0,_0) +450 x_(0,_1) +731 x_(0,_2) +222 x_(0,_3) +180 x_(0,_4) +284 x_(1,_0) +885 x_(1,_1) +1207 x_(1,_2) +432 x_(1,_3) +408 x_(1,_4) +80 y_0 +184 y_1 
-Subject to
- auto_c_000000000: +1 x_(0,_0) +1 x_(1,_0)  = 1
- auto_c_000000001: +1 x_(0,_1) +1 x_(1,_1)  = 1
- auto_c_000000002: +1 x_(0,_2) +1 x_(1,_2)  = 1
- auto_c_000000003: +1 x_(0,_3) +1 x_(1,_3)  = 1
- auto_c_000000004: +1 x_(0,_4) +1 x_(1,_4)  = 1
- auto_c_000000005: +6 x_(0,_4) -65 y_0  = 0
- auto_c_000000006: +6 x_(1,_4) -47 y_1  = 0
-Bounds
- 0 &lt;= x_(0,_0) &lt;= 1
- 0 &lt;= x_(0,_1) &lt;= 1
- 0 &lt;= x_(0,_2) &lt;= 1
- 0 &lt;= x_(0,_3) &lt;= 1
- 0 &lt;= x_(0,_4) &lt;= 1
- 0 &lt;= x_(1,_0) &lt;= 1
- 0 &lt;= x_(1,_1) &lt;= 1
- 0 &lt;= x_(1,_2) &lt;= 1
- 0 &lt;= x_(1,_3) &lt;= 1
- 0 &lt;= x_(1,_4) &lt;= 1
- 0 &lt;= y_0 &lt;= 1
- 0 &lt;= y_1 &lt;= 1
-Binaries
- y_0
- y_1
-End
-</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="83">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>opt_obj <span class="op">=</span> solver.opt_obj</span>
-<span id="cb8-2"><a href="#cb8-2"></a>opt_y <span class="op">=</span> solver.opt_y</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="bu">print</span>(opt_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>None</code></pre>
 </div>
 </div>
 
