@@ -36,6 +36,7 @@ book:
         - ip-nqueens.ipynb
         - ip-srflp.ipynb
         - ip-wlp.ipynb
+        - ip-cutting-stock.ipynb
         # - ip-rcps.ipynb
         # - column-generation.ipynb
     # - part: "Constraint Programming"
