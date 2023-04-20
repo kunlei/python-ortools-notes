@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./summary.html" rel="next">
+<link href="./ip-bin-packing.html" rel="next">
 <link href="./ip-wlp.html" rel="prev">
 <link href="./logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
@@ -86,6 +120,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     };
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 12&nbsp; The Cutting Stock Problem">
 <meta name="twitter:description" content="">
@@ -222,12 +258,18 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">The Cutting Stock Problem</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ip-bin-packing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">The Bin Packing Problem</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -264,8 +306,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 
 </header>
 
-<p>The cutting stock problem is a common problem in the paper industry, where large rolls of paper must be cut into smaller rolls of various widths to meet customer demands. For example, a paper mill may have a large roll of paper that is 60 inches wide and needs to produce smaller rolls of widths 30, 24, 18, and 12 inches. The mill must determine the best way to cut the large roll of paper into the required widths while minimizing waste.</p>
-<p>Let’s say that a paper company produces rolls with a uniform width of 100 inches and receives orders for rolls with widths of 20, 30, 40, and 50 inches. <a href="#tbl-cutting-stock-data">Table&nbsp;<span>12.1</span></a> shows an illustrative example.</p>
+<p>The cutting stock problem (CSP) is a common problem in the paper industry, where large rolls of paper must be cut into smaller rolls of various widths to meet customer demands. For example, a paper mill may have a large roll of paper that is 60 inches wide and needs to produce smaller rolls of widths 30, 24, 18, and 12 inches. The mill must determine the best way to cut the large roll of paper into the required widths while minimizing waste.</p>
+<p>Let’s say that a paper company produces rolls with a uniform width of 100 inches and receives orders for rolls with widths of 20, 30, 40, and 50 inches. <a href="#tbl-cutting-stock-data">Table&nbsp;<span>12.1</span></a> shows the order details.</p>
 <div class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div id="tbl-cutting-stock-data" class="anchored">
@@ -299,7 +341,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<p>To fulfill these orders, a single 100 inch roll can be cut into one or more of the order widths. This process generates scrap, which is the leftover material that cannot be used. The different combinations of cuts are called patterns. In this case, there are 37 different patterns that can be used.</p>
+<p>To fulfill these orders, a single 100 inch roll can be cut into one or more of the order widths. This process generates scrap, which is the leftover material that cannot be used. The different combinations of cuts are called patterns. In this case, there are many possible patterns but for simplicity purpose, we’ll assume only the 10 patterns listed in <a href="#tbl-cutting-stock-available-patterns">Table&nbsp;<span>12.2</span></a> are available.</p>
 <div class="cell" data-execution_count="16">
 <div class="cell-output cell-output-display" data-execution_count="16">
 <div id="tbl-cutting-stock-available-patterns" class="anchored">
@@ -390,6 +432,185 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
+<p>The objective of the cutting stock problem is to reduce the amount of material wastage while fulfilling the specified demands. The demand for each order is denoted by <span class="math inline">\(r_i\)</span>, and the number of order size <span class="math inline">\(i\)</span> in pattern <span class="math inline">\(j\)</span> is represented by <span class="math inline">\(a_{ij}\)</span>. To achieve this objective, we introduce the variable <span class="math inline">\(x_j\)</span> which is a non-negative integer representing the frequency with which pattern <span class="math inline">\(j\)</span> is used to fulfill the orders. The index <span class="math inline">\(j\)</span> ranges from 1 to 10. Thus, the problem can be expressed as follows.</p>
+<p><span class="math display">\[\begin{align}
+    \text{min.} &amp;\quad \sum_{j = 1}^n x_j \label{cutting-obj} \\
+    \text{s.t.} &amp;\quad \sum_{j=1}^n a_{ij} x_j \geq r_i, \ \forall i \in \mathcal{I} \label{cutting-cons1} \\
+    &amp;\quad x_j \in \mathbb{Z}^{+}=\{1,2,3,\ldots\}, \ \forall j \in \{1, \cdots, 10\} \label{cutting-cons2}
+\end{align}\]</span></p>
+<p>Now we solve this contrived cutting stock problem using OR-Tools. The code below gives the complete program.</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># prepare data</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>num_orders <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>order_quantities <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">120</span>, <span class="dv">40</span>, <span class="dv">20</span>]</span>
+<span id="cb1-6"><a href="#cb1-6"></a>num_patterns <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>pattern_details <span class="op">=</span> [</span>
+<span id="cb1-8"><a href="#cb1-8"></a>    [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb1-9"><a href="#cb1-9"></a>    [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>],</span>
+<span id="cb1-10"><a href="#cb1-10"></a>    [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>],</span>
+<span id="cb1-11"><a href="#cb1-11"></a>    [<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb1-12"><a href="#cb1-12"></a>    [<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb1-13"><a href="#cb1-13"></a>    [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span>],</span>
+<span id="cb1-14"><a href="#cb1-14"></a>    [<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb1-15"><a href="#cb1-15"></a>    [<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb1-16"><a href="#cb1-16"></a>    [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">0</span>],</span>
+<span id="cb1-17"><a href="#cb1-17"></a>    [<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb1-18"><a href="#cb1-18"></a>]</span>
+<span id="cb1-19"><a href="#cb1-19"></a></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co"># instantiate solver</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span>
+<span id="cb1-22"><a href="#cb1-22"></a></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co"># create decision varaibles</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>infinity <span class="op">=</span> solver.Infinity()</span>
+<span id="cb1-25"><a href="#cb1-25"></a>var_j <span class="op">=</span> [</span>
+<span id="cb1-26"><a href="#cb1-26"></a>    solver.IntVar(<span class="dv">0</span>, infinity, name<span class="op">=</span><span class="ss">f'x_</span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-27"><a href="#cb1-27"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_patterns)</span>
+<span id="cb1-28"><a href="#cb1-28"></a>]</span>
+<span id="cb1-29"><a href="#cb1-29"></a></span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="co"># create objective function</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a>solver.Minimize(solver.Sum(var_j))</span>
+<span id="cb1-32"><a href="#cb1-32"></a></span>
+<span id="cb1-33"><a href="#cb1-33"></a><span class="co"># create constraints</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_orders):</span>
+<span id="cb1-35"><a href="#cb1-35"></a>    expr <span class="op">=</span> [</span>
+<span id="cb1-36"><a href="#cb1-36"></a>        var_j[j] <span class="op">*</span> pattern_details[j][i]</span>
+<span id="cb1-37"><a href="#cb1-37"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_patterns)</span>
+<span id="cb1-38"><a href="#cb1-38"></a>    ]</span>
+<span id="cb1-39"><a href="#cb1-39"></a>    solver.Add(solver.Sum(expr) <span class="op">&gt;=</span> order_quantities[i])</span>
+<span id="cb1-40"><a href="#cb1-40"></a></span>
+<span id="cb1-41"><a href="#cb1-41"></a><span class="co"># solve the problem</span></span>
+<span id="cb1-42"><a href="#cb1-42"></a>status <span class="op">=</span> solver.Solve()</span>
+<span id="cb1-43"><a href="#cb1-43"></a><span class="cf">if</span> status <span class="op">==</span> pywraplp.Solver.OPTIMAL:</span>
+<span id="cb1-44"><a href="#cb1-44"></a>    obj <span class="op">=</span> solver.Objective().Value()</span>
+<span id="cb1-45"><a href="#cb1-45"></a>    <span class="bu">print</span>(<span class="ss">f"optimal obj = </span><span class="sc">{</span>obj<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-46"><a href="#cb1-46"></a>    </span>
+<span id="cb1-47"><a href="#cb1-47"></a>    opt_j <span class="op">=</span> [</span>
+<span id="cb1-48"><a href="#cb1-48"></a>        var_j[j].solution_value()</span>
+<span id="cb1-49"><a href="#cb1-49"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_patterns)</span>
+<span id="cb1-50"><a href="#cb1-50"></a>    ]</span>
+<span id="cb1-51"><a href="#cb1-51"></a>    <span class="bu">print</span>(opt_j)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>optimal obj = 83.0
+[0.0, 20.0, 0.0, 0.0, 40.0, 0.0, 16.0, 7.0, 0.0, 0.0]</code></pre>
+</div>
+</div>
+<p><a href="#tbl-cutting-stock-solution">Table&nbsp;<span>12.3</span></a> shows the final quantities produced for every order width.</p>
+<div class="cell" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div id="tbl-cutting-stock-solution" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;12.3: Solution</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Pattern</th>
+<th style="text-align: right;">Width (20)</th>
+<th style="text-align: right;">Wdith (30)</th>
+<th style="text-align: right;">Width (40)</th>
+<th style="text-align: right;">Width (50)</th>
+<th style="text-align: right;">Optimal Quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Pattern 1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pattern 2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pattern 3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pattern 4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pattern 5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pattern 6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pattern 7</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pattern 8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pattern 9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pattern 10</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Produced Order</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">83</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>This example problem seems trivial to solve, but in practice the CSP is challenging to solve because of the large number of possible cutting patterns that can be used and the combinatorial nature of the problem.</p>
+<p>To efficiently solve the cutting stock problem, a column generation approach is often used. The basic idea behind column generation is to start with a small subset of the possible cutting patterns, and then iteratively generate and add new cutting patterns to the problem until an optimal solution is found.</p>
+<p>The column generation approach involves solving a master problem and a subproblem iteratively. The master problem involves selecting the best set of cutting patterns from a larger set of potential patterns, while the subproblem involves finding the next cutting pattern(s) to add to the master problem. By solving these two problems iteratively, the algorithm can gradually add new cutting patterns to the master problem until the optimal solution is reached.</p>
+<p>The column generation approach has several advantages over other methods for solving the cutting stock problem. First, it can handle large-scale instances of the problem more efficiently. This is because the algorithm only considers a subset of the possible cutting patterns at each iteration, which reduces the computational time and memory required. Second, the approach is flexible and can easily handle changes in the problem parameters, such as demand or material availability. Finally, the approach is guaranteed to converge to an optimal solution, provided certain conditions are met.</p>
+<p>Overall, the cutting stock problem is challenging to solve due to its combinatorial nature and large number of possible cutting patterns. The column generation approach is a powerful technique for solving this problem efficiently and effectively, and is widely used in practice.</p>
 
 
 
@@ -636,8 +857,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./summary.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ip-bin-packing.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">The Bin Packing Problem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
