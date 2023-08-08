@@ -1,5 +1,9 @@
 *This book is still under active development.*
 
+*This book is also to test how many giving-ups do it take for me to write a book.*
+
+- *First giving-up: this happend on 04/20/2023 and I suddenly lost momentum to update this book. As of this update on 08/07/2023, almost four months have past without any plan to resume my work on this.*
+
 ## For the Impatient {.unnumbered}
 
 If you have experience with other optimization tools and you are just looking for some OR-Tools code examples, the example formulation and implementation below should give you a jump start.

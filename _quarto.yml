@@ -12,9 +12,9 @@ book:
   site-url: https://kunlei.github.io/python-ortools-notes/
   # downloads: [pdf, epub]
   sharing: [twitter]
-  comments:
-    giscus:
-      repo: kunlei/python-ortools-notes
+  # comments:
+    # giscus:
+      # repo: kunlei/python-ortools-notes
 
   sidebar:
     style: docked
@@ -39,6 +39,7 @@ book:
         - ip-cutting-stock.ipynb
         - ip-bin-packing.ipynb
         # - ip-rcps.ipynb
+        - ip-branch-bound.ipynb
         # - column-generation.ipynb
     # - part: "Constraint Programming"
     # - part: "Tailored Algorithms"
