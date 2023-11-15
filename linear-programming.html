@@ -120,6 +120,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
         }
     };
 </script>
+<script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2749302331976623" crossorigin="anonymous"></script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -341,7 +342,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <p>In this chapter, we first go through the modeling capabilities provided by Google OR-Tools to solve linear programming problems. Then we get our hands dirty by solving some linear programming problems.</p>
 <section id="modeling-capabilities" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="modeling-capabilities"><span class="header-section-number">3.1</span> Modeling Capabilities</h2>
-<p>There are three components in a mathematical model, namely, decision varaibles, constraints and objective, for which we will go over in the following sections.</p>
+<p>There are three components in a mathematical model, namely, decision variables, constraints and objective, for which we will go over in the following sections.</p>
 <section id="solver" class="level3" data-number="3.1.1">
 <h3 data-number="3.1.1" class="anchored" data-anchor-id="solver"><span class="header-section-number">3.1.1</span> Solver</h3>
 <p>In Google OR-Tools, a <code>Solver</code> instance must be created first so that variables, constraints and objective can be added to it. The <code>Solver</code> class is defined in the <code>ortools.linear_solver.pywraplp</code> module and it requires a solver id to instantiate an object. In the code snippet below, the required module is imported first and a <code>solver</code> object is created with <code>GLOP</code>, Google’s own optimization engine for solving linear programming problems. It is good practice to verify whether the desired solver is indeed created successfully or not.</p>
