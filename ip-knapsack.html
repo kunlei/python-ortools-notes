@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.526">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -101,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -110,6 +117,7 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -155,12 +163,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-knapsack.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-knapsack.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -170,12 +178,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Hands-on Optimization with OR-Tools in Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://twitter.com/intent/tweet?url=|url|" rel="" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+    <a href="https://twitter.com/intent/tweet?url=|url|" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
 </div>
     </div>
       </div>
@@ -308,7 +316,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -325,7 +333,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-knapsack.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-knapsack" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></span></h1>
 </div>
@@ -340,7 +348,9 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>The knapsack problem is a classic optimization problem in the field of operations research. It involves selecting a subset of items from a given set of items to maximize the total value/profit while satisfying certain constraints. This problem is NP-hard, meaning that it is computationally difficult to find an optimal solution for large instances of the problem. Various algorithms have been developed to solve this problem, including dynamic programming, branch and bound, and heuristic methods. The knapsack problem has applications in a variety of fields, including computer science, finance, and logistics, among others. In this chapter, we’ll examine two variants of the knapsack problem, namely, the single-dimensional knapsack problem and the multi-dimensional knapsack problem.</p>
 <section id="single-dimensional-knapsack-problem" class="level2" data-number="8.1">
@@ -358,7 +368,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <li><code>_profit</code>: this is the profit or value of selecting the item</li>
 <li><code>_properties</code>: this dictionary saves an item’s properties, including weight</li>
 </ul>
-<div class="cell" data-execution_count="209">
+<div id="cell-8" class="cell" data-execution_count="209">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">class</span> Item:</span>
 <span id="cb1-2"><a href="#cb1-2"></a>    <span class="co">"""An item represents an object that can be placed within a knapsack</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="co">    """</span></span>
@@ -404,7 +414,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <li><code>_capacities</code>: this saves the maximal capacity of the knapsack corresponding to different properties, including weight.</li>
 </ul>
 <p>The class also defines a method <code>read_data_set_f()</code> that reads and parses some benchmarking instancese available online.</p>
-<div class="cell" data-execution_count="210">
+<div id="cell-10" class="cell" data-execution_count="210">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> KnapsackDataCenter:</span>
 <span id="cb2-2"><a href="#cb2-2"></a>    </span>
 <span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
@@ -417,7 +427,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb2-10"><a href="#cb2-10"></a>    <span class="at">@property</span></span>
 <span id="cb2-11"><a href="#cb2-11"></a>    <span class="kw">def</span> capacities(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._capacities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="211">
+<div id="cell-11" class="cell" data-execution_count="211">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">class</span> SDKPDataCenter(KnapsackDataCenter):</span>
 <span id="cb3-2"><a href="#cb3-2"></a>    </span>
 <span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
@@ -448,7 +458,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb3-28"><a href="#cb3-28"></a>                <span class="cf">if</span> item_idx <span class="op">==</span> <span class="bu">int</span>(num_items): <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The code snippet below reads the instance <code>f1_l-d_kp_10_269</code> and shows its key information.</p>
-<div class="cell" data-execution_count="212">
+<div id="cell-13" class="cell" data-execution_count="212">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>data_file <span class="op">=</span> <span class="st">"./data/knapsack/SDKP/instances_01_KP/low-dimensional/f1_l-d_kp_10_269"</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a></span>
 <span id="cb4-3"><a href="#cb4-3"></a>data_center <span class="op">=</span> SDKPDataCenter()</span>
@@ -489,7 +499,7 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <li><code>build_model()</code>: this is responsible for instantiating the solver object, creating variables, generating constraints and defining the objective function</li>
 <li><code>optimize()</code>: this is the place where the OR-Tools searches for the optimal solution</li>
 </ul>
-<div class="cell" data-execution_count="213">
+<div id="cell-16" class="cell" data-execution_count="213">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb6-2"><a href="#cb6-2"></a></span>
 <span id="cb6-3"><a href="#cb6-3"></a><span class="kw">class</span> SDKnapsackSolver:</span>
@@ -551,13 +561,17 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <span id="cb6-59"><a href="#cb6-59"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
 <span id="cb6-60"><a href="#cb6-60"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We employ the model to tackle 10 benchmark instances that were downloaded from an online source (http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP/). <a href="#tbl-knapsack-data">Table&nbsp;<span>8.1</span></a> displays the computational results.</p>
+<p>We employ the model to tackle 10 benchmark instances that were downloaded from an online source (http://artemisa.unicauca.edu.co/~johnyortega/instances_01_KP/). <a href="#tbl-knapsack-data" class="quarto-xref">Table&nbsp;<span>8.1</span></a> displays the computational results.</p>
 <p>More specifically, the first column of the table lists the names of the instances, while the second and third columns indicate the number of items and the capacity of the knapsack for each instance, respectively. The last two columns report the optimal solution’s objective value and the number of selected items, respectively.</p>
 <div class="cell" data-execution_count="214">
-<div class="cell-output cell-output-display" data-execution_count="214">
-<div id="tbl-knapsack-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;8.1: Computational results of Knapsack problems</caption>
+<div id="tbl-knapsack-data" class="cell anchored" data-execution_count="214">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-knapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8.1: Computational results of Knapsack problems
+</figcaption>
+<div aria-describedby="tbl-knapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="214">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -642,6 +656,8 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 </section>
 <section id="multi-dimensional-knapsack-problem" class="level2" data-number="8.2">
@@ -661,7 +677,7 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
     &amp;\quad x_j \in \{0, 1\}, \ j = 1, \cdots, n \label{knapsack2-cons2}
 \end{align}\]</span></p>
 <p>To test the model, we take data from online source (http://people.brunel.ac.uk/~mastjjb/jeb/orlib/mknapinfo.html) and define a reading function <code>read_mdkp_dataset_1()</code> in class <code>MDKPDataCenter</code>. Note that the class inherits the <code>KnapsackDataCenter</code> class defined in the previous section, and all the parsed contents of an instance will be saved in the <code>_items</code> and <code>_capacities</code> attributes.</p>
-<div class="cell" data-execution_count="215">
+<div id="cell-23" class="cell" data-execution_count="215">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">class</span> MDKPDataCenter(KnapsackDataCenter):</span>
 <span id="cb7-2"><a href="#cb7-2"></a>    </span>
 <span id="cb7-3"><a href="#cb7-3"></a>    <span class="kw">def</span> read_mdkp_dataset_1(<span class="va">self</span>, data_file: <span class="bu">str</span>):</span>
@@ -705,7 +721,7 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <li>define objective in lines 36 - 42</li>
 <li>create constraints in line 44 - 58</li>
 </ul>
-<div class="cell" data-execution_count="216">
+<div id="cell-25" class="cell" data-execution_count="216">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb8-2"><a href="#cb8-2"></a></span>
 <span id="cb8-3"><a href="#cb8-3"></a><span class="kw">class</span> MDKnapsackSolver:</span>
@@ -771,12 +787,16 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <span id="cb8-63"><a href="#cb8-63"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
 <span id="cb8-64"><a href="#cb8-64"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#tbl-mdknapsack-data">Table&nbsp;<span>8.2</span></a> shows the computational results of some testing instances.</p>
+<p><a href="#tbl-mdknapsack-data" class="quarto-xref">Table&nbsp;<span>8.2</span></a> shows the computational results of some testing instances.</p>
 <div class="cell" data-execution_count="217">
-<div class="cell-output cell-output-display" data-execution_count="217">
-<div id="tbl-mdknapsack-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;8.2: Computational results of multi-dimensional knapsack problems</caption>
+<div id="tbl-mdknapsack-data" class="cell anchored" data-execution_count="217">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mdknapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8.2: Computational results of multi-dimensional knapsack problems
+</figcaption>
+<div aria-describedby="tbl-mdknapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="217">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -832,6 +852,8 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 </section>
 <section id="multi-choice-knapsack-problem" class="level2" data-number="8.3">
@@ -844,7 +866,7 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
     &amp;\quad x_j = \{0, 1\}, \ \forall j = 1, \cdots n \label{knapsack3-cons3}
 \end{align}\]</span></p>
 <p>The class <code>MCKPDataCenter</code> defines a reader function to parse the instances available online (https://or-dii.unibs.it/index.php?page=tiks).</p>
-<div class="cell" data-execution_count="218">
+<div id="cell-32" class="cell" data-execution_count="218">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">class</span> MCKPDataCenter(KnapsackDataCenter):</span>
 <span id="cb9-2"><a href="#cb9-2"></a>    </span>
 <span id="cb9-3"><a href="#cb9-3"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
@@ -887,7 +909,7 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <span id="cb9-40"><a href="#cb9-40"></a>    <span class="kw">def</span> num_choices(<span class="va">self</span>): <span class="cf">return</span> <span class="va">self</span>._num_choices</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The complete code to solve the problem is given below.</p>
-<div class="cell" data-execution_count="219">
+<div id="cell-34" class="cell" data-execution_count="219">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb10-2"><a href="#cb10-2"></a></span>
 <span id="cb10-3"><a href="#cb10-3"></a><span class="kw">class</span> MCKnapsackSolver:</span>
@@ -961,12 +983,16 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <span id="cb10-71"><a href="#cb10-71"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
 <span id="cb10-72"><a href="#cb10-72"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#tbl-mcknapsack-data">Table&nbsp;<span>8.3</span></a> shows some computational experiments.</p>
+<p><a href="#tbl-mcknapsack-data" class="quarto-xref">Table&nbsp;<span>8.3</span></a> shows some computational experiments.</p>
 <div class="cell" data-execution_count="220">
-<div class="cell-output cell-output-display" data-execution_count="220">
-<div id="tbl-mcknapsack-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;8.3: Computational results of multi-choice knapsack problems</caption>
+<div id="tbl-mcknapsack-data" class="cell anchored" data-execution_count="220">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mcknapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8.3: Computational results of multi-choice knapsack problems
+</figcaption>
+<div aria-describedby="tbl-mcknapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="220">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -1100,6 +1126,8 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 </section>
 <section id="multi-choice-multi-dimensional-knapsack-problem" class="level2" data-number="8.4">
@@ -1112,7 +1140,7 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
     &amp;\quad x_j = \{0, 1\}, \ \forall j = 1, \cdots n
 \end{align}\]</span></p>
 <p>The code snippet below gives the complete program to solve this problem.</p>
-<div class="cell" data-execution_count="223">
+<div id="cell-41" class="cell" data-execution_count="223">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb11-2"><a href="#cb11-2"></a></span>
 <span id="cb11-3"><a href="#cb11-3"></a><span class="kw">class</span> MCMDKnapsackSolver:</span>
@@ -1187,12 +1215,16 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 <span id="cb11-72"><a href="#cb11-72"></a>    <span class="kw">def</span> get_num_chosen_items(<span class="va">self</span>):</span>
 <span id="cb11-73"><a href="#cb11-73"></a>        <span class="cf">return</span> <span class="bu">sum</span>(<span class="va">self</span>._opt_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#tbl-mcmdknapsack-data">Table&nbsp;<span>8.4</span></a> shows some empirical computational results.</p>
+<p><a href="#tbl-mcmdknapsack-data" class="quarto-xref">Table&nbsp;<span>8.4</span></a> shows some empirical computational results.</p>
 <div class="cell" data-execution_count="225">
-<div class="cell-output cell-output-display" data-execution_count="225">
-<div id="tbl-mcmdknapsack-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;8.4: Computational results of multi-choice multi-dimensional knapsack problems</caption>
+<div id="tbl-mcmdknapsack-data" class="cell anchored" data-execution_count="225">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mcmdknapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8.4: Computational results of multi-choice multi-dimensional knapsack problems
+</figcaption>
+<div aria-describedby="tbl-mcmdknapsack-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="225">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -1326,10 +1358,12 @@ index: 9, profit: 87.0, weight: 46.0</code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-chen_reduce_2014" class="csl-entry" role="listitem">
 Chen, Yuning, and Jin-Kao Hao. 2014. <span>“A <span>‘Reduce and Solve’</span> Approach for the Multiple-Choice Multidimensional Knapsack Problem.”</span> <em>European Journal of Operational Research</em> 239 (2): 313–22. <a href="https://doi.org/10.1016/j.ejor.2014.05.025">https://doi.org/10.1016/j.ejor.2014.05.025</a>.
 </div>
@@ -1425,10 +1459,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1438,8 +1471,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1452,6 +1494,135 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1495,6 +1666,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1520,6 +1692,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1581,17 +1779,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ip-cvrp.html" class="pagination-link">
+      <a href="./ip-cvrp.html" class="pagination-link  aria-label=" &lt;span="" vehicle="" routing="" problem&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ip-nqueens.html" class="pagination-link">
+      <a href="./ip-nqueens.html" class="pagination-link" aria-label="<span class='chapter-number'>9</span>&nbsp; <span class='chapter-title'>The N-queens Problem</span>">
         <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The N-queens Problem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

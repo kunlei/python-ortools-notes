@@ -2,78 +2,78 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/index.html</loc>
-    <lastmod>2023-11-15T03:03:39.599Z</lastmod>
+    <lastmod>2023-09-25T03:44:39.712Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/preface.html</loc>
-    <lastmod>2023-11-15T03:03:39.601Z</lastmod>
+    <lastmod>2023-03-31T14:18:09.832Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/intro.html</loc>
-    <lastmod>2023-11-15T03:03:39.604Z</lastmod>
+    <lastmod>2023-02-27T16:02:24.302Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/env-setup.html</loc>
-    <lastmod>2023-11-15T03:03:39.610Z</lastmod>
+    <lastmod>2023-02-24T14:44:26.992Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/linear-programming.html</loc>
-    <lastmod>2023-11-15T03:03:39.638Z</lastmod>
+    <lastmod>2023-11-04T02:11:45.653Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/integer-programming.html</loc>
-    <lastmod>2023-11-15T03:03:39.642Z</lastmod>
+    <lastmod>2023-04-05T22:42:31.594Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-jsp.html</loc>
-    <lastmod>2023-11-15T03:03:39.658Z</lastmod>
+    <lastmod>2023-04-05T22:41:54.617Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-tsp.html</loc>
-    <lastmod>2023-11-15T03:03:39.717Z</lastmod>
+    <lastmod>2023-04-11T14:14:59.584Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-cvrp.html</loc>
-    <lastmod>2023-11-15T03:03:39.755Z</lastmod>
+    <lastmod>2023-04-13T22:24:45.602Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-knapsack.html</loc>
-    <lastmod>2023-11-15T03:03:39.778Z</lastmod>
+    <lastmod>2023-04-15T20:16:55.993Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-nqueens.html</loc>
-    <lastmod>2023-11-15T03:03:39.787Z</lastmod>
+    <lastmod>2023-04-16T15:06:59.564Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-srflp.html</loc>
-    <lastmod>2023-11-15T03:03:39.795Z</lastmod>
+    <lastmod>2023-04-17T03:05:13.208Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-wlp.html</loc>
-    <lastmod>2023-11-15T03:03:39.807Z</lastmod>
+    <lastmod>2023-04-19T03:09:59.859Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-cutting-stock.html</loc>
-    <lastmod>2023-11-15T03:03:39.812Z</lastmod>
+    <lastmod>2023-04-20T02:28:13.770Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-bin-packing.html</loc>
-    <lastmod>2023-11-15T03:03:39.821Z</lastmod>
+    <lastmod>2023-04-21T01:33:02.417Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/ip-branch-bound.html</loc>
-    <lastmod>2023-11-15T03:03:39.824Z</lastmod>
+    <lastmod>2023-04-21T01:42:13.785Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/summary.html</loc>
-    <lastmod>2023-11-15T03:03:39.826Z</lastmod>
+    <lastmod>2023-02-19T02:54:41.477Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/references.html</loc>
-    <lastmod>2023-11-15T03:03:39.829Z</lastmod>
+    <lastmod>2023-02-19T02:54:41.476Z</lastmod>
   </url>
   <url>
     <loc>https://kunlei.github.io/python-ortools-notes/Hands-on-Optimization-with-OR-Tools-in-Python.pdf</loc>
-    <lastmod>2023-11-15T03:03:39.087Z</lastmod>
+    <lastmod>2024-02-20T03:39:52.125Z</lastmod>
   </url>
 </urlset>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.526">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -101,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -110,6 +117,7 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -149,10 +157,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 
 <meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 6&nbsp; Traveling Salesman Problem">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://kunlei.github.io/python-ortools-notes/ip-tsp_files/figure-html/fig-tsp-ulysses22-sol-output-1.png">
-<meta name="twitter:image-height" content="790">
-<meta name="twitter:image-width" content="1182">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 </head>
 
 <body class="nav-sidebar docked">
@@ -161,12 +166,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-tsp.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-tsp.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -176,12 +181,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Hands-on Optimization with OR-Tools in Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://twitter.com/intent/tweet?url=|url|" rel="" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+    <a href="https://twitter.com/intent/tweet?url=|url|" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
 </div>
     </div>
       </div>
@@ -314,7 +319,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -339,7 +344,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-tsp.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-ip-tsp" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></span></h1>
 </div>
@@ -354,7 +359,9 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>The traveling salesman problem (TSP) is a classic optimization problem in computer science and operations research. The problem can be stated as follows: given a set of cities and the distances between them, what is the shortest possible route that visits each city exactly once and returns to the starting city?</p>
 <p>The TSP has many real-world applications, including logistics and transportation planning, circuit board drilling, and DNA sequencing. However, it is a well-known NP-hard problem, meaning that finding an optimal solution is computationally difficult for large instances of the problem. As a result, many heuristic and approximation algorithms have been developed to find suboptimal solutions that are still very good in practice. In this chapter, we present several mathematical formulations of the TSP existing in the literature and implement them using OR-Tools.</p>
@@ -367,7 +374,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <h3 data-number="6.1.1" class="anchored" data-anchor-id="tsplib"><span class="header-section-number">6.1.1</span> TSPLIB</h3>
 <p>The TSP instances used in this section are sourced from <a href="http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/">TSPLIB95</a>, a library of TSP benchmark instances. To make it easier to work with these instances, we utilize the <code>tsplib95</code> Python library, which can be installed using the <code>pip install tsplib95</code> command.</p>
 <p>In the code snippet below, we demonstrate how to use the <code>tsplib95</code> package to load the <em>ulysses22.tsp</em> problem from a data file downloaded from TSPLIB95. The loaded data can be used to formulate and solve TSP instances using OR-Tools or other optimization tools. The full instance data is provided at the end for reference. By leveraging the <code>tsplib95</code> package, we can quickly and easily access TSP instances for experimentation and analysis, and focus our efforts on the formulation and optimization aspects of the problem.</p>
-<div class="cell" data-execution_count="20">
+<div id="cell-7" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> tsplib95</span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="co"># load problem</span></span>
@@ -407,14 +414,14 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </div>
 </div>
 <p>The list of nodes can be retrieved using the <code>get_nodes()</code> function, as shown below.</p>
-<div class="cell" data-execution_count="21">
+<div id="cell-9" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="bu">list</span>(problem.get_nodes())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]</code></pre>
 </div>
 </div>
 <p>To get the distance between any pair of nodes, we use the <code>get_weight()</code> function.</p>
-<div class="cell" data-execution_count="22">
+<div id="cell-11" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="bu">print</span>(<span class="ss">f'distance between node 1 and 2 = </span><span class="sc">{</span>problem<span class="sc">.</span>get_weight(<span class="dv">1</span>, <span class="dv">2</span>)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>distance between node 1 and 2 = 509</code></pre>
@@ -425,7 +432,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <h3 data-number="6.1.2" class="anchored" data-anchor-id="visualize-tsp-solution"><span class="header-section-number">6.1.2</span> Visualize TSP Solution</h3>
 <p>In this section, our goal is to gain a better understanding of the TSP problem by visualizing the optimal solution found for instances provided by TSPLIB95. To achieve this, we define a class called <code>TspVisualizer</code> in our code that is responsible for displaying the route that connects all nodes in a TSP solution. The <code>TspVisualizer</code> class contains a single function, called <code>show(locations, edges)</code>, which accepts two input parameters: <em>locations</em> and <em>edges</em>.</p>
 <p>The <em>locations</em> parameter is a dictionary that contains the mapping between location ID and its corresponding coordinates. The <em>edges</em> parameter is a list of edges that form the TSP tour. By calling the show function with the appropriate input parameters, we can visualize the TSP tour and gain an intuitive understanding of what the TSP problem is trying to accomplish. This visualization can be a helpful tool in understanding how the different TSP formulations and algorithms work, and can aid in identifying potential improvements to the solution. The use of the <code>TspVisualizer</code> class allows for easy visualization of the TSP solution and makes it possible to explore and analyze TSP instances in a more meaningful way.</p>
-<div class="cell" data-execution_count="23">
+<div id="cell-14" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
@@ -488,7 +495,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb7-60"><a href="#cb7-60"></a>        plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now let’s load the optimal solution for the aforementioned instance and show its content below.</p>
-<div class="cell" data-execution_count="24">
+<div id="cell-16" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>solution <span class="op">=</span> tsplib95.load(<span class="st">'./data/tsp/ulysses22.opt.tour'</span>)</span>
 <span id="cb8-2"><a href="#cb8-2"></a>solution.as_name_dict()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="24">
@@ -520,8 +527,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
    8]]}</code></pre>
 </div>
 </div>
-<p>The code snippet below plots the optimal tour, which is shown in <a href="#fig-tsp-ulysses22-sol">Figure&nbsp;<span>6.1</span></a>.</p>
-<div class="cell" data-execution_count="25">
+<p>The code snippet below plots the optimal tour, which is shown in <a href="#fig-tsp-ulysses22-sol" class="quarto-xref">Figure&nbsp;<span>6.1</span></a>.</p>
+<div id="cell-fig-tsp-ulysses22-sol" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>locations <span class="op">=</span> problem.node_coords</span>
 <span id="cb10-2"><a href="#cb10-2"></a>tour <span class="op">=</span> solution.tours[<span class="dv">0</span>]</span>
 <span id="cb10-3"><a href="#cb10-3"></a>edges <span class="op">=</span> []</span>
@@ -535,15 +542,19 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb10-11"><a href="#cb10-11"></a>TspVisualizer.show(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-ulysses22-sol-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.1: Optimal tour of the <em>ulysses22</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-ulysses22-sol-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Optimal tour of the <em>ulysses22</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>Let’s put this visualization procedure into a dedicated function, as is given below.</p>
-<div class="cell" data-execution_count="26">
+<div id="cell-20" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="im">import</span> tsplib95</span>
 <span id="cb11-2"><a href="#cb11-2"></a></span>
 <span id="cb11-3"><a href="#cb11-3"></a><span class="kw">def</span> visualize_tsp(instance_name: <span class="bu">str</span>):</span>
@@ -563,25 +574,33 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb11-17"><a href="#cb11-17"></a>    edges.append((tour[<span class="op">-</span><span class="dv">1</span>], tour[<span class="dv">0</span>]))</span>
 <span id="cb11-18"><a href="#cb11-18"></a>    TspVisualizer.show(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#fig-tsp-berlin52-sol">Figure&nbsp;<span>6.2</span></a> and <a href="#fig-tsp-pr76-sol">Figure&nbsp;<span>6.3</span></a> show the optimal tours for the <em>berlin52</em> and <em>pr76</em> instances, respectively.</p>
-<div class="cell" data-execution_count="27">
+<p><a href="#fig-tsp-berlin52-sol" class="quarto-xref">Figure&nbsp;<span>6.2</span></a> and <a href="#fig-tsp-pr76-sol" class="quarto-xref">Figure&nbsp;<span>6.3</span></a> show the optimal tours for the <em>berlin52</em> and <em>pr76</em> instances, respectively.</p>
+<div id="cell-fig-tsp-berlin52-sol" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>visualize_tsp(<span class="st">'berlin52'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-berlin52-sol-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.2: Optimal tour of the <em>berlin52</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-berlin52-sol-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.2: Optimal tour of the <em>berlin52</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="28">
+<div id="cell-fig-tsp-pr76-sol" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a>visualize_tsp(<span class="st">'pr76'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-pr76-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-pr76-sol-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.3: Optimal tour of the <em>pr76</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-pr76-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-pr76-sol-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-pr76-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.3: Optimal tour of the <em>pr76</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
@@ -616,11 +635,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \label{tsp1-cons3}  \\
 &amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp1-cons4}
 \end{align}\]</span></p>
-<p>This specific TSP formulation aims to find the optimal route with the shortest total distance. To ensure that each node is visited exactly once, constraints <span class="math inline">\(\eqref{tsp1-cons1}\)</span> and <span class="math inline">\(\eqref{tsp1-cons2}\)</span>, also known as <em>degree constraints</em>, are used. Another set of constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span>, called subtour elimination constraints, ensure that the solution does not contain any subtours. Subtours are smaller cycles within the larger route that violate the requirement of visiting each city exactly once. Two examples of solutions with subtours are shown in figures <a href="#fig-subtour1">Figure&nbsp;<span>6.4</span></a> and <a href="#fig-subtour2">Figure&nbsp;<span>6.5</span></a>. While these solutions satisfy the degree constraints, they violate the subtour elimination constraints. A subtour contains the same number of edges (or arcs) as nodes, so limiting the number of edges to be less than the number of nodes can help to eliminate subtours. Furthermore, because of the presence of degree constraints, subtours with only one node cannot exist, and similarly, subtours with <span class="math inline">\(n-1\)</span> nodes are also impossible. Therefore, it is acceptable to define the subtour elimination constraints only for subtours that contain between 2 and <span class="math inline">\(n-2\)</span> nodes.</p>
+<p>This specific TSP formulation aims to find the optimal route with the shortest total distance. To ensure that each node is visited exactly once, constraints <span class="math inline">\(\eqref{tsp1-cons1}\)</span> and <span class="math inline">\(\eqref{tsp1-cons2}\)</span>, also known as <em>degree constraints</em>, are used. Another set of constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span>, called subtour elimination constraints, ensure that the solution does not contain any subtours. Subtours are smaller cycles within the larger route that violate the requirement of visiting each city exactly once. Two examples of solutions with subtours are shown in figures <a href="#fig-subtour1" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> and <a href="#fig-subtour2" class="quarto-xref">Figure&nbsp;<span>6.5</span></a>. While these solutions satisfy the degree constraints, they violate the subtour elimination constraints. A subtour contains the same number of edges (or arcs) as nodes, so limiting the number of edges to be less than the number of nodes can help to eliminate subtours. Furthermore, because of the presence of degree constraints, subtours with only one node cannot exist, and similarly, subtours with <span class="math inline">\(n-1\)</span> nodes are also impossible. Therefore, it is acceptable to define the subtour elimination constraints only for subtours that contain between 2 and <span class="math inline">\(n-2\)</span> nodes.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-subtour1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-subtour1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-subtour1">flowchart LR
     1((1)) --&gt; 2((2))
@@ -632,7 +652,10 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     6 --&gt; 5
 </pre>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;6.4: Subtour with 2 nodes</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-subtour1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.4: Subtour with 2 nodes
+</figcaption>
 </figure>
 </div>
 </div>
@@ -640,7 +663,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-subtour2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-subtour2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-subtour2">flowchart LR
     1((1)) --&gt; 2((2))
@@ -652,7 +676,10 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     6 --&gt; 4
 </pre>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;6.5: Subtour with 3 nodes</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-subtour2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.5: Subtour with 3 nodes
+</figcaption>
 </figure>
 </div>
 </div>
@@ -663,7 +690,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \end{align}\]</span></p>
 <p>To understand this, observe that the value of <span class="math inline">\(|S|\)</span> can be calculated as the sum of two terms: the sum of the decision variables <span class="math inline">\(x_{ij}\)</span> for all edges <span class="math inline">\((i,j)\)</span> that are included in the subset, and the sum of the decision variables <span class="math inline">\(x_{ij}\)</span> for all edges that cross the boundary of the subtour, that is, <span class="math inline">\(|S| = \sum_{i, j \in S, \ (i, j) \in \mathcal{A}} x_{ij} + \sum_{i \in S}\sum_{j \notin S} x_{ij}\)</span>. This means that the constraints <span class="math inline">\(\eqref{tsp1-cons3}\)</span> and <span class="math inline">\(\eqref{tsp1-cons5}\)</span> are interchangeable, as they represent the same condition in different forms.</p>
 <p>To simplify the implementation of different TSP formulations that will be presented in the following sections, we have created a base class called <code>TspModel</code> in the code below. This class contains the instance information that needs to be solved, as well as several helper functions. Within the class definition, the attribute <code>_node_list</code> holds the list of nodes that must be visited by the TSP tour. The attribute <code>_node_coords</code> is a dictionary that stores the location information for each node. Finally, the attribute <code>_distance</code> is another dictionary that provides the distance between any pair of nodes. The <code>read_inputs()</code> function, defined between lines 15 and 31, takes a TSP problem instance and extracts the necessary information for solving the problem later. The <code>get_combinations()</code> function, defined between lines 33 and 34, generates all possible combinations of nodes with the specified size.</p>
-<div class="cell" data-execution_count="29">
+<div id="cell-34" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="im">from</span> typing <span class="im">import</span> Dict, List</span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
 <span id="cb14-3"><a href="#cb14-3"></a><span class="im">import</span> tsplib95</span>
@@ -706,7 +733,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb14-40"><a href="#cb14-40"></a>    <span class="kw">def</span> num_nodes(<span class="va">self</span>): <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>._node_coords)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To implement the TSP model using OR-Tools, we define the <code>TspModelV1</code> class that inherits from the base class <code>TspModel</code>. The constructor initializes a solver object and defines attributes to store decision variables and the optimal solution. The <code>_create_variables()</code> function creates binary decision variables for every arc in the problem, while the <code>_create_objective()</code> function calculates the total traveling cost. Degree constraints are defined in the <code>_create_degree_constraints()</code> function, while the subtour elimination constraints are defined in the <code>_create_subtour_elimination_constraints()</code> function. The <code>build_model()</code> function needs to be called before optimize() to construct the model.</p>
-<div class="cell" data-execution_count="30">
+<div id="cell-36" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb15-3"><a href="#cb15-3"></a></span>
@@ -809,8 +836,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb15-100"><a href="#cb15-100"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb15-101"><a href="#cb15-101"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we use the <code>TspModelV1</code> class to solve the <em>burma14</em> instance and plots the optimal solution found by the OR-Tools in <a href="#fig-tsp-model1-burma14-sol">Figure&nbsp;<span>6.6</span></a>.</p>
-<div class="cell" data-execution_count="31">
+<p>Now we use the <code>TspModelV1</code> class to solve the <em>burma14</em> instance and plots the optimal solution found by the OR-Tools in <a href="#fig-tsp-model1-burma14-sol" class="quarto-xref">Figure&nbsp;<span>6.6</span></a>.</p>
+<div id="cell-fig-tsp-model1-burma14-sol" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a></span>
 <span id="cb16-3"><a href="#cb16-3"></a>model_v1 <span class="op">=</span> TspModelV1()</span>
@@ -826,9 +853,13 @@ optimal value = 3323.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model1-burma14-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model1-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.6: Optimal route for the <em>burma14</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model1-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model1-burma14-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model1-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.6: Optimal route for the <em>burma14</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
@@ -855,7 +886,7 @@ optimal value = 3323.00</code></pre>
 &amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp2-cons4} \\
 &amp;\quad 1 \leq n_i \leq n - 1, i = 2, \cdots, n \label{tsp2-cons5}
 \end{align}\]</span></p>
-<p>In this formulation, constraints <span class="math inline">\(\eqref{tsp2-cons1}\)</span> and <span class="math inline">\(\eqref{tsp2-cons2}\)</span> serve as the degree constraints requiring that there is only one arc entering and leaving a node. Constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> are the new subtour elimination constraints. To see how constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> effectively forbid subtours, let’s examine the example below in <a href="#fig-subtour3">Figure&nbsp;<span>6.7</span></a>. In the figure, nodes 5 and 6 form a subtour and constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> become:</p>
+<p>In this formulation, constraints <span class="math inline">\(\eqref{tsp2-cons1}\)</span> and <span class="math inline">\(\eqref{tsp2-cons2}\)</span> serve as the degree constraints requiring that there is only one arc entering and leaving a node. Constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> are the new subtour elimination constraints. To see how constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> effectively forbid subtours, let’s examine the example below in <a href="#fig-subtour3" class="quarto-xref">Figure&nbsp;<span>6.7</span></a>. In the figure, nodes 5 and 6 form a subtour and constraints <span class="math inline">\(\eqref{tsp2-cons3}\)</span> become:</p>
 <p><span class="math display">\[\begin{align}
 u_5 - u_6 + (7 - 1) * 1 \leq 7 - 2 \\
 u_6 - u_5 + (7 - 1) * 1 \leq 7 - 2\\
@@ -875,7 +906,8 @@ u_6 \leq u_5 - 1
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-subtour3" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-subtour3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-subtour3">flowchart LR
     1((1)) --&gt; 2((2))
@@ -887,13 +919,16 @@ u_6 \leq u_5 - 1
     6 --&gt; 5
 </pre>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;6.7: Subtour with 2 nodes</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-subtour3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.7: Subtour with 2 nodes
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>The code below gives the complete program of the formulation. The new variable <span class="math inline">\(u_i\)</span> is defined in function <code>_create_variables()</code> and the subtour elimination constraints are updated in function <code>_create_subtour_elimination_constraints()</code>.</p>
-<div class="cell" data-execution_count="32">
+<div id="cell-51" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb18-2"><a href="#cb18-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb18-3"><a href="#cb18-3"></a></span>
@@ -1002,8 +1037,8 @@ u_6 \leq u_5 - 1
 <span id="cb18-106"><a href="#cb18-106"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb18-107"><a href="#cb18-107"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We now use this formulation to solve the <em>burma14</em> instance and show its optimal solution in <a href="#fig-tsp-model2-burma14-sol">Figure&nbsp;<span>6.8</span></a>.</p>
-<div class="cell" data-execution_count="33">
+<p>We now use this formulation to solve the <em>burma14</em> instance and show its optimal solution in <a href="#fig-tsp-model2-burma14-sol" class="quarto-xref">Figure&nbsp;<span>6.8</span></a>.</p>
+<div id="cell-fig-tsp-model2-burma14-sol" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb19-2"><a href="#cb19-2"></a></span>
 <span id="cb19-3"><a href="#cb19-3"></a>model_v2 <span class="op">=</span> TspModelV2()</span>
@@ -1019,15 +1054,19 @@ optimal value = 3323.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model2-burma14-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model2-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.8: Optimal route for the <em>burma14</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model2-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model2-burma14-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model2-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.8: Optimal route for the <em>burma14</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#fig-tsp-model2-ulysses22-sol">Figure&nbsp;<span>6.9</span></a> shows the optimal solution found by the formulation for the <em>ulysses22</em> instance.</p>
-<div class="cell" data-execution_count="34">
+<p><a href="#fig-tsp-model2-ulysses22-sol" class="quarto-xref">Figure&nbsp;<span>6.9</span></a> shows the optimal solution found by the formulation for the <em>ulysses22</em> instance.</p>
+<div id="cell-fig-tsp-model2-ulysses22-sol" class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/ulysses22.tsp'</span></span>
 <span id="cb21-2"><a href="#cb21-2"></a></span>
 <span id="cb21-3"><a href="#cb21-3"></a>model_v2 <span class="op">=</span> TspModelV2()</span>
@@ -1043,9 +1082,13 @@ optimal value = 7013.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model2-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model2-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.9: Optimal route for the <em>ulysses22</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model2-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model2-ulysses22-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model2-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.9: Optimal route for the <em>ulysses22</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
@@ -1069,11 +1112,12 @@ optimal value = 7013.00</code></pre>
 &amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp3-cons6} \\
 &amp;\quad y_{ij} \geq 0, \ \forall (i, j) \in \mathcal{A} \label{tsp3-cons7}
 \end{align}\]</span></p>
-<p>In this formulation, the constraints <span class="math inline">\(\eqref{tsp3-cons3}\)</span> - <span class="math inline">\(\eqref{tsp3-cons5}\)</span> are the subtour elimination constraints. Specifically, constraints <span class="math inline">\(\eqref{tsp3-cons3}\)</span> make sure that the amount of flow on any arc <span class="math inline">\((i, j)\)</span> is at most <span class="math inline">\(n - 1\)</span> when the arc is active. Constraints <span class="math inline">\(\eqref{tsp3-cons4}\)</span> state that there is a total of <span class="math inline">\(n - 1\)</span> flowing out of the source node 1. Constraints <span class="math inline">\(\eqref{tsp3-cons5}\)</span> require that the incoming flow is 1 unit bigger than the outgoing flow at any node other than the source node 1. To see how this prevents subtours, we’ll use <a href="#fig-subtour4">Figure&nbsp;<span>6.10</span></a> as an example.</p>
+<p>In this formulation, the constraints <span class="math inline">\(\eqref{tsp3-cons3}\)</span> - <span class="math inline">\(\eqref{tsp3-cons5}\)</span> are the subtour elimination constraints. Specifically, constraints <span class="math inline">\(\eqref{tsp3-cons3}\)</span> make sure that the amount of flow on any arc <span class="math inline">\((i, j)\)</span> is at most <span class="math inline">\(n - 1\)</span> when the arc is active. Constraints <span class="math inline">\(\eqref{tsp3-cons4}\)</span> state that there is a total of <span class="math inline">\(n - 1\)</span> flowing out of the source node 1. Constraints <span class="math inline">\(\eqref{tsp3-cons5}\)</span> require that the incoming flow is 1 unit bigger than the outgoing flow at any node other than the source node 1. To see how this prevents subtours, we’ll use <a href="#fig-subtour4" class="quarto-xref">Figure&nbsp;<span>6.10</span></a> as an example.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-subtour4" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-subtour4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-subtour4">flowchart LR
     1((1)) -- 5 --&gt; 2((2))
@@ -1084,7 +1128,10 @@ optimal value = 7013.00</code></pre>
     6 --w--&gt; 5
 </pre>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;6.10: Subtour with 2 nodes</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-subtour4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.10: Subtour with 2 nodes
+</figcaption>
 </figure>
 </div>
 </div>
@@ -1096,7 +1143,7 @@ optimal value = 7013.00</code></pre>
 \end{align}\]</span></p>
 <p>Summing them together leads to <span class="math inline">\(0 = 2\)</span>, which is clearly false.</p>
 <p>The code below gives the complete implementation of this formulation.</p>
-<div class="cell" data-execution_count="35">
+<div id="cell-65" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb23-2"><a href="#cb23-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb23-3"><a href="#cb23-3"></a></span>
@@ -1220,8 +1267,8 @@ optimal value = 7013.00</code></pre>
 <span id="cb23-121"><a href="#cb23-121"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb23-122"><a href="#cb23-122"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#fig-tsp-model3-burma14-sol">Figure&nbsp;<span>6.11</span></a> shows the optimal soution for instance <em>burma14</em> found by this formulation.</p>
-<div class="cell" data-execution_count="36">
+<p><a href="#fig-tsp-model3-burma14-sol" class="quarto-xref">Figure&nbsp;<span>6.11</span></a> shows the optimal soution for instance <em>burma14</em> found by this formulation.</p>
+<div id="cell-fig-tsp-model3-burma14-sol" class="cell" data-execution_count="36">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb24-2"><a href="#cb24-2"></a></span>
 <span id="cb24-3"><a href="#cb24-3"></a>model_v3 <span class="op">=</span> TspModelV3()</span>
@@ -1237,15 +1284,19 @@ optimal value = 3323.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model3-burma14-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model3-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.11: Optimal route for the <em>burma14</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model3-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model3-burma14-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model3-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.11: Optimal route for the <em>burma14</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#fig-tsp-model3-ulysses22-sol">Figure&nbsp;<span>6.12</span></a> shows the optimal route found by the formulation for the instance <em>ulysses22</em>.</p>
-<div class="cell" data-execution_count="37">
+<p><a href="#fig-tsp-model3-ulysses22-sol" class="quarto-xref">Figure&nbsp;<span>6.12</span></a> shows the optimal route found by the formulation for the instance <em>ulysses22</em>.</p>
+<div id="cell-fig-tsp-model3-ulysses22-sol" class="cell" data-execution_count="37">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/ulysses22.tsp'</span></span>
 <span id="cb26-2"><a href="#cb26-2"></a></span>
 <span id="cb26-3"><a href="#cb26-3"></a>model_v3 <span class="op">=</span> TspModelV3()</span>
@@ -1261,15 +1312,19 @@ optimal value = 7013.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model3-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model3-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.12: Optimal route for the <em>ulysses22</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model3-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model3-ulysses22-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model3-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.12: Optimal route for the <em>ulysses22</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#fig-tsp-model3-berlin52-sol">Figure&nbsp;<span>6.13</span></a> gives the optimal solution of instance <em>berlin52</em>.</p>
-<div class="cell" data-execution_count="38">
+<p><a href="#fig-tsp-model3-berlin52-sol" class="quarto-xref">Figure&nbsp;<span>6.13</span></a> gives the optimal solution of instance <em>berlin52</em>.</p>
+<div id="cell-fig-tsp-model3-berlin52-sol" class="cell" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/berlin52.tsp'</span></span>
 <span id="cb28-2"><a href="#cb28-2"></a></span>
 <span id="cb28-3"><a href="#cb28-3"></a>model_v3 <span class="op">=</span> TspModelV3()</span>
@@ -1285,15 +1340,19 @@ optimal value = 7542.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model3-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model3-berlin52-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.13: Optimal route for the <em>berlin52</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model3-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model3-berlin52-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model3-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.13: Optimal route for the <em>berlin52</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#fig-tsp-model3-pr76-sol">Figure&nbsp;<span>6.14</span></a> shows the optimal solution for instance <em>pr16</em>.</p>
-<div class="cell" data-execution_count="39">
+<p><a href="#fig-tsp-model3-pr76-sol" class="quarto-xref">Figure&nbsp;<span>6.14</span></a> shows the optimal solution for instance <em>pr16</em>.</p>
+<div id="cell-fig-tsp-model3-pr76-sol" class="cell" data-execution_count="39">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/pr76.tsp'</span></span>
 <span id="cb30-2"><a href="#cb30-2"></a></span>
 <span id="cb30-3"><a href="#cb30-3"></a>model_v3 <span class="op">=</span> TspModelV3()</span>
@@ -1309,9 +1368,13 @@ optimal value = 108159.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model3-pr76-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model3-pr76-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.14: Optimal route for the <em>pr76</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model3-pr76-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model3-pr76-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model3-pr76-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.14: Optimal route for the <em>pr76</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
@@ -1340,11 +1403,12 @@ optimal value = 108159.00</code></pre>
 &amp;\quad y_{ij} \geq 0, \ \forall (i, j) \in \mathcal{A} \label{tsp4-cons10}  \\
 &amp;\quad z_{ij} \geq 0, \ \forall (i, j) \in \mathcal{A} \label{tsp4-cons11}
 \end{align}\]</span></p>
-<p>In this formulation, constraints <span class="math inline">\(\eqref{tsp4-cons3}\)</span> - <span class="math inline">\(\eqref{tsp4-cons8}\)</span> together serve as the subtour elimination constraints. To better understand the two commodity flow formulation, we’ll use <a href="#fig-two-commodity-flow">Figure&nbsp;<span>6.15</span></a> as an example. At the source node 1, there is <span class="math inline">\(n-1\)</span> units of commodity 1 leaving the node and there is no unit of commodity 2 leaving it. At each subsequent node, the amount of commodity 1 decreases by 1 unit while the amount of commodity 2 increases by 1 unit. On any arc in the tour, the total amount of commodities is always <span class="math inline">\(n - 1\)</span>.</p>
+<p>In this formulation, constraints <span class="math inline">\(\eqref{tsp4-cons3}\)</span> - <span class="math inline">\(\eqref{tsp4-cons8}\)</span> together serve as the subtour elimination constraints. To better understand the two commodity flow formulation, we’ll use <a href="#fig-two-commodity-flow" class="quarto-xref">Figure&nbsp;<span>6.15</span></a> as an example. At the source node 1, there is <span class="math inline">\(n-1\)</span> units of commodity 1 leaving the node and there is no unit of commodity 2 leaving it. At each subsequent node, the amount of commodity 1 decreases by 1 unit while the amount of commodity 2 increases by 1 unit. On any arc in the tour, the total amount of commodities is always <span class="math inline">\(n - 1\)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-two-commodity-flow" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-two-commodity-flow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-two-commodity-flow">flowchart LR
     1((1)) -- c1: 3, c2:0 --&gt; 2((2))
@@ -1353,13 +1417,16 @@ optimal value = 108159.00</code></pre>
     4 -- c1: 0, c2:3 --&gt; 1
 </pre>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;6.15: Two commodities flowing on the tour</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-two-commodity-flow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.15: Two commodities flowing on the tour
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>The code below gives the complete implementation of the two commodity flow formulation.</p>
-<div class="cell" data-execution_count="40">
+<div id="cell-80" class="cell" data-execution_count="40">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb32-2"><a href="#cb32-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb32-3"><a href="#cb32-3"></a></span>
@@ -1541,8 +1608,8 @@ optimal value = 108159.00</code></pre>
 <span id="cb32-179"><a href="#cb32-179"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb32-180"><a href="#cb32-180"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#fig-tsp-model4-burma14-sol">Figure&nbsp;<span>6.16</span></a> shows the optimals solution identified by the formulation for instance <em>burma14</em>.</p>
-<div class="cell" data-execution_count="41">
+<p><a href="#fig-tsp-model4-burma14-sol" class="quarto-xref">Figure&nbsp;<span>6.16</span></a> shows the optimals solution identified by the formulation for instance <em>burma14</em>.</p>
+<div id="cell-fig-tsp-model4-burma14-sol" class="cell" data-execution_count="41">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb33-2"><a href="#cb33-2"></a></span>
 <span id="cb33-3"><a href="#cb33-3"></a>model_v4 <span class="op">=</span> TspModelV4()</span>
@@ -1558,15 +1625,19 @@ optimal value = 3323.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model4-burma14-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model4-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.16: Optimal route for the <em>burma14</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model4-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model4-burma14-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model4-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.16: Optimal route for the <em>burma14</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#fig-tsp-model4-ulysses22-sol">Figure&nbsp;<span>6.17</span></a> gives the optimal solution of the <em>ulysses22</em> instance.</p>
-<div class="cell" data-execution_count="49">
+<p><a href="#fig-tsp-model4-ulysses22-sol" class="quarto-xref">Figure&nbsp;<span>6.17</span></a> gives the optimal solution of the <em>ulysses22</em> instance.</p>
+<div id="cell-fig-tsp-model4-ulysses22-sol" class="cell" data-execution_count="49">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/ulysses22.tsp'</span></span>
 <span id="cb35-2"><a href="#cb35-2"></a></span>
 <span id="cb35-3"><a href="#cb35-3"></a>model_v4 <span class="op">=</span> TspModelV4()</span>
@@ -1582,15 +1653,19 @@ optimal value = 7013.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model4-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model4-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.17: Optimal route for the <em>ulysses22</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model4-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model4-ulysses22-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model4-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.17: Optimal route for the <em>ulysses22</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#fig-tsp-model4-berlin52-sol">Figure&nbsp;<span>6.18</span></a> shows the optimals solution identified by the formulation for instance <em>berlin52</em>.</p>
-<div class="cell" data-execution_count="42">
+<p><a href="#fig-tsp-model4-berlin52-sol" class="quarto-xref">Figure&nbsp;<span>6.18</span></a> shows the optimals solution identified by the formulation for instance <em>berlin52</em>.</p>
+<div id="cell-fig-tsp-model4-berlin52-sol" class="cell" data-execution_count="42">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/berlin52.tsp'</span></span>
 <span id="cb37-2"><a href="#cb37-2"></a></span>
 <span id="cb37-3"><a href="#cb37-3"></a>model_v4 <span class="op">=</span> TspModelV4()</span>
@@ -1606,9 +1681,13 @@ optimal value = 7542.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model4-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model4-berlin52-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.18: Optimal route for the <em>berlin52</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model4-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model4-berlin52-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model4-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.18: Optimal route for the <em>berlin52</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
@@ -1635,7 +1714,7 @@ optimal value = 7542.00</code></pre>
 &amp;\quad x_{ij} = \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{tsp5-cons9}\\
 &amp;\quad y_{ij} \geq 0, \ \forall (i, j) \in \mathcal{A}, k \in \mathcal{V} \backslash \{1\} \label{tsp5-cons10}
 \end{align}\]</span></p>
-<div class="cell" data-execution_count="43">
+<div id="cell-91" class="cell" data-execution_count="43">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb39-2"><a href="#cb39-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb39-3"><a href="#cb39-3"></a></span>
@@ -1780,7 +1859,7 @@ optimal value = 7542.00</code></pre>
 <span id="cb39-142"><a href="#cb39-142"></a>        <span class="bu">print</span>(<span class="ss">f"Number of variables: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumVariables()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb39-143"><a href="#cb39-143"></a>        <span class="bu">print</span>(<span class="ss">f"Number of constraints: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_solver<span class="sc">.</span>NumConstraints()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="44">
+<div id="cell-fig-tsp-model5-burma14-sol" class="cell" data-execution_count="44">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/burma14.tsp'</span></span>
 <span id="cb40-2"><a href="#cb40-2"></a></span>
 <span id="cb40-3"><a href="#cb40-3"></a>model_v5 <span class="op">=</span> TspModelV5()</span>
@@ -1796,14 +1875,18 @@ optimal value = 3323.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model5-burma14-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model5-burma14-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.19: Optimal route for the <em>burma14</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model5-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model5-burma14-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model5-burma14-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.19: Optimal route for the <em>burma14</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="50">
+<div id="cell-fig-tsp-model5-ulysses22-sol" class="cell" data-execution_count="50">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/ulysses22.tsp'</span></span>
 <span id="cb42-2"><a href="#cb42-2"></a></span>
 <span id="cb42-3"><a href="#cb42-3"></a>model_v5 <span class="op">=</span> TspModelV5()</span>
@@ -1819,14 +1902,18 @@ optimal value = 7013.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model5-ulysses22-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model5-ulysses22-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.20: Optimal route for the <em>ulysses22</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model5-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model5-ulysses22-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model5-ulysses22-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.20: Optimal route for the <em>ulysses22</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="45">
+<div id="cell-fig-tsp-model5-berlin52-sol" class="cell" data-execution_count="45">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1"></a>instance <span class="op">=</span> <span class="st">'./data/tsp/berlin52.tsp'</span></span>
 <span id="cb44-2"><a href="#cb44-2"></a></span>
 <span id="cb44-3"><a href="#cb44-3"></a>model_v5 <span class="op">=</span> TspModelV5()</span>
@@ -1842,9 +1929,13 @@ optimal value = 7542.00</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-tsp-model5-berlin52-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-tsp_files/figure-html/fig-tsp-model5-berlin52-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6.21: Optimal route for the <em>berlin52</em> instance</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tsp-model5-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-tsp_files/figure-html/fig-tsp-model5-berlin52-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tsp-model5-berlin52-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.21: Optimal route for the <em>berlin52</em> instance
+</figcaption>
 </figure>
 </div>
 </div>
@@ -1852,12 +1943,16 @@ optimal value = 7542.00</code></pre>
 </section>
 <section id="performance-comparison" class="level2" data-number="6.8">
 <h2 data-number="6.8" class="anchored" data-anchor-id="performance-comparison"><span class="header-section-number">6.8</span> Performance Comparison</h2>
-<p>We give in <a href="#tbl-tsp-data">Table&nbsp;<span>6.1</span></a> the computational times required to find the optimal solutions for different instances. It is by no means a thorough or comprehensive performance comparison, as it is only based on one run and on a few instances. It can be seen from the table that the single commodity flow formulation seems to perform the best among all the five formulations.</p>
+<p>We give in <a href="#tbl-tsp-data" class="quarto-xref">Table&nbsp;<span>6.1</span></a> the computational times required to find the optimal solutions for different instances. It is by no means a thorough or comprehensive performance comparison, as it is only based on one run and on a few instances. It can be seen from the table that the single commodity flow formulation seems to perform the best among all the five formulations.</p>
 <div class="cell" data-execution_count="53">
-<div class="cell-output cell-output-display" data-execution_count="53">
-<div id="tbl-tsp-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;6.1: Computational time comparison of the five formulations</caption>
+<div id="tbl-tsp-data" class="cell anchored" data-execution_count="53">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tsp-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6.1: Computational time comparison of the five formulations
+</figcaption>
+<div aria-describedby="tbl-tsp-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="53">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -1905,10 +2000,12 @@ optimal value = 7542.00</code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-dantzig_solution_1954" class="csl-entry" role="listitem">
 Dantzig, G., R. Fulkerson, and S. Johnson. 1954. <span>“Solution of a <span>Large</span>-<span>Scale</span> <span>Traveling</span>-<span>Salesman</span> <span>Problem</span>.”</span> <em>Journal of the Operations Research Society of America</em> 2 (4): 393–410. <a href="https://doi.org/10.1287/opre.2.4.393">https://doi.org/10.1287/opre.2.4.393</a>.
 </div>
@@ -1998,10 +2095,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2011,8 +2107,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2025,6 +2130,135 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -2068,6 +2302,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -2093,6 +2328,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -2154,17 +2415,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ip-jsp.html" class="pagination-link">
+      <a href="./ip-jsp.html" class="pagination-link  aria-label=" &lt;span="" shop="" scheduling&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ip-cvrp.html" class="pagination-link">
+      <a href="./ip-cvrp.html" class="pagination-link" aria-label="<span class='chapter-number'>7</span>&nbsp; <span class='chapter-title'>Capacitated Vehicle Routing Problem</span>">
         <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

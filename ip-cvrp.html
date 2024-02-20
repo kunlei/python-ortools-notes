@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.526">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -101,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -110,6 +117,7 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -146,10 +154,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 
 <meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 7&nbsp; Capacitated Vehicle Routing Problem">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://kunlei.github.io/python-ortools-notes/ip-cvrp_files/figure-html/fig-cvrp-p-n16-k6-sol-output-1.png">
-<meta name="twitter:image-height" content="790">
-<meta name="twitter:image-width" content="1182">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 </head>
 
 <body class="nav-sidebar docked">
@@ -158,12 +163,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-cvrp.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-cvrp.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -173,12 +178,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Hands-on Optimization with OR-Tools in Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://twitter.com/intent/tweet?url=|url|" rel="" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+    <a href="https://twitter.com/intent/tweet?url=|url|" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
 </div>
     </div>
       </div>
@@ -311,7 +316,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -329,7 +334,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-cvrp.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-ip-cvrp" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Capacitated Vehicle Routing Problem</span></span></h1>
 </div>
@@ -344,7 +349,9 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>The Capacitated Vehicle Routing Problem (CVRP) is a classical combinatorial optimization problem that involves finding the optimal set of routes for a fleet of vehicles to deliver goods or services to a set of customers. In the CVRP, a set of customers is given, each with a known demand and location. A fleet of vehicles, each with a limited capacity, is available to serve these customers. The problem is to find a set of routes visited by the vehicles such that each customer is visited once and only once and the total traveling distance is minimized.</p>
 <p>We use the notation provided in <span class="citation" data-cites="toth_vehicle_2014">Toth and Vigo (<a href="references.html#ref-toth_vehicle_2014" role="doc-biblioref">2014</a>)</span> to facilitate the presentation of different CVRP models. The depot, denoted as 0, serves as the starting point for transporting goods to customers in <span class="math inline">\(\mathcal{N} = {1, 2, \cdots, n}\)</span> using a homogeneous fleet <span class="math inline">\(\mathcal{K} = {1, 2, \cdots, |\mathcal{K}|}\)</span>. Each customer in <span class="math inline">\(\mathcal{N}\)</span> has a demand of <span class="math inline">\(q_i \geq 0\)</span>, and each vehicle has a positive capacity of <span class="math inline">\(Q &gt; 0\)</span>. The cost of transportation, denoted by <span class="math inline">\(c_{ij}\)</span>, is incurred when a vehicle travels between <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. A vehicle’s route begins at the depot, visits some or all the customers in <span class="math inline">\(\mathcal{N}\)</span>, and then returns to the depot. The objective is to determine the optimal set of routes for the fleet to minimize the total cost of transportation.</p>
@@ -357,7 +364,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <section id="cvrp-instances" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="cvrp-instances"><span class="header-section-number">7.1</span> CVRP Instances</h2>
 <p>We use the instances taken from <span class="citation" data-cites="cvrplib">CVRPLIB (<a href="references.html#ref-cvrplib" role="doc-biblioref">2014</a>)</span> to illustrate the modeling and solving process with Google OR-Tools. <span class="citation" data-cites="cvrplib">CVRPLIB (<a href="references.html#ref-cvrplib" role="doc-biblioref">2014</a>)</span> contains many benchmarking instances for CVRP and we use the python package <code>vrplib</code> to load the instance <code>P-n16-k8.vrp</code> and its optimal solution <code>P-n16-k8.sol</code>.</p>
-<div class="cell" data-execution_count="1">
+<div id="cell-5" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># install vrplib with command: pip install vrplib</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> vrplib</span>
 <span id="cb1-3"><a href="#cb1-3"></a></span>
@@ -366,7 +373,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb1-6"><a href="#cb1-6"></a>solution <span class="op">=</span> vrplib.read_solution(<span class="st">"./data/cvrp/P-n16-k8.sol"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s first create a function to visualize vehicle routes, as given below.</p>
-<div class="cell" data-execution_count="2">
+<div id="cell-7" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-3"><a href="#cb2-3"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
@@ -438,9 +445,9 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb2-69"><a href="#cb2-69"></a>    plt.axis(<span class="st">'off'</span>)</span>
 <span id="cb2-70"><a href="#cb2-70"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#fig-cvrp-p-n16-k6-sol">Figure&nbsp;<span>7.1</span></a> shows the optimal vehicle routes for the instance P-n16-k8.vrp.</p>
-<div class="cell" data-execution_count="3">
-<details>
+<p><a href="#fig-cvrp-p-n16-k6-sol" class="quarto-xref">Figure&nbsp;<span>7.1</span></a> shows the optimal vehicle routes for the instance P-n16-k8.vrp.</p>
+<div id="cell-fig-cvrp-p-n16-k6-sol" class="cell" data-execution_count="3">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># visualize the optimal solution</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a>node_coords <span class="op">=</span> instance[<span class="st">'node_coord'</span>]</span>
@@ -464,9 +471,13 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-cvrp-p-n16-k6-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-cvrp_files/figure-html/fig-cvrp-p-n16-k6-sol-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;7.1: Optimal routes for instance P-n16-k8.vrp</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cvrp-p-n16-k6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-cvrp_files/figure-html/fig-cvrp-p-n16-k6-sol-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cvrp-p-n16-k6-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: Optimal routes for instance P-n16-k8.vrp
+</figcaption>
 </figure>
 </div>
 </div>
@@ -486,7 +497,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \end{align}\]</span></p>
 <p>The objective function represented by equation <span class="math inline">\(\eqref{cvrp-two-index-obj}\)</span> is to minimize the overall transportation costs. The constraints expressed in equations <span class="math inline">\(\eqref{cvrp-two-index-cons1}\)</span> and <span class="math inline">\(\eqref{cvrp-two-index-cons2}\)</span> work together to guarantee that each customer is visited only once, with one incoming and outgoing arc. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons3}\)</span> ensure that all available vehicles are utilized to serve the customers. Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons4}\)</span> prevent the formation of sub-tours. Finally, the variable types are defined by the last set of constraints, which are presented in equation <span class="math inline">\(\eqref{cvrp-two-index-cons5}\)</span>.</p>
 <p>To solve the aforementioned instance, we’ll first prepare the data for our following implementation use. Let’s first define two classes, <code>Node</code> and <code>Vehicle</code>, to represent a node in the network and the vechiles, respectively.</p>
-<div class="cell" data-execution_count="120">
+<div id="cell-15" class="cell" data-execution_count="120">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> Node:</span>
 <span id="cb4-2"><a href="#cb4-2"></a>    <span class="co">"""a node is either a depot (0) or a customer</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="co">    """</span></span>
@@ -515,7 +526,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb4-26"><a href="#cb4-26"></a><span class="ss">            y_coord: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_y_coord<span class="sc">}</span><span class="ss">,</span><span class="ch">\</span></span>
 <span id="cb4-27"><a href="#cb4-27"></a><span class="ss">            demand: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_demand<span class="sc">}</span><span class="ss">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="7">
+<div id="cell-16" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">class</span> Vehicle:</span>
 <span id="cb5-2"><a href="#cb5-2"></a>    <span class="co">"""a vehicle</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="co">    """</span></span>
@@ -534,7 +545,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb5-16"><a href="#cb5-16"></a>        <span class="cf">return</span> <span class="ss">f"id: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_id<span class="sc">}</span><span class="ss">, capacity: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>_capacity<span class="sc">}</span><span class="ss">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now let’s define a class <code>CvrpDataCenter</code> to hold all the information we need later. It also has a helper function to read and parse a CVRP instance.</p>
-<div class="cell" data-execution_count="118">
+<div id="cell-18" class="cell" data-execution_count="118">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="im">import</span> vrplib</span>
 <span id="cb6-3"><a href="#cb6-3"></a><span class="im">import</span> re</span>
@@ -618,7 +629,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb6-81"><a href="#cb6-81"></a>        <span class="cf">return</span> combs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To implement this formulation using Google OR-Tools, we first create a <code>CvrpDataCenter</code> object and read in the instance <code>P-n16-k8.vrp</code>. Then we create a <code>solver</code> object with solver option <code>SCIP</code> to solve mixed integer programming problems.</p>
-<div class="cell" data-execution_count="139">
+<div id="cell-20" class="cell" data-execution_count="139">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
@@ -632,7 +643,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb7-11"><a href="#cb7-11"></a>solver <span class="op">=</span> pywraplp.Solver.CreateSolver(<span class="st">'SCIP'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now let’s create the decision variable <span class="math inline">\(x_{ij}\)</span>. Note that we don’t need to create variables when <span class="math inline">\(i = j\)</span> since there is no arc pointing to itself in the graph <span class="math inline">\(\mathcal{G}\)</span> we defined earlier.</p>
-<div class="cell" data-execution_count="142">
+<div id="cell-22" class="cell" data-execution_count="142">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># create decision variables</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a>num_nodes <span class="op">=</span> cvrp_data_center.num_nodes</span>
 <span id="cb8-3"><a href="#cb8-3"></a>num_vehicles <span class="op">=</span> cvrp_data_center.num_vehicles</span>
@@ -642,7 +653,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb8-7"><a href="#cb8-7"></a>    var_x[i][j] <span class="op">=</span> solver.BoolVar(name<span class="op">=</span><span class="st">"x_{i, j}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we create the objective function.</p>
-<div class="cell" data-execution_count="143">
+<div id="cell-24" class="cell" data-execution_count="143">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># define objective function</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a>obj_expr <span class="op">=</span> [</span>
 <span id="cb9-3"><a href="#cb9-3"></a>    cvrp_data_center.distance(i, j, integer<span class="op">=</span><span class="va">True</span>) <span class="op">*</span> var_x[i][j]</span>
@@ -652,7 +663,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb9-7"><a href="#cb9-7"></a>solver.Minimize(solver.Sum(obj_expr))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And we create the constraints <span class="math inline">\(\eqref{cvrp-two-index-cons1}\)</span> and <span class="math inline">\(\eqref{cvrp-two-index-cons2}\)</span>.</p>
-<div class="cell" data-execution_count="145">
+<div id="cell-26" class="cell" data-execution_count="145">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># create incoming and outgoing arc constraints</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes):</span>
 <span id="cb10-3"><a href="#cb10-3"></a>    out_arcs <span class="op">=</span> [var_x[i][j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(num_nodes) <span class="cf">if</span> j <span class="op">!=</span> i]</span>
@@ -661,13 +672,13 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb10-6"><a href="#cb10-6"></a>    solver.Add(solver.Sum(in_arcs) <span class="op">==</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Constraints <span class="math inline">\(\eqref{cvrp-two-index-cons3}\)</span> are created as follows.</p>
-<div class="cell" data-execution_count="146">
+<div id="cell-28" class="cell" data-execution_count="146">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># create fleet size constraint</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a>expr <span class="op">=</span> [var_x[<span class="dv">0</span>][i] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_nodes)]</span>
 <span id="cb11-3"><a href="#cb11-3"></a>solver.Add(solver.Sum(expr) <span class="op">==</span> num_vehicles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To create the subtour elimination constraints <span class="math inline">\(\eqref{cvrp-two-index-cons4}\)</span>, we first need to enumerate all the non-empty subset of <span class="math inline">\(\mathcal{N}\)</span>, for which we define a helper function named <code>get_all_combinations()</code> in the <code>CvrpDataCenter</code> class. In the code snippet below, we define a separate constraint for every nonempty customer set <span class="math inline">\(S\)</span>, and the right-hand side <span class="math inline">\(r(S)\)</span> is defined as <span class="math inline">\(\lceil {q(S) / Q} \rceil\)</span>.</p>
-<div class="cell" data-execution_count="147">
+<div id="cell-30" class="cell" data-execution_count="147">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># create subtour elimination constraint</span></span>
 <span id="cb12-2"><a href="#cb12-2"></a>nodes <span class="op">=</span> cvrp_data_center.nodes</span>
 <span id="cb12-3"><a href="#cb12-3"></a>vehicle_capacity <span class="op">=</span> cvrp_data_center.vehicle_capacity</span>
@@ -686,7 +697,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb12-16"><a href="#cb12-16"></a>    solver.Add(solver.Sum(expr) <span class="op">&gt;=</span> rhs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Putting it all together, we have the complete program below. It can be seen from the output that the optimal solution is 450 and there are 8 routes in the identified solution.</p>
-<div class="cell" data-execution_count="172">
+<div id="cell-32" class="cell" data-execution_count="172">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb13-2"><a href="#cb13-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb13-3"><a href="#cb13-3"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
@@ -784,7 +795,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb13-95"><a href="#cb13-95"></a>        routes.append(route)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To facilitate the model comparison in following steps, we’ll wrap the above program into a dedicated class <code>Cvrp1</code>.</p>
-<div class="cell" data-execution_count="169">
+<div id="cell-34" class="cell" data-execution_count="169">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb14-3"><a href="#cb14-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -938,9 +949,9 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb14-151"><a href="#cb14-151"></a></span>
 <span id="cb14-152"><a href="#cb14-152"></a>        show_vehicle_routes(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The code below validates that the same optimal solution is obtained using this object-oriented approach. <a href="#fig-cvrp-two-index-sol">Figure&nbsp;<span>7.2</span></a> shows the routes found by the two-index formulation. Note that the routes are different from the ones in <a href="#fig-cvrp-p-n16-k6-sol">Figure&nbsp;<span>7.1</span></a> but they have the same objective value.</p>
-<div class="cell" data-execution_count="170">
-<details>
+<p>The code below validates that the same optimal solution is obtained using this object-oriented approach. <a href="#fig-cvrp-two-index-sol" class="quarto-xref">Figure&nbsp;<span>7.2</span></a> shows the routes found by the two-index formulation. Note that the routes are different from the ones in <a href="#fig-cvrp-p-n16-k6-sol" class="quarto-xref">Figure&nbsp;<span>7.1</span></a> but they have the same objective value.</p>
+<div id="cell-fig-cvrp-two-index-sol" class="cell" data-execution_count="170">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>cvrp1 <span class="op">=</span> Cvrp1(CvrpDataCenter())</span>
 <span id="cb15-2"><a href="#cb15-2"></a>cvrp1.read_instance(<span class="st">"./data/cvrp/P-n16-k8-mini.vrp"</span>)</span>
@@ -963,9 +974,13 @@ route: [(0, 8), (8, 11), (11, 0)], length: 92</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-cvrp-two-index-sol" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-cvrp_files/figure-html/fig-cvrp-two-index-sol-output-2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;7.2: Optimal routes found by the two-index formulation</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cvrp-two-index-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-cvrp_files/figure-html/fig-cvrp-two-index-sol-output-2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cvrp-two-index-sol-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2: Optimal routes found by the two-index formulation
+</figcaption>
 </figure>
 </div>
 </div>
@@ -988,7 +1003,7 @@ route: [(0, 8), (8, 11), (11, 0)], length: 92</code></pre>
     &amp;\quad q_i \leq u_i \leq Q, \ \forall i \in \mathcal{N} \label{cvrp2-cons5} \\
     &amp;\quad x_{ij} \in \{0, 1\}, \ \forall (i, j) \in \mathcal{A} \label{cvrp2-cons6}
 \end{align}\]</span></p>
-<div class="cell" data-execution_count="165">
+<div id="cell-41" class="cell" data-execution_count="165">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb17-2"><a href="#cb17-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb17-3"><a href="#cb17-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1153,7 +1168,7 @@ route: [(0, 8), (8, 11), (11, 0)], length: 92</code></pre>
 <span id="cb17-162"><a href="#cb17-162"></a></span>
 <span id="cb17-163"><a href="#cb17-163"></a>        show_vehicle_routes(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="166">
+<div id="cell-42" class="cell" data-execution_count="166">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>cvrp2 <span class="op">=</span> Cvrp2(CvrpDataCenter())</span>
 <span id="cb18-2"><a href="#cb18-2"></a>cvrp2.read_instance(<span class="st">"./data/cvrp/P-n16-k8-mini.vrp"</span>)</span>
 <span id="cb18-3"><a href="#cb18-3"></a>cvrp2.build_model()</span>
@@ -1173,7 +1188,11 @@ route: [(0, 10), (10, 4), (4, 0)], length: 55
 route: [(0, 11), (11, 8), (8, 0)], length: 92</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="ip-cvrp_files/figure-html/cell-18-output-2.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="ip-cvrp_files/figure-html/cell-18-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -1199,7 +1218,7 @@ route: [(0, 11), (11, 8), (8, 0)], length: 92</code></pre>
     &amp;\quad y_{ik} \in \{0, 1\}, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \label{cvrp3-cons9} \\
     &amp;\quad u_{ik} \geq 0, \ \forall i \in \mathcal{V}, k \in \mathcal{K} \label{cvrp3-cons10}
 \end{align}\]</span></p>
-<div class="cell" data-execution_count="159">
+<div id="cell-46" class="cell" data-execution_count="159">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb20-2"><a href="#cb20-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb20-3"><a href="#cb20-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1394,7 +1413,7 @@ route: [(0, 11), (11, 8), (8, 0)], length: 92</code></pre>
 <span id="cb20-192"><a href="#cb20-192"></a></span>
 <span id="cb20-193"><a href="#cb20-193"></a>        show_vehicle_routes(locations, edges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="160">
+<div id="cell-47" class="cell" data-execution_count="160">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>cvrp3 <span class="op">=</span> Cvrp3(CvrpDataCenter())</span>
 <span id="cb21-2"><a href="#cb21-2"></a>cvrp3.read_instance(<span class="st">"./data/cvrp/P-n16-k8-mini.vrp"</span>)</span>
 <span id="cb21-3"><a href="#cb21-3"></a>cvrp3.build_model()</span>
@@ -1415,18 +1434,26 @@ route: [(0, 4), (4, 10), (10, 0)], length: 55
 route: [(0, 6), (6, 0)], length: 24</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="ip-cvrp_files/figure-html/cell-20-output-2.png" class="img-fluid"></p>
+<div>
+<figure class="figure">
+<p><img src="ip-cvrp_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="performance-comparison" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="performance-comparison"><span class="header-section-number">7.5</span> Performance Comparison</h2>
-<p><a href="#tbl-vrp-data">Table&nbsp;<span>7.1</span></a> shows the runtime comparison on the same instance.</p>
+<p><a href="#tbl-vrp-data" class="quarto-xref">Table&nbsp;<span>7.1</span></a> shows the runtime comparison on the same instance.</p>
 <div class="cell" data-execution_count="174">
-<div class="cell-output cell-output-display" data-execution_count="174">
-<div id="tbl-vrp-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;7.1: Computational time comparison of the three formulations</caption>
+<div id="tbl-vrp-data" class="cell anchored" data-execution_count="174">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-vrp-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7.1: Computational time comparison of the three formulations
+</figcaption>
+<div aria-describedby="tbl-vrp-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="174">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -1446,10 +1473,12 @@ route: [(0, 6), (6, 0)], length: 24</code></pre>
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-cvrplib" class="csl-entry" role="listitem">
 CVRPLIB. 2014. <span>“<span>CVRPLIB</span>.”</span> <a href="http://vrp.galgos.inf.puc-rio.br/index.php/en/">http://vrp.galgos.inf.puc-rio.br/index.php/en/</a>.
 </div>
@@ -1545,10 +1574,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1558,8 +1586,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1572,6 +1609,135 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1615,6 +1781,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1640,6 +1807,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1701,17 +1894,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ip-tsp.html" class="pagination-link">
+      <a href="./ip-tsp.html" class="pagination-link  aria-label=" &lt;span="" salesman="" problem&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ip-knapsack.html" class="pagination-link">
+      <a href="./ip-knapsack.html" class="pagination-link" aria-label="<span class='chapter-number'>8</span>&nbsp; <span class='chapter-title'>The Knapsack Problem</span>">
         <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The Knapsack Problem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.526">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -101,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -110,6 +117,7 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -146,10 +154,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 
 <meta name="twitter:title" content="Hands-on Optimization with OR-Tools in Python - 5&nbsp; Job Shop Scheduling">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://kunlei.github.io/python-ortools-notes/ip-jsp_files/figure-html/fig-jssp-dis-sol-ft06-output-1.png">
-<meta name="twitter:image-height" content="290">
-<meta name="twitter:image-width" content="690">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 </head>
 
 <body class="nav-sidebar docked">
@@ -158,12 +163,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-jsp.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-jsp.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -173,12 +178,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Hands-on Optimization with OR-Tools in Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://twitter.com/intent/tweet?url=|url|" rel="" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+    <a href="https://twitter.com/intent/tweet?url=|url|" title="Twitter" class="quarto-navigation-tool px-1" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
 </div>
     </div>
       </div>
@@ -311,7 +316,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -327,7 +332,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./linear-programming.html">Mathematical Programming</a></li><li class="breadcrumb-item"><a href="./ip-jsp.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-ip-jsp" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Job Shop Scheduling</span></span></h1>
 </div>
@@ -342,11 +347,13 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>In this section, we use Google OR-Tools to solve some of the classical integer programming problems.</p>
 <p>To test the modeling of JSSP, we use a benchmarking instance from the OR-Library (<span class="citation" data-cites="or-library">Beasley (<a href="references.html#ref-or-library" role="doc-biblioref">1990</a>)</span>), shown in the box below. The two numbers in the first line represent the number of jobs and the number of machines, respectively. Each remaining line contains the operations, processing machine and processing time, for each job. Note that the machines are numbered starting from 0.</p>
-<div class="cell" data-code-block-bg="true" data-code-block-border-left="#31BAE9" data-execution_count="26">
+<div id="cell-4" class="cell" data-code-block-bg="true" data-code-block-border-left="#31BAE9" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Instance ft06 from OR-Library</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="co"># 6 6   </span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="co"># 2 1   0   3   1   6   3   7   5   3   4   6</span></span>
@@ -357,7 +364,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb1-8"><a href="#cb1-8"></a><span class="co"># 1 3   3   3   5   9   0   10  4   4   2   1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Suppose this instance data is saved in a file named <em>ft06.txt</em> and the code below defines an utility function to read and parse the instance for later use.</p>
-<div class="cell" data-execution_count="27">
+<div id="cell-6" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">def</span> read_jssp_instance(filename: <span class="bu">str</span>):</span>
 <span id="cb2-2"><a href="#cb2-2"></a>    <span class="cf">with</span> <span class="bu">open</span>(filename) <span class="im">as</span> f:</span>
 <span id="cb2-3"><a href="#cb2-3"></a>        num_jobs, num_machines <span class="op">=</span> [<span class="bu">int</span>(x) <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">next</span>(f).split()]</span>
@@ -394,7 +401,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \end{align}\]</span></p>
 <p>The objective <span class="math inline">\(\eqref{jsp-dis-obj}\)</span> aims to minimize the maximal completion time of any job <span class="math inline">\(j \in \mathcal{J}\)</span>. Constraints <span class="math inline">\(\eqref{jsp-dis-cons1}\)</span> require that all the job processing starting time must not be negative values. Constraints <span class="math inline">\(\eqref{jsp-dis-cons2}\)</span> enforce the sequencing order among operations for every job, which state that the <span class="math inline">\(h\)</span>-th operation of job <span class="math inline">\(j\)</span>, <span class="math inline">\(o_h^j\)</span>, cannot start unless its preceeding operation <span class="math inline">\(o_{h - 1}^j\)</span> finishes. Constraints <span class="math inline">\(\eqref{jsp-dis-cons3}\)</span> and <span class="math inline">\(\eqref{jsp-dis-cons4}\)</span> together make sure that at most one job can be processed on a machine at any time. To be specific, in case of job <span class="math inline">\(j\)</span> preceding job <span class="math inline">\(k\)</span> on machine <span class="math inline">\(i\)</span>, <span class="math inline">\(z_{ijk}\)</span> takes the value of 1 and constraints <span class="math inline">\(\eqref{jsp-dis-cons4}\)</span> ensure that job <span class="math inline">\(k\)</span> won’t start processing on machine <span class="math inline">\(i\)</span> unless job <span class="math inline">\(i\)</span> completes processing; Otherwise, <span class="math inline">\(z_{ijk}\)</span> takes the value of 0 and constraints <span class="math inline">\(\eqref{jsp-dis-cons3}\)</span> require that job <span class="math inline">\(j\)</span> starts processing after job <span class="math inline">\(k\)</span>. Note that both constraints are needed when we require <span class="math inline">\(j &lt; k\)</span>; Otherwise, only one of them is needed if we create a constraint for every pair of <span class="math inline">\(j\)</span> and <span class="math inline">\(k\)</span> on a machine. Constraints <span class="math inline">\(\eqref{jsp-dis-cons5}\)</span> derive <span class="math inline">\(C_{max}\)</span> across all jobs. The last constraints <span class="math inline">\(\eqref{jsp-dis-cons6}\)</span> state the variable type of <span class="math inline">\(z_{ijk}\)</span>.</p>
 <p>The disjunctive formulation code is presented entirely in the following lines. The data related to the specific case are read between lines 5 to 8, and a solver object is created in line 11. The variable <span class="math inline">\(x_{ij}\)</span> is introduced in lines 16 to 23, followed by the introduction of variable <span class="math inline">\(z_{ijk}\)</span> in lines 25 to 34. The variable <span class="math inline">\(C_{max}\)</span> is defined in lines 36 to 38. The objective of the model is set in line 41, and the constraints are established in lines 44 to 80. The instance is solved, and the optimal solution is obtained from lines 82 to 93.</p>
-<div class="cell" data-execution_count="28">
+<div id="cell-10" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict</span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb3-3"><a href="#cb3-3"></a></span>
@@ -492,8 +499,8 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <pre><code>min. makespan = 55.00</code></pre>
 </div>
 </div>
-<p>The output of the model indicates that the lowest possible time needed to complete all tasks in this instance is 55. To illustrate the most efficient solution, we have created a function called <code>show_schedule()</code> that displays a Gantt chart of the tasks needed to process all jobs. <a href="#fig-jssp-dis-sol-ft06">Figure&nbsp;<span>5.1</span></a> displays the optimal solution for this instance.</p>
-<div class="cell" data-execution_count="29">
+<p>The output of the model indicates that the lowest possible time needed to complete all tasks in this instance is 55. To illustrate the most efficient solution, we have created a function called <code>show_schedule()</code> that displays a Gantt chart of the tasks needed to process all jobs. <a href="#fig-jssp-dis-sol-ft06" class="quarto-xref">Figure&nbsp;<span>5.1</span></a> displays the optimal solution for this instance.</p>
+<div id="cell-fig-jssp-dis-sol-ft06" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb5-3"><a href="#cb5-3"></a></span>
@@ -532,9 +539,13 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <span id="cb5-36"><a href="#cb5-36"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-jssp-dis-sol-ft06" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-jsp_files/figure-html/fig-jssp-dis-sol-ft06-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.1: Optimal solution of the ft06 instance using the disjunctive formulation</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jssp-dis-sol-ft06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-jsp_files/figure-html/fig-jssp-dis-sol-ft06-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssp-dis-sol-ft06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: Optimal solution of the ft06 instance using the disjunctive formulation
+</figcaption>
 </figure>
 </div>
 </div>
@@ -553,7 +564,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \end{align}\]</span></p>
 <p>In this formulation, the first set of constraints, referred to as <span class="math inline">\(\eqref{jsp-time-cons1}\)</span>, state that each job <span class="math inline">\(j\)</span> must start at one specific time within the scheduling horizon <span class="math inline">\(H\)</span>, which is determined as the sum of processing times for all jobs - <span class="math inline">\(H = \sum_{i \in \mathcal{I}, j \in \mathcal{J}} p_{ij}\)</span>. Constraints <span class="math inline">\(\eqref{jsp-time-cons2}\)</span> are used to calculate the value of <span class="math inline">\(C_{max}\)</span>, while constraints <span class="math inline">\(\eqref{jsp-time-cons3}\)</span> ensure that only one job can be processed by a machine at any given time. It’s important to note that a job will remain on a machine for its full processing time and cannot be interrupted. Constraints <span class="math inline">\(\eqref{jsp-time-cons4}\)</span> make sure that the order of processing jobs is followed, and constraints <span class="math inline">\(\eqref{jsp-time-cons5}\)</span> define the variable types used in the formulation.</p>
 <p>The following code provides a program that uses the time-indexed formulation to solve the <code>ft06</code> instance, with the value of <span class="math inline">\(H\)</span> being the sum of all job processing times plus one. The two variables, <span class="math inline">\(x_{ijt}\)</span> and <span class="math inline">\(C_{max}\)</span>, are created in lines 18 - 27. The constraints are created in lines 33 - 57. The optimal solution is retrieved in lines 61 - 71. It can be seen from the output that the same optimal objective, 55, is obtained using this formulation.</p>
-<div class="cell" data-execution_count="30">
+<div id="cell-17" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> typing <span class="im">import</span> List, Dict</span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="im">from</span> ortools.linear_solver <span class="im">import</span> pywraplp</span>
 <span id="cb6-3"><a href="#cb6-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -629,14 +640,18 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <pre><code>min. makespan = 55.00</code></pre>
 </div>
 </div>
-<p>The optimal solution can be seen in <a href="#fig-jssp-time-sol-ft06">Figure&nbsp;<span>5.2</span></a>. Even though both formulations achieve the same optimal objective value, there are some minor discrepancies between the optimal solutions. For instance, in <a href="#fig-jssp-dis-sol-ft06">Figure&nbsp;<span>5.1</span></a>, there is a gap after job 4 completes processing on machine 3, which is not present in <a href="#fig-jssp-time-sol-ft06">Figure&nbsp;<span>5.2</span></a>.</p>
-<div class="cell" data-execution_count="31">
+<p>The optimal solution can be seen in <a href="#fig-jssp-time-sol-ft06" class="quarto-xref">Figure&nbsp;<span>5.2</span></a>. Even though both formulations achieve the same optimal objective value, there are some minor discrepancies between the optimal solutions. For instance, in <a href="#fig-jssp-dis-sol-ft06" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>, there is a gap after job 4 completes processing on machine 3, which is not present in <a href="#fig-jssp-time-sol-ft06" class="quarto-xref">Figure&nbsp;<span>5.2</span></a>.</p>
+<div id="cell-fig-jssp-time-sol-ft06" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-jssp-time-sol-ft06" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-jsp_files/figure-html/fig-jssp-time-sol-ft06-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.2: Optimal solution of the ft06 instance using the time-indexed formulation</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jssp-time-sol-ft06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-jsp_files/figure-html/fig-jssp-time-sol-ft06-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssp-time-sol-ft06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: Optimal solution of the ft06 instance using the time-indexed formulation
+</figcaption>
 </figure>
 </div>
 </div>
@@ -670,7 +685,7 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 \end{align}\]</span></p>
 <p>In this formulation, constraints <span class="math inline">\(\eqref{jsp-rank-cons1}\)</span> make sure that there is only one job assigned to a particular rank <span class="math inline">\(k\)</span> on machine <span class="math inline">\(i\)</span>. Constraints <span class="math inline">\(\eqref{jsp-rank-cons2}\)</span> ensure that any job <span class="math inline">\(j\)</span> is assigned to one and only one rank on a machine <span class="math inline">\(i\)</span>. Constraints <span class="math inline">\(\eqref{jsp-rank-cons3}\)</span> require that a machine can only process at most one job at any point of time. Constraints <span class="math inline">\(\eqref{jsp-rank-cons4}\)</span> guarantee that the processing order of a job is respected. Constraints <span class="math inline">\(\eqref{jsp-rank-cons5}\)</span> computes the makespan. The remaining constraints <span class="math inline">\(\eqref{jsp-rank-cons6}\)</span>, <span class="math inline">\(\eqref{jsp-rank-cons7}\)</span> and <span class="math inline">\(\eqref{jsp-rank-cons8}\)</span> indicate the variable types.</p>
 <p>We now solve the same problem instance using this rank-based formulation in Google OR-Tools, for which the complete code is shown below.</p>
-<div class="cell" data-execution_count="32">
+<div id="cell-25" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
 <span id="cb9-2"><a href="#cb9-2"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
 <span id="cb9-3"><a href="#cb9-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -762,24 +777,32 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 <pre><code>opt_obj = 55.0000</code></pre>
 </div>
 </div>
-<p><a href="#fig-jssp-rank-sol-ft06">Figure&nbsp;<span>5.3</span></a> displays the optimal solution obtained by utilizing the rank-based model. Upon careful examination, it is slightly distinct from the optimal solutions produced by the disjunctive model and the time-indexed model. Nevertheless, all three models achieve the same objective value of 55.</p>
-<div class="cell" data-execution_count="33">
+<p><a href="#fig-jssp-rank-sol-ft06" class="quarto-xref">Figure&nbsp;<span>5.3</span></a> displays the optimal solution obtained by utilizing the rank-based model. Upon careful examination, it is slightly distinct from the optimal solutions produced by the disjunctive model and the time-indexed model. Nevertheless, all three models achieve the same objective value of 55.</p>
+<div id="cell-fig-jssp-rank-sol-ft06" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a>show_schedule(num_jobs, operations, processing_times, opt_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-jssp-rank-sol-ft06" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ip-jsp_files/figure-html/fig-jssp-rank-sol-ft06-output-1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5.3: Optional solution found by the rank-based model for instance ft06</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-jssp-rank-sol-ft06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ip-jsp_files/figure-html/fig-jssp-rank-sol-ft06-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssp-rank-sol-ft06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Optional solution found by the rank-based model for instance ft06
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>While this book does not aim to compare the performance of the three modeling approaches, <a href="#tbl-jssp-data">Table&nbsp;<span>5.1</span></a> presents the computational times required by each formulation to discover the optimal solutions. The table indicates that the disjunctive model is the most efficient of the three, followed by the time-indexed model, while the rank-based model requires the longest time to converge. It should be noted that making a conclusion about the performance of these models based on one experimental run on a single instance is insufficient.</p>
+<p>While this book does not aim to compare the performance of the three modeling approaches, <a href="#tbl-jssp-data" class="quarto-xref">Table&nbsp;<span>5.1</span></a> presents the computational times required by each formulation to discover the optimal solutions. The table indicates that the disjunctive model is the most efficient of the three, followed by the time-indexed model, while the rank-based model requires the longest time to converge. It should be noted that making a conclusion about the performance of these models based on one experimental run on a single instance is insufficient.</p>
 <div class="cell" data-execution_count="34">
-<div class="cell-output cell-output-display" data-execution_count="34">
-<div id="tbl-jssp-data" class="anchored">
-<table class="table table-sm table-striped small">
-<caption>Table&nbsp;5.1: Computational time comparison of the three formulations</caption>
+<div id="tbl-jssp-data" class="cell anchored" data-execution_count="34">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-jssp-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.1: Computational time comparison of the three formulations
+</figcaption>
+<div aria-describedby="tbl-jssp-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="34">
+<table class="cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">Instance</th>
@@ -799,10 +822,12 @@ gtag('config', 'G-DTVHQH448R', { 'anonymize_ip': true});
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-or-library" class="csl-entry" role="listitem">
 Beasley, John E. 1990. <span>“OR-Library: Distributing Test Problems by Electronic Mail.”</span> <em>Journal of the Operational Research Society</em> 41 (11): 1069–72.
 </div>
@@ -901,10 +926,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -914,8 +938,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -928,6 +961,135 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -971,6 +1133,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -996,6 +1159,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1057,17 +1246,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./integer-programming.html" class="pagination-link">
+      <a href="./integer-programming.html" class="pagination-link  aria-label=" &lt;span="" programming&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Integer Programming</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ip-tsp.html" class="pagination-link">
+      <a href="./ip-tsp.html" class="pagination-link" aria-label="<span class='chapter-number'>6</span>&nbsp; <span class='chapter-title'>Traveling Salesman Problem</span>">
         <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Traveling Salesman Problem</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 
